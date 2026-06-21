@@ -130,6 +130,13 @@ def append_comment(line: str, hint: str, lang: str) -> str:
         if LINE_MARK.search(line):
             return line
         return line.rstrip() + f" & REM 【行】{hint}" + ("\n" if line.endswith("\n") else "")
+    if lang == "ps1":
+        if LINE_MARK.search(line) or line.strip().startswith("#"):
+            # 已有 # 注释行：在末尾追加 【行】说明（PowerShell 支持行尾 #）
+            if LINE_MARK.search(line):
+                return line
+            return line.rstrip() + f" # 【行】{hint}" + ("\n" if line.endswith("\n") else "")
+        return line.rstrip() + f" # 【行】{hint}" + ("\n" if line.endswith("\n") else "")
     if lang == "vue_template":
         if "-->" in line:
             return line.replace("-->", f" 【行】{hint} -->", 1)
@@ -190,8 +197,9 @@ def process_file(path: Path, dry_run: bool) -> int:
             i += 1
             continue
         lang = "bat" if path.suffix.lower() == ".bat" else (
+            "ps1" if path.suffix.lower() == ".ps1" else (
             "vue_template" if in_template or line.strip().startswith("<!--") else (
-            "java" if path.suffix == ".java" else "js")
+            "java" if path.suffix == ".java" else "js"))
         )
         block_start = i + 1
         block_end = find_block_end(lines, block_start, lang if lang != "vue_template" else "js")
