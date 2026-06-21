@@ -1,4 +1,4 @@
-﻿package com.scau.campusstudyroomreservationmanagementsystem.config;
+package com.scau.campusstudyroomreservationmanagementsystem.config;
 
 import com.scau.campusstudyroomreservationmanagementsystem.support.CurrentUser;
 import io.jsonwebtoken.Claims;

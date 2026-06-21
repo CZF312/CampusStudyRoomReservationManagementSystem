@@ -73,6 +73,10 @@ function Get-ConfiguredMysqlPassword {
 
 Write-Title
 
+# 编辑 Java 时若存成 UTF-8 BOM，javac 会报非法字符 \ufeff；启动前自动清理
+$stripBom = Join-Path $scriptRoot "strip-java-bom.ps1"
+if (Test-Path $stripBom) { & $stripBom | Out-Null }
+
 if (-not (Test-Path (Join-Path $root "pom.xml"))) {
     Write-Host "[ERROR] pom.xml not found. Run start.bat from the project root." -ForegroundColor Red
     exit 1

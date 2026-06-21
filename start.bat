@@ -1,5 +1,5 @@
-REM 【F1-1·步骤1】实例：组长双击本文件，调用 scripts\start-system.ps1 启动系统
 @echo off
+REM 【F1-1·步骤1】实例：组长双击本文件，调用 scripts\start-system.ps1 启动系统
 setlocal
 chcp 65001 >nul 2>&1
 cd /d "%~dp0"

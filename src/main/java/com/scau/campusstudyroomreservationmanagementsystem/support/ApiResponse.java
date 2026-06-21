@@ -1,4 +1,4 @@
-﻿package com.scau.campusstudyroomreservationmanagementsystem.support;
+package com.scau.campusstudyroomreservationmanagementsystem.support;
 
 /**
  * 【F1-2·JSON】实例：小明点确认后收到 {"code":200,"message":"success","data":{...}}

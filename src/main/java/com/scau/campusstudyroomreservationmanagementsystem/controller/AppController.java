@@ -1,4 +1,4 @@
-﻿package com.scau.campusstudyroomreservationmanagementsystem.controller;
+package com.scau.campusstudyroomreservationmanagementsystem.controller;
 
 import com.scau.campusstudyroomreservationmanagementsystem.service.AppService;
 import com.scau.campusstudyroomreservationmanagementsystem.support.ApiResponse;
