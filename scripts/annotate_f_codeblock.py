@@ -23,6 +23,26 @@ EXT = {".java", ".vue", ".js", ".bat", ".ps1", ".sql"}
 F_HEADER = re.compile(r"【F\d+-\d+·[^】]+】功能链实例：")
 LINE_MARK = re.compile(r"【行】")
 SKIP_DIRS = {"node_modules", "target", ".git", "static/assets"}
+# 启动/验收脚本含 here-string、bat 块语法，禁止自动行尾注释（会破坏 PowerShell/batch 解析）
+SKIP_ANNOTATE_NAMES = {
+    "start.bat",
+    "start-system.ps1",
+    "setup-after-clone.ps1",
+    "verify-v3-dictionary.ps1",
+    "strip-java-bom.ps1",
+}
+
+
+def ps1_unsafe_inline_comment(line: str) -> bool:
+    """PowerShell：here-string 起止行、反引号续行后不可追加 # 注释。"""
+    s = line.rstrip()
+    if re.search(r'@"\s*($|#)', s) or re.search(r"@'\s*($|#)", s):
+        return True
+    if re.match(r'^\s*"@\s*($|#)', s) or re.match(r"^\s*'@\s*($|#)", s):
+        return True
+    if s.endswith("`") or re.search(r"`\s+#\s*【行】", s):
+        return True
+    return False
 
 
 def describe_js_line(stripped: str) -> str | None:
@@ -139,12 +159,12 @@ def describe_vue_template_line(stripped: str) -> str | None:
 
 def append_comment(line: str, hint: str, lang: str) -> str:
     if lang == "bat":
-        if LINE_MARK.search(line):
-            return line
-        return line.rstrip() + f" & REM 【行】{hint}" + ("\n" if line.endswith("\n") else "")
+        # bat 禁止行尾 `& REM`（if () 块内会报「不是内部或外部命令」）；改由 process_file 在上一行插入 REM
+        return line
     if lang == "ps1":
-        if LINE_MARK.search(line) or line.strip().startswith("#"):
-            # 已有 # 注释行：在末尾追加 【行】说明（PowerShell 支持行尾 #）
+        if LINE_MARK.search(line) or ps1_unsafe_inline_comment(line):
+            return line
+        if line.strip().startswith("#"):
             if LINE_MARK.search(line):
                 return line
             return line.rstrip() + f" # 【行】{hint}" + ("\n" if line.endswith("\n") else "")
@@ -224,6 +244,16 @@ def process_file(path: Path, dry_run: bool) -> int:
                 hint = describe_js_line(stripped)
             if not hint:
                 continue
+            if lang == "bat":
+                if stripped.upper().startswith("REM") or LINE_MARK.search(lines[j]):
+                    continue
+                if j > 0 and LINE_MARK.search(lines[j - 1]):
+                    continue
+                indent = lines[j][: len(lines[j]) - len(lines[j].lstrip())]
+                lines.insert(j, f"{indent}REM 【行】{hint}\n")
+                changed += 1
+                block_end += 1
+                continue
             new_line = append_comment(lines[j], hint, lang)
             if new_line != lines[j]:
                 lines[j] = new_line
@@ -243,6 +273,8 @@ def main() -> None:
     total = 0
     for p in sorted(ROOT.rglob("*")):
         if p.suffix.lower() not in EXT:
+            continue
+        if p.name in SKIP_ANNOTATE_NAMES:
             continue
         if any(x in p.parts for x in SKIP_DIRS):
             continue

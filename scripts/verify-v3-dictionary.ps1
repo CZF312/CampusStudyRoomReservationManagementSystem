@@ -1,84 +1,84 @@
-# 【F1-1·环境启动】功能链实例：组长双击 `start.bat` → PowerShell 导入 `database-full.sql` 建库 `study_room_reservation` → Spring Boot 监听 8080 → 浏览器打开登录页 → `… 本处职责：验收 17 项第三版字典，输出 PASS=17
-# V3 data dictionary verification for MySQL snapshot # 【行】执行本行语句，推进功能链中的当前步骤
-# Usage: .\scripts\verify-v3-dictionary.ps1 # 【行】执行本行语句，推进功能链中的当前步骤
-#        .\scripts\verify-v3-dictionary.ps1 -Password 123456 # 【行】执行本行语句，推进功能链中的当前步骤
+# ?F1-1�????????????? database-full.sql ???????? 17 ???? PASS=17
+# V3 data dictionary verification for MySQL snapshot
+# Usage: .\scripts\verify-v3-dictionary.ps1
+#        .\scripts\verify-v3-dictionary.ps1 -Password 123456
 
-param( # 【行】执行本行语句，推进功能链中的当前步骤
-    [string]$DbHost = "127.0.0.1", # 【行】执行本行语句，推进功能链中的当前步骤
-    [int]$Port = 3306, # 【行】执行本行语句，推进功能链中的当前步骤
-    [string]$User = "root", # 【行】执行本行语句，推进功能链中的当前步骤
-    [string]$Password = "", # 【行】执行本行语句，推进功能链中的当前步骤
-    [string]$Database = "study_room_reservation" # 【行】执行本行语句，推进功能链中的当前步骤
+param(
+    [string]$DbHost = "127.0.0.1",
+    [int]$Port = 3306,
+    [string]$User = "root",
+    [string]$Password = "",
+    [string]$Database = "study_room_reservation"
 )
 
-$ErrorActionPreference = "Stop" # 【行】执行本行语句，推进功能链中的当前步骤
+$ErrorActionPreference = "Stop"
 $scriptRoot = if ($PSScriptRoot) { $PSScriptRoot } elseif ($env:CSRRM_SCRIPT_ROOT) { $env:CSRRM_SCRIPT_ROOT } else { Join-Path (Get-Location) "scripts" }
-$root = Split-Path -Parent $scriptRoot # 【行】执行本行语句，推进功能链中的当前步骤
+$root = Split-Path -Parent $scriptRoot
 
-if (-not (Get-Command mysql -ErrorAction SilentlyContinue)) { # 【行】分支判断：根据当前 UI 状态决定后续逻辑
-    Write-Host "[FAIL] mysql not in PATH" -ForegroundColor Red # 【行】执行本行语句，推进功能链中的当前步骤
-    exit 1 # 【行】执行本行语句，推进功能链中的当前步骤
+if (-not (Get-Command mysql -ErrorAction SilentlyContinue)) {
+    Write-Host "[FAIL] mysql not in PATH" -ForegroundColor Red
+    exit 1
 }
 
-if (-not $Password) { # 【行】分支判断：根据当前 UI 状态决定后续逻辑
-    $localProps = Join-Path $root "src\main\resources\application-local.properties" # 【行】执行本行语句，推进功能链中的当前步骤
-    if (Test-Path $localProps) { # 【行】分支判断：根据当前 UI 状态决定后续逻辑
-        $line = Get-Content $localProps | Where-Object { $_ -match '^\s*spring\.datasource\.password\s*=' } | Select-Object -First 1 # 【行】执行本行语句，推进功能链中的当前步骤
-        if ($line -match '=\s*(.+)$') { $Password = $Matches[1].Trim() } # 【行】分支判断：根据当前 UI 状态决定后续逻辑
+if (-not $Password) {
+    $localProps = Join-Path $root "src\main\resources\application-local.properties"
+    if (Test-Path $localProps) {
+        $line = Get-Content $localProps | Where-Object { $_ -match '^\s*spring\.datasource\.password\s*=' } | Select-Object -First 1
+        if ($line -match '=\s*(.+)$') { $Password = $Matches[1].Trim() }
     }
 }
-if (-not $Password) { # 【行】分支判断：根据当前 UI 状态决定后续逻辑
-    $sec = Read-Host "MySQL password for $User" -AsSecureString # 【行】执行本行语句，推进功能链中的当前步骤
-    $Password = [Runtime.InteropServices.Marshal]::PtrToStringAuto( # 【行】执行本行语句，推进功能链中的当前步骤
-        [Runtime.InteropServices.Marshal]::SecureStringToBSTR($sec)) # 【行】执行本行语句，推进功能链中的当前步骤
+if (-not $Password) {
+    $sec = Read-Host "MySQL password for $User" -AsSecureString
+    $Password = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
+        [Runtime.InteropServices.Marshal]::SecureStringToBSTR($sec))
 }
 
-$env:MYSQL_PWD = $Password # 【行】执行本行语句，推进功能链中的当前步骤
-$mysql = (Get-Command mysql).Source # 【行】执行本行语句，推进功能链中的当前步骤
-$fail = 0 # 【行】执行本行语句，推进功能链中的当前步骤
-$pass = 0 # 【行】执行本行语句，推进功能链中的当前步骤
+$env:MYSQL_PWD = $Password
+$mysql = (Get-Command mysql).Source
+$fail = 0
+$pass = 0
 
-function Test-Check { # 【行】进入代码块
-    param([string]$Name, [bool]$Ok, [string]$Detail = "") # 【行】执行本行语句，推进功能链中的当前步骤
-    if ($Ok) { # 【行】分支判断：根据当前 UI 状态决定后续逻辑
-        $script:pass++ # 【行】执行本行语句，推进功能链中的当前步骤
-        Write-Host "[PASS] $Name" -ForegroundColor Green # 【行】执行本行语句，推进功能链中的当前步骤
-        if ($Detail) { Write-Host "       $Detail" -ForegroundColor DarkGray } # 【行】分支判断：根据当前 UI 状态决定后续逻辑
-    } else { # 【行】进入代码块
-        $script:fail++ # 【行】执行本行语句，推进功能链中的当前步骤
-        Write-Host "[FAIL] $Name" -ForegroundColor Red # 【行】执行本行语句，推进功能链中的当前步骤
-        if ($Detail) { Write-Host "       $Detail" -ForegroundColor Yellow } # 【行】分支判断：根据当前 UI 状态决定后续逻辑
+function Test-Check {
+    param([string]$Name, [bool]$Ok, [string]$Detail = "")
+    if ($Ok) {
+        $script:pass++
+        Write-Host "[PASS] $Name" -ForegroundColor Green
+        if ($Detail) { Write-Host "       $Detail" -ForegroundColor DarkGray }
+    } else {
+        $script:fail++
+        Write-Host "[FAIL] $Name" -ForegroundColor Red
+        if ($Detail) { Write-Host "       $Detail" -ForegroundColor Yellow }
     }
 }
 
-function Invoke-Query { # 【行】进入代码块
-    param([string]$Sql) # 【行】执行本行语句，推进功能链中的当前步骤
-    $out = & $mysql -h $DbHost -P $Port --protocol=TCP -u $User -N -B $Database -e $Sql 2>&1 # 【行】执行本行语句，推进功能链中的当前步骤
-    if ($LASTEXITCODE -ne 0) { # 【行】分支判断：根据当前 UI 状态决定后续逻辑
-        throw ($out | Out-String).Trim() # 【行】执行本行语句，推进功能链中的当前步骤
+function Invoke-Query {
+    param([string]$Sql)
+    $out = & $mysql -h $DbHost -P $Port --protocol=TCP -u $User -N -B $Database -e $Sql 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw ($out | Out-String).Trim()
     }
-    return $out # 【行】返回本函数计算结果给调用方
+    return $out
 }
 
-Write-Host "" # 【行】执行本行语句，推进功能链中的当前步骤
-Write-Host "=== CSRRM v3 dictionary verification ===" -ForegroundColor Cyan # 【行】执行本行语句，推进功能链中的当前步骤
-Write-Host "Database: $Database @ ${DbHost}:$Port" -ForegroundColor Cyan # 【行】执行本行语句，推进功能链中的当前步骤
-Write-Host "" # 【行】执行本行语句，推进功能链中的当前步骤
+Write-Host ""
+Write-Host "=== CSRRM v3 dictionary verification ===" -ForegroundColor Cyan
+Write-Host "Database: $Database @ ${DbHost}:$Port" -ForegroundColor Cyan
+Write-Host ""
 
-try { # 【行】进入代码块
-    $dbExists = & $mysql -h $DbHost -P $Port --protocol=TCP -u $User -N -B -e ` # 【行】执行本行语句，推进功能链中的当前步骤
-        "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME='$Database';" 2>&1 # 【行】执行本行语句，推进功能链中的当前步骤
-    Test-Check "Database exists" ($dbExists -eq "1") "schema=$Database" # 【行】执行本行语句，推进功能链中的当前步骤
+try {
+    $dbExists = & $mysql -h $DbHost -P $Port --protocol=TCP -u $User -N -B -e `
+        "SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME='$Database';" 2>&1
+    Test-Check "Database exists" ($dbExists -eq "1") "schema=$Database"
 
-    $tableCount = Invoke-Query @" # 【行】执行本行语句，推进功能链中的当前步骤
-SELECT COUNT(*) FROM information_schema.TABLES # 【行】执行本行语句，推进功能链中的当前步骤
-WHERE TABLE_SCHEMA='$Database' AND TABLE_TYPE='BASE TABLE'; # 【行】执行本行语句，推进功能链中的当前步骤
-"@ # 【行】执行本行语句，推进功能链中的当前步骤
-    $tableNames = Invoke-Query @" # 【行】执行本行语句，推进功能链中的当前步骤
-SELECT TABLE_NAME FROM information_schema.TABLES # 【行】执行本行语句，推进功能链中的当前步骤
-WHERE TABLE_SCHEMA='$Database' AND TABLE_TYPE='BASE TABLE' # 【行】执行本行语句，推进功能链中的当前步骤
-ORDER BY TABLE_NAME; # 【行】执行本行语句，推进功能链中的当前步骤
-"@ # 【行】执行本行语句，推进功能链中的当前步骤
+    $tableCount = Invoke-Query @"
+SELECT COUNT(*) FROM information_schema.TABLES
+WHERE TABLE_SCHEMA='$Database' AND TABLE_TYPE='BASE TABLE';
+"@
+    $tableNames = Invoke-Query @"
+SELECT TABLE_NAME FROM information_schema.TABLES
+WHERE TABLE_SCHEMA='$Database' AND TABLE_TYPE='BASE TABLE'
+ORDER BY TABLE_NAME;
+"@
     Test-Check "16 business tables" ($tableCount -eq "16") "actual=$tableCount tables: $($tableNames -join ', ')"
     $hasTempLeave = Invoke-Query @"
 SELECT COUNT(*) FROM information_schema.TABLES
