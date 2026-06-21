@@ -4,11 +4,11 @@
     <div v-if="toast" class="toast">{{ toast }}</div>
 
     <section v-if="!token" :class="loginRole === 'admin' ? 'admin-login-page' : 'login-page'">
-      <!-- 【F2-1·步骤1 / F2-2·步骤1】实例：小明或 admin 在登录页填账号密码 -->
+      <!-- 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：小明或 admin 在登录页填账号密码 -->
       <template v-if="loginRole === 'student'">
-      <div class="login-logo-box">🎓</div>
-      <div class="login-title">校园自习室预约系统</div>
-      <div class="login-subtitle">{{ loginRole === 'student' ? 'Campus Study Room Reservation' : 'Study Room Admin Console' }}</div>
+      <div class="login-logo-box">🎓</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+      <div class="login-title">校园自习室预约系统</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+      <div class="login-subtitle">{{ loginRole === 'student' ? 'Campus Study Room Reservation' : 'Study Room Admin Console' }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
       <div class="login-card">
         <div class="field">
           <label>学号</label>
@@ -57,11 +57,11 @@
             <strong class="hero-title">你好，{{ me.name || '同学' }}</strong>
             <span class="hero-sub">{{ homeDateText }}</span>
           </div>
-          <!-- 【F5-2·步骤1·模板】实例：管理员发布公告后，小明首页此处展示公告卡片 -->
-          <h2 class="section-title">📣 公告通知</h2>
-          <div class="announce-row">
-            <article class="announce-card" v-for="a in sortedAnnouncements.slice(0, 4)" :key="a.id" @click="readAnnouncement(a)">
-              <div class="announce-tag">📌 {{ a.pinned ? '系统通知' : (a.type || '公告') }}</div>
+          <!-- 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：管理员发布公告后，小明首页此处展示公告卡片 -->
+          <h2 class="section-title">📣 公告通知</h2> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="announce-row"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <article class="announce-card" v-for="a in sortedAnnouncements.slice(0, 4)" :key="a.id" @click="readAnnouncement(a)"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div class="announce-tag">📌 {{ a.pinned ? '系统通知' : (a.type || '公告') }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <strong>{{ a.title }}</strong>
               <p>{{ formatDate(a.published_at || a.created_at) }}</p>
             </article>
@@ -97,13 +97,13 @@
         </template>
 
         <template v-if="studentPage === 'reservation'">
-          <!-- 【F3-1·步骤1–2】实例：小明选日期、14:00–16:00 快捷时段与绿色 A-12 -->
-          <div v-if="creditBlocked" class="card warn-hint" style="border-color:#fecaca;background:#fff1f2;color:#b91c1c;font-weight:700">
+          <!-- 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：小明选日期、14:00–16:00 快捷时段与绿色 A-12 -->
+          <div v-if="creditBlocked" class="card warn-hint" style="border-color:#fecaca;background:#fff1f2;color:#b91c1c;font-weight:700"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             信用积分不足，暂不可预约。请前往「我的 → 信用积分」查看详情。
-          </div>
-          <h2>🗓️ 选择日期</h2>
-          <div class="date-rail">
-            <button v-for="d in dateOptions" :key="d.date" class="date-pill" :class="{ active: reservationForm.date === d.date }" @click="setReservationDate(d.date)">
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <h2>🗓️ 选择日期</h2> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="date-rail"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <button v-for="d in dateOptions" :key="d.date" class="date-pill" :class="{ active: reservationForm.date === d.date }" @click="setReservationDate(d.date)"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <span>{{ d.label }}</span>
               <strong>{{ d.day }}</strong>
               <small>{{ d.month }}月</small>
@@ -161,9 +161,9 @@
         </template>
 
         <template v-if="studentPage === 'checkin'">
-          <!-- 【F4-1·步骤1–2】实例：小明签到页展示学号 QR，等 admin 扫码 -->
-          <div class="card check-card check-hero">
-            <span class="status" :class="reservationStatusClass(activeReservation?.status) || 'PENDING'">{{ activeReservation ? statusText(activeReservation.status) : '暂无预约' }}</span>
+          <!-- 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：小明签到页展示学号 QR，等 admin 扫码 -->
+          <div class="card check-card check-hero"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <span class="status" :class="reservationStatusClass(activeReservation?.status) || 'PENDING'">{{ activeReservation ? statusText(activeReservation.status) : '暂无预约' }}</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
             <div class="timer">{{ timerText }}</div>
           </div>
           <div class="card reservation-detail-card checkin-info-card" v-if="activeReservation">
@@ -215,7 +215,7 @@
           <div class="profile-menu">
             <button type="button" class="profile-item" @click="studentPage = 'myres'"><span>📋</span><span>我的预约</span><span class="arrow">›</span></button>
             <button type="button" class="profile-item" @click="studentPage = 'credit'"><span>⭐</span><span>信用积分</span><span class="arrow">›</span></button>
-            <button type="button" class="profile-item" @click="studentPage = 'stats'; drawStudentChart()"><span>📊</span><span>学习统计</span><span class="arrow">›</span></button>
+            <button type="button" class="profile-item" @click="openStudyStats()"><span>📊</span><span>学习统计</span><span class="arrow">›</span></button>
           </div>
           <div class="profile-group-title">账号与安全</div>
           <div class="profile-menu">
@@ -229,9 +229,9 @@
         </template>
 
         <template v-if="studentPage === 'myres'">
-          <!-- 【F3-3·步骤1】实例：小明在「我的预约」按 Tab 筛选，卡片上可取消待使用单 -->
-          <div class="filter-row">
-            <button v-for="s in reservationTabs" :key="s.key" :class="{ active: reservationStatus === s.key }" @click="reservationStatus = s.key">{{ s.label }}</button>
+          <!-- 【F3-3·我的预约】功能链实例：小明在「我的 → 我的预约」按 Tab 筛「待使用」→ 看到刚约的 A-12；管理员签到后，签到页每 2 秒轮询同一接口，状态自动变「使用中」。 本处职责：小明在「我的预约」按 Tab 筛选，卡片上可取消待使用单 -->
+          <div class="filter-row"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <button v-for="s in reservationTabs" :key="s.key" :class="{ active: reservationStatus === s.key }" @click="reservationStatus = s.key">{{ s.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
           </div>
           <ReservationCard v-for="r in shownReservations" :key="r.id" :item="r" :status-text="statusText" @cancel="cancelReservation(r)" />
         </template>
@@ -264,6 +264,45 @@
         </template>
 
         <template v-if="studentPage === 'stats'">
+          <!-- 【F5-1·学习统计】功能链实例：小明打开学习统计切换当期/往期查看柱图 本处职责：学习统计页模板，含独立起止日期选择与快捷区间按钮 -->
+          <div class="period-tabs stats-range-tabs"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <button type="button" :class="{ active: studyStatsRangeMode === 'current' }" @click="changeStudyStatsRangeMode('current')">当期</button> <!-- 【行】绑定当期/往期 Tab 高亮与点击切换 -->
+            <button type="button" :class="{ active: studyStatsRangeMode === 'past' }" @click="changeStudyStatsRangeMode('past')">往期</button>
+          </div>
+          <div v-if="studyStatsRangeMode === 'past'" class="student-stats-range-row">
+            <div class="student-date-range-fields">
+              <el-date-picker
+                v-model="studyStatsStartDate"
+                type="date"
+                teleported
+                placement="bottom-start"
+                placeholder="开始日期"
+                value-format="YYYY-MM-DD"
+                :popper-options="{ strategy: 'fixed' }"
+                popper-class="stats-date-popper-single"
+                class="student-stats-date-picker"
+                @change="onStudyStatsStartDateChange"
+              />
+              <span class="student-date-sep">至</span>
+              <el-date-picker
+                v-model="studyStatsEndDate"
+                type="date"
+                teleported
+                placement="bottom-end"
+                placeholder="结束日期"
+                value-format="YYYY-MM-DD"
+                :popper-options="{ strategy: 'fixed' }"
+                popper-class="stats-date-popper-single"
+                class="student-stats-date-picker"
+                @change="onStudyStatsEndDateChange"
+              />
+            </div>
+            <div class="stats-date-shortcuts">
+              <button v-for="s in statsRangeShortcuts" :key="s.text" type="button" class="btn btn-outline btn-sm" @click="applyStudyStatsShortcut(s)">{{ s.text }}</button>
+            </div>
+            <button type="button" class="btn btn-outline" @click="resetStudyStatsDateRange">全部历史</button>
+          </div>
+          <p v-if="studyStatsHint" class="scanner-hint">{{ studyStatsHint }}</p>
           <div class="stats-tabs">
             <button v-for="p in statPeriods" :key="p.key" :class="{ active: statPeriod === p.key }" @click="changeStatPeriod(p.key)">{{ p.label }}</button>
           </div>
@@ -294,10 +333,10 @@
           <FeedbackBox @submit="submitFeedback" />
         </template>
 
-        <!-- 【F5-2·步骤2b】实例：小明点铃铛进入通知页，可单条/全部标已读 -->
+        <!-- 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：小明点铃铛进入通知页，可单条/全部标已读 -->
         <template v-if="studentPage === 'notifications'">
-          <el-button plain @click="readAllNotifications">全部已读</el-button>
-          <article class="notif-item" :class="{ read: n.read_flag }" v-for="n in notifications" :key="n.id" @click="readNotification(n)">
+          <el-button plain @click="readAllNotifications">全部已读</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <article class="notif-item" :class="{ read: n.read_flag }" v-for="n in notifications" :key="n.id" @click="readNotification(n)"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
             <div class="notif-icon">🔔</div>
             <div>
               <strong><span v-if="!n.read_flag" class="dot"></span>{{ n.title }}</strong>
@@ -362,15 +401,15 @@
 
         <main class="content admin-content">
           <template v-if="adminPage === 'users'">
-            <!-- 【F6-3·步骤1】实例：管理员审核/拒绝/禁用学生，可导出 CSV -->
-            <div class="admin-head-actions">
-              <h3 class="section-title">学生用户管理</h3>
-              <button type="button" class="btn btn-primary" @click="exportUsersCsv">导出 CSV</button>
-            </div>
-            <p class="scanner-hint">审核注册申请、禁用/启用学生账号；导出包含当前筛选条件下的全部学生。</p>
-            <el-input v-model="userKeyword" placeholder="搜索学号或姓名" @input="loadUsers" />
-            <div class="filter-row user-audit-filters">
-              <button v-for="f in userAuditFilters" :key="f.key" type="button" :class="{ active: userAuditFilter === f.key }" @click="userAuditFilter = f.key; loadUsers()">{{ f.label }}</button>
+            <!-- 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：管理员审核/拒绝/禁用学生，可导出 CSV -->
+            <div class="admin-head-actions"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <h3 class="section-title">学生用户管理</h3> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <button type="button" class="btn btn-primary" @click="exportUsersCsv">导出 CSV</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <p class="scanner-hint">审核注册申请、禁用/启用学生账号；导出包含当前筛选条件下的全部学生。</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-input v-model="userKeyword" placeholder="搜索学号或姓名" @input="loadUsers" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button v-for="f in userAuditFilters" :key="f.key" type="button" :class="{ active: userAuditFilter === f.key }" @click="userAuditFilter = f.key; loadUsers()">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             </div>
             <DataTable :rows="pagedUsers" :columns="['student_no','name','college','credit_score','auditLabel','statusLabel']" empty-text="暂无用户数据">
               <template #actions="{ row }">
@@ -385,16 +424,16 @@
           </template>
 
           <template v-if="adminPage === 'admins'">
-            <!-- 【F6-7·步骤1】实例：superadmin 新增/编辑/禁用其他管理员账号 -->
-            <div class="admin-head-actions">
-              <h3>管理员管理</h3>
-              <button v-if="isSuperAdmin" type="button" class="btn btn-primary" @click="openAdminForm()">新增管理员</button>
-            </div>
-            <p v-if="!isSuperAdmin" class="scanner-hint">仅超级管理员可新增、编辑或禁用其他管理员；您当前只能查看自己的账号信息。</p>
-            <p v-else class="scanner-hint">超级管理员可分配图书馆负责人、新增/编辑/禁用普通管理员账号。</p>
-            <el-input v-model="adminKeyword" placeholder="搜索账号或姓名" clearable />
-            <div class="filter-row user-audit-filters">
-              <button v-for="f in adminStatusFilters" :key="f.key" type="button" :class="{ active: adminStatusFilter === f.key }" @click="adminStatusFilter = f.key">{{ f.label }}</button>
+            <!-- 【F6-7·管理员与日志】功能链实例：superadmin 在「设置 → 操作日志」查看审核/改密等记录；在「管理员管理」新增普管账号。 本处职责：superadmin 新增/编辑/禁用其他管理员账号 -->
+            <div class="admin-head-actions"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <h3>管理员管理</h3> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <button v-if="isSuperAdmin" type="button" class="btn btn-primary" @click="openAdminForm()">新增管理员</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <p v-if="!isSuperAdmin" class="scanner-hint">仅超级管理员可新增、编辑或禁用其他管理员；您当前只能查看自己的账号信息。</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <p v-else class="scanner-hint">超级管理员可分配图书馆负责人、新增/编辑/禁用普通管理员账号。</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-input v-model="adminKeyword" placeholder="搜索账号或姓名" clearable /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button v-for="f in adminStatusFilters" :key="f.key" type="button" :class="{ active: adminStatusFilter === f.key }" @click="adminStatusFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             </div>
             <DataTable :rows="pagedAdminAccounts" :columns="adminAccountColumns" empty-text="暂无管理员">
               <template #actions="{ row }">
@@ -410,16 +449,16 @@
           </template>
 
           <template v-if="adminPage === 'rooms'">
-            <!-- 【F6-4·步骤1】实例：管理员维护自习室信息与座位网格，超管可删室 -->
-            <div class="admin-head-actions">
-              <h3>自习室管理</h3>
-              <button v-if="isSuperAdmin" type="button" class="btn btn-primary" @click="openRoomFormCreate">新增自习室</button>
-            </div>
-            <p v-if="!isSuperAdmin" class="scanner-hint">普通管理员仅可编辑本人负责的自习室；点击「编辑」可在同一界面管理座位网格。</p>
-            <p v-else class="scanner-hint">超级管理员可新增/删除自习室，并为每个自习室指定图书馆负责人。点击「编辑」可在同一界面管理座位网格。</p>
-            <el-input v-model="roomKeyword" placeholder="搜索名称、位置或楼层" clearable />
-            <div class="filter-row user-audit-filters">
-              <button v-for="f in roomStatusFilters" :key="f.key" type="button" :class="{ active: roomStatusFilter === f.key }" @click="roomStatusFilter = f.key">{{ f.label }}</button>
+            <!-- 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：管理员维护自习室信息与座位网格，超管可删室 -->
+            <div class="admin-head-actions"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <h3>自习室管理</h3> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <button v-if="isSuperAdmin" type="button" class="btn btn-primary" @click="openRoomFormCreate">新增自习室</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <p v-if="!isSuperAdmin" class="scanner-hint">普通管理员仅可编辑本人负责的自习室；点击「编辑」可在同一界面管理座位网格。</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <p v-else class="scanner-hint">超级管理员可新增/删除自习室，并为每个自习室指定图书馆负责人。点击「编辑」可在同一界面管理座位网格。</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-input v-model="roomKeyword" placeholder="搜索名称、位置或楼层" clearable /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button v-for="f in roomStatusFilters" :key="f.key" type="button" :class="{ active: roomStatusFilter === f.key }" @click="roomStatusFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             </div>
             <article class="room-item" v-for="r in pagedRooms" :key="r.id">
               <div>
@@ -438,11 +477,11 @@
           </template>
 
           <template v-if="adminPage === 'reservations'">
-            <!-- 【F6-5·步骤1】实例：管理员查全站预约，对违约单点「撤销违约」恢复信用 -->
-            <p class="scanner-hint">可按学号、姓名、预约号、自习室筛选；违约记录可在此撤销并恢复信用分。</p>
-            <el-input v-model="reservationKeyword" placeholder="搜索学号、姓名、预约号或自习室" clearable />
-            <div class="filter-row user-audit-filters">
-              <button v-for="f in reservationAdminStatusFilters" :key="f.key" type="button" :class="{ active: reservationStatusFilter === f.key }" @click="reservationStatusFilter = f.key">{{ f.label }}</button>
+            <!-- 【F6-5·预约监管】功能链实例：小明被标「已违约」→ 管理员在预约管理点「撤销违约」→ 信用分恢复。 本处职责：管理员查全站预约，对违约单点「撤销违约」恢复信用 -->
+            <p class="scanner-hint">可按学号、姓名、预约号、自习室筛选；违约记录可在此撤销并恢复信用分。</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-input v-model="reservationKeyword" placeholder="搜索学号、姓名、预约号或自习室" clearable /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button v-for="f in reservationAdminStatusFilters" :key="f.key" type="button" :class="{ active: reservationStatusFilter === f.key }" @click="reservationStatusFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             </div>
             <el-select v-model="reservationRoomFilter" placeholder="全部自习室" clearable style="min-width:220px;margin-bottom:12px">
               <el-option v-for="r in rooms" :key="r.id" :label="r.name" :value="r.id" />
@@ -457,9 +496,9 @@
           </template>
 
           <template v-if="adminPage === 'checkins'">
-            <!-- 【F4-1·步骤3】实例：admin 输入小明学号或拍照扫码签到 -->
-            <div class="card scan-box">
-              <p class="scanner-hint">{{ scanHint || '优先「确认签到」输入学号（最稳）；拍照扫码为辅助，部分手机因照片格式/屏幕摩尔纹可能识别失败。' }}</p>
+            <!-- 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：admin 输入小明学号或拍照扫码签到 -->
+            <div class="card scan-box"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <p class="scanner-hint">{{ scanHint || '优先「确认签到」输入学号（最稳）；拍照扫码为辅助，部分手机因照片格式/屏幕摩尔纹可能识别失败。' }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               <div class="scanner-toolbar">
                 <button type="button" class="btn btn-primary" :disabled="scanBusy" @click="triggerPhotoScan">{{ scanBusy ? '处理中…' : '拍照扫码' }}</button>
                 <button type="button" class="btn btn-outline" :disabled="scanBusy || !scanStudentNo.trim()" @click="scanCheckin">{{ scanBusy ? '提交中…' : '确认签到' }}</button>
@@ -481,43 +520,43 @@
             <AdminPager v-model:page="liveReservationPage" v-model:page-size="liveReservationPageSize" :total="liveReservationTotalPages" :count="decoratedLiveReservations.length" />
           </template>
 
-          <!-- 【F5-2·步骤5·模板】实例：管理员在公告页点「发布公告」打开弹窗 -->
+          <!-- 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：管理员在公告页点「发布公告」打开弹窗 -->
           <template v-if="adminPage === 'announcements'">
-            <el-input v-model="announcementKeyword" placeholder="搜索公告标题或内容" clearable style="margin-bottom:12px" />
-            <el-button type="primary" @click="editAnnouncement()">发布公告</el-button>
-            <article class="card announcement" v-for="a in pagedAnnouncements" :key="a.id">
-              <strong>{{ a.title }}</strong><p>{{ a.content }}</p>
+            <el-input v-model="announcementKeyword" placeholder="搜索公告标题或内容" clearable style="margin-bottom:12px" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-button type="primary" @click="editAnnouncement()">发布公告</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <article class="card announcement" v-for="a in pagedAnnouncements" :key="a.id"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <strong>{{ a.title }}</strong><p>{{ a.content }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               <el-button size="small" @click="editAnnouncement(a)">编辑</el-button>
             </article>
             <AdminPager v-model:page="announcementPage" v-model:page-size="announcementPageSize" :total="announcementTotalPages" :count="filteredAnnouncements.length" />
           </template>
           <template v-if="adminPage === 'statistics'">
-            <!-- 【F6-1·步骤1】实例：管理员打开统计页，ECharts 展示使用率与趋势 -->
-            <div class="admin-head-actions">
-              <h3>统计分析</h3>
-              <el-dropdown trigger="click" @command="handleExportCommand">
-                <button type="button" class="btn btn-primary">
+            <!-- 【F6-1·统计与CSV】功能链实例：管理员打开统计页，切换当期/往期与报表类型，查看图表并导出 CSV 本处职责：管理员打开统计页，ECharts 展示使用率与趋势 -->
+            <div class="admin-head-actions"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <h3>统计分析</h3> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <el-dropdown trigger="click" @command="handleExportCommand"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <button type="button" class="btn btn-primary"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
                   📤 导出报表 ▾
-                </button>
+                </button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
                 <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item command="current">📊 导出当前图表数据</el-dropdown-item>
-                    <el-dropdown-item command="usage" divided>座位使用率报表</el-dropdown-item>
-                    <el-dropdown-item command="reservation">预约量趋势报表</el-dropdown-item>
-                    <el-dropdown-item command="peak">高峰时段分析报表</el-dropdown-item>
-                    <el-dropdown-item command="activity" divided>用户活跃度报表</el-dropdown-item>
-                    <el-dropdown-item command="studyDuration">自习时长排名报表</el-dropdown-item>
-                    <el-dropdown-item command="credit">信用与违约统计报表</el-dropdown-item>
-                  </el-dropdown-menu>
+                  <el-dropdown-menu> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-dropdown-item command="current">📊 导出当前图表数据</el-dropdown-item> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-dropdown-item command="usage" divided>座位使用率报表</el-dropdown-item> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-dropdown-item command="reservation">预约量趋势报表</el-dropdown-item> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-dropdown-item command="peak">高峰时段分析报表</el-dropdown-item> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-dropdown-item command="activity" divided>用户活跃度报表</el-dropdown-item> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-dropdown-item command="studyDuration">自习时长排名报表</el-dropdown-item> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-dropdown-item command="credit">信用与违约统计报表</el-dropdown-item> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </el-dropdown-menu> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
                 </template>
-              </el-dropdown>
-            </div>
-            <el-select v-model="adminStatsRoomId" placeholder="全部自习室（汇总）" clearable style="width:100%;max-width:360px;margin-bottom:12px" @change="loadAdminStatistics">
-              <el-option label="全部自习室（汇总）" :value="null" />
-              <el-option v-for="r in rooms" :key="r.id" :label="r.name" :value="r.id" />
-            </el-select>
-            <div class="period-tabs adminStatsRange">
-              <button type="button" :class="{ active: adminStatsRangeMode === 'current' }" @click="changeAdminStatsRangeMode('current')">当期</button>
+              </el-dropdown> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-select v-model="adminStatsRoomId" placeholder="全部自习室（汇总）" clearable style="width:100%;max-width:360px;margin-bottom:12px" @change="loadAdminStatistics"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <el-option label="全部自习室（汇总）" :value="null" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <el-option v-for="r in rooms" :key="r.id" :label="r.name" :value="r.id" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </el-select> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="period-tabs adminStatsRange"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button type="button" :class="{ active: adminStatsRangeMode === 'current' }" @click="changeAdminStatsRangeMode('current')">当期</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <button type="button" :class="{ active: adminStatsRangeMode === 'past' }" @click="changeAdminStatsRangeMode('past')">往期</button>
             </div>
             <div class="period-tabs adminStatsPeriod">
@@ -531,13 +570,16 @@
                 v-model="adminStatsDateRange"
                 type="daterange"
                 unlink-panels
+                teleported
+                placement="bottom-start"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 value-format="YYYY-MM-DD"
-                :shortcuts="adminStatsRangeShortcuts"
-                popper-class="admin-stats-date-popper"
-                style="max-width:360px"
+                :shortcuts="statsRangeShortcuts"
+                :popper-options="{ strategy: 'fixed' }"
+                popper-class="stats-date-popper"
+                class="admin-stats-date-picker"
                 @change="onAdminStatsDateRangeChange"
               />
               <button type="button" class="btn btn-outline" @click="resetAdminStatsDateRange">全部历史</button>
@@ -572,9 +614,9 @@
           </template>
 
           <template v-if="adminPage === 'settings'">
-            <!-- 【F6-2·步骤1】实例：superadmin 在设置页修改预约时长、信用扣分等规则 -->
-            <div class="card" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
-              <span>👤 当前管理员：<strong>{{ me.name }}</strong> ({{ me.role }})</span>
+            <!-- 【F6-2·系统配置】功能链实例：superadmin 把单次最长预约改为 4 小时 → 保存 → 写入 `system_config.json` → 下次预约立即按新规则校验。 本处职责：superadmin 在设置页修改预约时长、信用扣分等规则 -->
+            <div class="card" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <span>👤 当前管理员：<strong>{{ me.name }}</strong> ({{ me.role }})</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
             </div>
 
             <!-- Tab Headers -->
@@ -1177,9 +1219,9 @@ const registerForm = reactive({ studentNo: '', name: '', gender: '男', college:
 const rooms = ref([])
 const seats = ref([])
 const selectedSeat = ref(null)
-// 【F1-2·Vue】实例：小明点「预约」时 studentPage='reservation'，网址不变只换内容
-const studentPage = ref('home')
-const reservationForm = reactive({ date: new Date().toISOString().slice(0, 10), roomId: null, startTime: '09:00', endTime: '11:00' })
+// 【F1-2·技术概念】功能链实例：小明点「确认预约」→ 浏览器用 **Vue** 发 **HTTP** **JSON** 到 **REST API** → **Controller** 转 **Service** 写 **MySQL** → 返回 **JSON** `… 本处职责：小明点「预约」时 studentPage='reservation'，网址不变只换内容
+const studentPage = ref('home') // 【行】声明并赋值变量 `studentPage`
+const reservationForm = reactive({ date: new Date().toISOString().slice(0, 10), roomId: null, startTime: '09:00', endTime: '11:00' }) // 【行】声明并赋值变量 `reservationForm`
 const reservations = ref([])
 const reservationStatus = ref('ALL')
 const announcements = ref([])
@@ -1210,12 +1252,12 @@ const quickTimeSlots = [
 const RESERVATION_PAST_GRACE_MINUTES = 15
 const CREDIT_SCORE_MAX = 500
 const RES_STATUS_MAP = {
-  // 【F7-3·步骤1】实例：库中 PENDING/USING 等映射为页面「待使用」「使用中」
-  PENDING: '待使用', USING: '使用中', COMPLETED: '已完成', CANCELLED: '已取消',
-  VIOLATED: '已违约', AUTO_CANCELLED: '已违约', AUTO_CHECKOUT: '已完成',
-  待签到: '待使用', 违约: '已违约', 超时取消: '已违约', 自动签退: '已完成'
+  // 【F7-3·前端状态】功能链实例：见 01 项目理解指南对应节功能链实例 本处职责：库中 PENDING/USING 等映射为页面「待使用」「使用中」
+  PENDING: '待使用', USING: '使用中', COMPLETED: '已完成', CANCELLED: '已取消', // 【行】执行本行语句，推进功能链中的当前步骤
+  VIOLATED: '已违约', AUTO_CANCELLED: '已违约', AUTO_CHECKOUT: '已完成', // 【行】执行本行语句，推进功能链中的当前步骤
+  待签到: '待使用', 违约: '已违约', 超时取消: '已违约', 自动签退: '已完成' // 【行】执行本行语句，推进功能链中的当前步骤
 }
-const AUDIT_STATUS_MAP = { PENDING: '待审核', APPROVED: '已通过', REJECTED: '已拒绝' }
+const AUDIT_STATUS_MAP = { PENDING: '待审核', APPROVED: '已通过', REJECTED: '已拒绝' } // 【行】声明并赋值变量 `AUDIT_STATUS_MAP`
 const ACCOUNT_STATUS_MAP = { NORMAL: '正常', PENDING: '待审核', DISABLED: '禁用', BLACKLIST: '黑名单', 已禁用: '禁用' }
 const ADMIN_STATUS_MAP = { NORMAL: '正常', DISABLED: '离职', 禁用: '离职', 已禁用: '离职', 已离职: '离职' }
 const ADMIN_ROLE_MAP = { ADMIN: '普通管理员', NORMAL_ADMIN: '普通管理员', SUPER_ADMIN: '超级管理员' }
@@ -1273,7 +1315,11 @@ const adminStatsRangeMode = ref('current')
 const adminStatsRoomId = ref(null)
 const adminStatsDateRange = ref(null)
 const adminStatsRangeTouched = ref(false)
-const adminStatsRangeShortcuts = [
+const studyStatsRangeMode = ref('current')
+const studyStatsStartDate = ref(null)
+const studyStatsEndDate = ref(null)
+const studyStatsRangeTouched = ref(false)
+const statsRangeShortcuts = [
   {
     text: '近30天',
     value: () => {
@@ -1581,31 +1627,46 @@ const creditLevel = computed(() => Number(credit.value.score || 0) >= 280 ? '优
 const checkinCount = computed(() => credit.value.logs?.filter(l => String(l.reason || '').includes('签到')).length || 0)
 const violationCount = computed(() => reservations.value.filter(r => reservationStatusValue(r.status) === '已违约').length)
 const totalStudyHours = computed(() => ((studyStats.value.totalMinutes || 0) / 60).toFixed(1).replace('.0', ''))
-const studyDays = computed(() => studyStats.value.series?.length || 0)
+const studyDays = computed(() => Number(studyStats.value.studyDayCount ?? studyStats.value.series?.length ?? 0))
 const averageStudyHours = computed(() => {
-  const days = Math.max(1, studyDays.value)
-  return (((studyStats.value.totalMinutes || 0) / 60) / days).toFixed(1).replace('.0', '')
+  const divisor = Math.max(1, Number(studyStats.value.studyDayCount ?? studyStats.value.series?.length ?? 0))
+  return (((studyStats.value.totalMinutes || 0) / 60) / divisor).toFixed(1).replace('.0', '')
 })
-const studyChartTitle = computed(() => ({
-  day: '今日各时段学习时长（小时）',
-  week: '本周每日学习时长（小时）',
-  month: '本月每周学习时长（小时）',
-  year: '近一年每月学习时长（小时）'
-}[statPeriod.value] || '学习时长（小时）'))
-const studyBars = computed(() => {
-  const rows = studyStats.value.series || []
-  if (rows.length) {
-    return rows.map(row => ({
-      label: formatStudyLabel(row.label),
-      value: Number(((Number(row.minutes || 0)) / 60).toFixed(1))
-    }))
+const studyChartTitle = computed(() => {
+  const past = studyStatsRangeMode.value === 'past'
+  const titles = {
+    day: past ? '往期每日学习时长（小时）' : '今日各时段学习时长（小时）',
+    week: past ? '往期每日学习时长（小时）' : '本周每日学习时长（小时）',
+    month: past ? '往期每月学习时长（小时）' : '本月每周学习时长（小时）',
+    year: past ? '往年年报每月学习时长（小时）' : '本年年报每月学习时长（小时）'
   }
-  if (statPeriod.value === 'day') {
-    return [8, 10, 12, 14, 16, 18, 20, 22].map(hour => ({ label: `${hour}时`, value: 0 }))
-  }
-  const days = statPeriod.value === 'month' ? 30 : 7
-  return Array.from({ length: days }, (_, i) => ({ label: `${i + 1}`, value: 0 }))
+  return titles[statPeriod.value] || '学习时长（小时）'
 })
+const studyStatsHint = computed(() => {
+  const parts = [studyStats.value.periodLabel, studyStats.value.rangeWindowLabel].filter(Boolean)
+  return parts.length ? parts.join(' · ') : ''
+})
+/** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：studyBars 将 API series 转为 bar-chart-lite 所需的 {label,value} 数组 */
+const studyBars = computed(() => { // 【行】声明并赋值变量 `studyBars`
+  const rows = studyStats.value.series || [] // 【行】声明并赋值变量 `rows`
+  if (statPeriod.value === 'year' || (statPeriod.value === 'month' && studyStatsRangeMode.value === 'past')) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return buildYearStudyBars(rows) // 【行】返回本函数计算结果给调用方
+  }
+  if (rows.length) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return rows.map(row => ({ // 【行】返回本函数计算结果给调用方
+      label: formatStudyLabel(row.label), // 【行】执行本行语句，推进功能链中的当前步骤
+      value: Number(((Number(row.minutes || 0)) / 60).toFixed(1)) // 【行】执行本行语句，推进功能链中的当前步骤
+    })) // 【行】执行本行语句，推进功能链中的当前步骤
+  }
+  if (statPeriod.value === 'day') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return [8, 10, 12, 14, 16, 18, 20, 22].map(hour => ({ label: `${hour}时`, value: 0 })) // 【行】返回本函数计算结果给调用方
+  }
+  if (statPeriod.value === 'year') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return buildYearStudyBars([]) // 【行】返回本函数计算结果给调用方
+  }
+  const days = statPeriod.value === 'month' ? 30 : 7 // 【行】声明并赋值变量 `days`
+  return Array.from({ length: days }, (_, i) => ({ label: `${i + 1}`, value: 0 })) // 【行】返回本函数计算结果给调用方
+}) // 【行】执行本行语句，推进功能链中的当前步骤
 const maxStudyBarValue = computed(() => Math.max(1, ...studyBars.value.map(b => Number(b.value || 0))))
 const studyAdvice = computed(() => {
   if (statPeriod.value === 'day') {
@@ -1617,13 +1678,13 @@ const studyAdvice = computed(() => {
 const statPeriods = [{ key: 'day', label: '日报' }, { key: 'week', label: '周报' }, { key: 'month', label: '月报' }, { key: 'year', label: '年报' }]
 const reservationTabs = [{ key: 'ALL', label: '全部' }, { key: '待使用', label: '待使用' }, { key: '使用中', label: '使用中' }, { key: '已完成', label: '已完成' }, { key: '已取消', label: '已取消' }]
 const studentNav = [{ page: 'home', label: '首页', icon: '🏠' }, { page: 'reservation', label: '预约', icon: '🪑' }, { page: 'checkin', label: '签到', icon: '✅' }, { page: 'profile', label: '我的', icon: '👤' }]
-/** 【F2-2·步骤5】实例：superadmin 登录后 isSuperAdmin 为 true，侧栏显示「设置」 */
-const isSuperAdmin = computed(() => role.value === 'SUPER_ADMIN')
-const adminRoleLabel = computed(() => {
-  if (role.value === 'SUPER_ADMIN') return '超级管理员'
-  if (role.value === 'ADMIN') return '普通管理员'
-  return role.value || '管理员'
-})
+/** 【F2-2·管理员登录】功能链实例：管理员切到「管理员登录」→ 输入 `admin` / `admin123` → 进入管理端签到页；`superadmin` 侧栏额外显示「设置」「管理员管理」。 本处职责：superadmin 登录后 isSuperAdmin 为 true，侧栏显示「设置」*/
+const isSuperAdmin = computed(() => role.value === 'SUPER_ADMIN') // 【行】声明并赋值变量 `isSuperAdmin`
+const adminRoleLabel = computed(() => { // 【行】声明并赋值变量 `adminRoleLabel`
+  if (role.value === 'SUPER_ADMIN') return '超级管理员' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (role.value === 'ADMIN') return '普通管理员' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  return role.value || '管理员' // 【行】返回本函数计算结果给调用方
+}) // 【行】执行本行语句，推进功能链中的当前步骤
 const adminProfileInitial = computed(() => {
   const name = String(me.value.name || me.value.account || '管').trim()
   return name.slice(0, 1).toUpperCase()
@@ -1998,22 +2059,22 @@ function openSeatEdit(seat) {
   })
   seatEditOpen.value = true
 }
-/** 【F6-4·步骤4】实例：布局图点座位 PUT /admin/seats/{id} 改靠窗/电源等 */
-async function saveSeatEdit() {
-  try {
-    await call('put', `/admin/seats/${seatEditForm.id}`, {
-      isSeat: seatEditForm.is_seat ? 1 : 0,
-      hasPower: seatEditForm.has_power ? 1 : 0,
-      nearWindow: seatEditForm.near_window ? 1 : 0,
-      quietZone: seatEditForm.quiet_zone ? 1 : 0,
-      hotSeat: seatEditForm.hot_seat ? 1 : 0,
-      status: seatStatusValue(seatEditForm.status) || '空闲',
-      cellCategory: seatEditForm.cell_category || (seatEditForm.is_seat ? '座位' : '非座位'),
-      seatType: seatEditForm.seat_type || '普通'
-    })
-    seatEditOpen.value = false
-    notify('座位配置已保存')
-    await loadAdminSeats()
+/** 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：布局图点座位 PUT /admin/seats/{id} 改靠窗/电源等*/
+async function saveSeatEdit() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    await call('put', `/admin/seats/${seatEditForm.id}`, { // 【行】带 JWT 调用后端 REST API
+      isSeat: seatEditForm.is_seat ? 1 : 0, // 【行】执行本行语句，推进功能链中的当前步骤
+      hasPower: seatEditForm.has_power ? 1 : 0, // 【行】执行本行语句，推进功能链中的当前步骤
+      nearWindow: seatEditForm.near_window ? 1 : 0, // 【行】执行本行语句，推进功能链中的当前步骤
+      quietZone: seatEditForm.quiet_zone ? 1 : 0, // 【行】执行本行语句，推进功能链中的当前步骤
+      hotSeat: seatEditForm.hot_seat ? 1 : 0, // 【行】执行本行语句，推进功能链中的当前步骤
+      status: seatStatusValue(seatEditForm.status) || '空闲', // 【行】执行本行语句，推进功能链中的当前步骤
+      cellCategory: seatEditForm.cell_category || (seatEditForm.is_seat ? '座位' : '非座位'), // 【行】执行本行语句，推进功能链中的当前步骤
+      seatType: seatEditForm.seat_type || '普通' // 【行】执行本行语句，推进功能链中的当前步骤
+    }) // 【行】执行本行语句，推进功能链中的当前步骤
+    seatEditOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('座位配置已保存') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadAdminSeats() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
 async function saveProfileAndClose() {
@@ -2078,13 +2139,72 @@ function syncAdminStatsDateRangeFromSummary(summary = {}) {
     adminStatsDateRange.value = [summary.startDate, summary.endDate]
   }
 }
-/** 【F6-6·步骤2】实例：管理员签到页底部展示待签到/使用中实时列表 */
-async function loadLiveReservations() {
-  try {
-    liveReservations.value = await call('get', '/admin/live-reservations')
-  } catch (e) {
-    liveReservations.value = []
-    notify(e.message)
+/** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：buildStudyStatsParams 将 period、rangeMode、起止日期 ref 组装为 GET 查询参数 */
+function buildStudyStatsParams() { // 【行】进入代码块
+  const params = { period: statPeriod.value, rangeMode: studyStatsRangeMode.value } // 【行】初始化 GET 查询参数字典，键名与后端约定一致
+  if (studyStatsRangeMode.value === 'past' && studyStatsStartDate.value && studyStatsEndDate.value) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    params.startDate = studyStatsStartDate.value // 【行】读写往期统计的开始日期 ref
+    params.endDate = studyStatsEndDate.value // 【行】读写往期统计的结束日期 ref
+  }
+  return params // 【行】返回参数字典，供 axios call() 拼接到 URL
+}
+function syncStudyStatsDateRangeFromSummary(summary = {}) {
+  if (studyStatsRangeMode.value !== 'past' || studyStatsRangeTouched.value) return
+  if (summary.startDate && summary.endDate) {
+    studyStatsStartDate.value = summary.startDate
+    studyStatsEndDate.value = summary.endDate
+  }
+}
+/** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：applyStudyStatsShortcut 与起止日期 change 写入 ref 并触发 loadStudyStats */
+function normalizeStudyStatsDateRange() { // 【行】保证开始日期不晚于结束日期
+  if (!studyStatsStartDate.value || !studyStatsEndDate.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (studyStatsStartDate.value > studyStatsEndDate.value) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    const tmp = studyStatsStartDate.value // 【行】读写往期统计的开始日期 ref
+    studyStatsStartDate.value = studyStatsEndDate.value // 【行】读写往期统计的开始日期 ref
+    studyStatsEndDate.value = tmp // 【行】读写往期统计的结束日期 ref
+  }
+}
+function onStudyStatsStartDateChange() {
+  normalizeStudyStatsDateRange()
+  studyStatsRangeTouched.value = true
+  loadStudyStats().then(drawStudentChart)
+}
+function onStudyStatsEndDateChange() {
+  normalizeStudyStatsDateRange()
+  studyStatsRangeTouched.value = true
+  loadStudyStats().then(drawStudentChart)
+}
+function applyStudyStatsShortcut(shortcut) {
+  const range = shortcut.value()
+  studyStatsStartDate.value = range[0]
+  studyStatsEndDate.value = range[1]
+  studyStatsRangeTouched.value = true
+  loadStudyStats().then(drawStudentChart)
+}
+/** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：changeStudyStatsRangeMode 切换当期/往期 Tab 并重拉统计 */
+async function changeStudyStatsRangeMode(mode) { // 【行】进入代码块
+  studyStatsRangeMode.value = mode // 【行】更新当期/往期 Tab 对应的 rangeMode 状态
+  if (mode !== 'past') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    studyStatsStartDate.value = null // 【行】读写往期统计的开始日期 ref
+    studyStatsEndDate.value = null // 【行】读写往期统计的结束日期 ref
+    studyStatsRangeTouched.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+  }
+  await loadStudyStats() // 【行】异步拉取学习统计数据并写入 studyStats ref
+  drawStudentChart() // 【行】根据最新 studyBars 重绘 ECharts 柱图
+}
+function resetStudyStatsDateRange() {
+  studyStatsStartDate.value = null
+  studyStatsEndDate.value = null
+  studyStatsRangeTouched.value = false
+  loadStudyStats().then(drawStudentChart)
+}
+/** 【F6-6·运营看板】功能链实例：管理员打开签到页 → 底部实时列表显示「待签到 / 使用中」预约；学生签到页轮询同步状态。 本处职责：管理员签到页底部展示待签到/使用中实时列表*/
+async function loadLiveReservations() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    liveReservations.value = await call('get', '/admin/live-reservations') // 【行】带 JWT 调用后端 REST API
+  } catch (e) { // 【行】进入代码块
+    liveReservations.value = [] // 【行】执行本行语句，推进功能链中的当前步骤
+    notify(e.message) // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 function toDateValue(date) {
@@ -2100,7 +2220,45 @@ function formatDate(value) {
 function formatStudyLabel(value) {
   const text = String(value || '')
   if (statPeriod.value === 'day') return `${String(text).padStart(2, '0')}时`
+  if (statPeriod.value === 'year' || (statPeriod.value === 'month' && studyStatsRangeMode.value === 'past')) {
+    const match = text.match(/^(\d{4})-(\d{2})$/)
+    return match ? `${match[2]}月` : text
+  }
   return text.length >= 10 ? text.slice(5, 10).replace('-', '/') : text
+}
+/** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：buildYearStudyBars 按统计窗口补全无数据的月份为 0 */
+function buildYearStudyBars(rows) { // 【行】进入代码块
+  const map = new Map((rows || []).map(row => [String(row.label), Number(row.minutes || 0)])) // 【行】声明并赋值变量 `map`
+  const bars = [] // 【行】声明并赋值变量 `bars`
+  let start // 【行】执行本行语句，推进功能链中的当前步骤
+  let end // 【行】执行本行语句，推进功能链中的当前步骤
+  if (studyStats.value.startDate && studyStats.value.endDate) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    start = new Date(`${studyStats.value.startDate}T00:00:00`) // 【行】执行本行语句，推进功能链中的当前步骤
+    end = new Date(`${studyStats.value.endDate}T00:00:00`) // 【行】执行本行语句，推进功能链中的当前步骤
+  } else if (statPeriod.value === 'month' && studyStatsRangeMode.value === 'past') { // 【行】进入代码块
+    const now = new Date() // 【行】声明并赋值变量 `now`
+    end = new Date(now.getFullYear(), now.getMonth() - 1, 1) // 【行】执行本行语句，推进功能链中的当前步骤
+    start = new Date(end.getFullYear(), end.getMonth() - 11, 1) // 【行】执行本行语句，推进功能链中的当前步骤
+  } else if (studyStatsRangeMode.value === 'past') { // 【行】进入代码块
+    const y = new Date().getFullYear() - 1 // 【行】声明并赋值变量 `y`
+    start = new Date(y, 0, 1) // 【行】执行本行语句，推进功能链中的当前步骤
+    end = new Date(y, 11, 1) // 【行】执行本行语句，推进功能链中的当前步骤
+  } else { // 【行】进入代码块
+    const now = new Date() // 【行】声明并赋值变量 `now`
+    start = new Date(now.getFullYear(), 0, 1) // 【行】执行本行语句，推进功能链中的当前步骤
+    end = new Date(now.getFullYear(), now.getMonth(), 1) // 【行】执行本行语句，推进功能链中的当前步骤
+  }
+  const cursor = new Date(start.getFullYear(), start.getMonth(), 1) // 【行】声明并赋值变量 `cursor`
+  const endMonth = new Date(end.getFullYear(), end.getMonth(), 1) // 【行】声明并赋值变量 `endMonth`
+  while (cursor <= endMonth) { // 【行】进入代码块
+    const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}` // 【行】声明并赋值变量 `key`
+    bars.push({ // 【行】进入代码块
+      label: `${String(cursor.getMonth() + 1).padStart(2, '0')}月`, // 【行】执行本行语句，推进功能链中的当前步骤
+      value: Number(((map.get(key) || 0) / 60).toFixed(1)) // 【行】执行本行语句，推进功能链中的当前步骤
+    }) // 【行】执行本行语句，推进功能链中的当前步骤
+    cursor.setMonth(cursor.getMonth() + 1) // 【行】执行本行语句，推进功能链中的当前步骤
+  }
+  return bars // 【行】返回本函数计算结果给调用方
 }
 function barHeight(value) {
   if (!Number(value)) return 4
@@ -2233,11 +2391,11 @@ function openProfileInfo() {
   profileInfoOpen.value = true
 }
 function confirmCheckout() {
-  // 【F4-2·步骤1】实例：小明点签退，弹窗确认后调用 doCheckout
-  if (!activeReservation.value) return
-  openModalConfirm('确认签退', '签退后将结束本次学习并释放座位，确定签退吗？', doCheckout)
+  // 【F4-2·签退与信用】功能链实例：小明使用中点「签退」→ 确认 → 预约「已完成」→ 信用页看到签到 +5 流水与当前分数。 本处职责：小明点签退，弹窗确认后调用 doCheckout
+  if (!activeReservation.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  openModalConfirm('确认签退', '签退后将结束本次学习并释放座位，确定签退吗？', doCheckout) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-/** 【F4-2·步骤2】实例：POST /reservations/{id}/checkout，展示学习分钟数 */
+/** 【F4-2·签退与信用】功能链实例：小明使用中点「签退」→ 确认 → 预约「已完成」→ 信用页看到签到 +5 流水与当前分数。 本处职责：POST /reservations/{id}/checkout，展示学习分钟数*/
 async function doCheckout() {
   try {
     const data = await call('post', `/reservations/${activeReservation.value.id}/checkout`)
@@ -2273,125 +2431,125 @@ function openRegister() {
   registerPassword2.value = ''
   registerOpen.value = true
 }
-/** 【F2-3·步骤1】实例：小李注册前上传身份材料到 uploads/material */
-async function onRegisterFile(event) {
-  const file = event.target.files?.[0]
-  if (!file) {
-    registerForm.materialUrl = ''
-    return
+/** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：小李注册前上传身份材料到 uploads/material*/
+async function onRegisterFile(event) { // 【行】进入代码块
+  const file = event.target.files?.[0] // 【行】声明并赋值变量 `file`
+  if (!file) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    registerForm.materialUrl = '' // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  try {
-    const form = new FormData()
-    form.append('file', file)
-    const res = await api.post('/auth/register/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } })
-    registerForm.materialUrl = res.data.data.url
-    notify('身份材料上传成功')
-  } catch (e) {
-    notify(e.message || '材料上传失败')
-  }
-}
-/** 【F1-2·HTTP】实例：小明点确认预约时，call 发 POST /api/reservations，body 为 JSON */
-async function call(method, url, data, config) {
-  const res = await api.request({ method, url, data, ...config })
-  return res.data.data
-}
-/** 【F2-1·步骤2】实例：小明 POST /auth/login，保存 token 进 localStorage */
-async function loginStudent() {
-  if (authLoading.value) return
-  if (!studentLogin.username.trim() || !studentLogin.password) {
-    notify('请输入学号和密码')
-    return
-  }
-  authLoading.value = true
-  try {
-    const data = await call('post', '/auth/login', studentLogin)
-    afterLogin(data.token, 'STUDENT', data.userInfo)
-  } catch (e) {
-    notify(e.message || '登录失败')
-  } finally {
-    authLoading.value = false
+  try { // 【行】进入代码块
+    const form = new FormData() // 【行】声明并赋值变量 `form`
+    form.append('file', file) // 【行】执行本行语句，推进功能链中的当前步骤
+    const res = await api.post('/auth/register/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } }) // 【行】声明并赋值变量 `res`
+    registerForm.materialUrl = res.data.data.url // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('身份材料上传成功') // 【行】执行本行语句，推进功能链中的当前步骤
+  } catch (e) { // 【行】进入代码块
+    notify(e.message || '材料上传失败') // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
-/** 【F2-2·步骤2】实例：admin POST /admin/auth/login */
-async function loginAdmin() {
-  if (authLoading.value) return
-  if (!adminLogin.account.trim() || !adminLogin.password) {
-    notify('请输入管理员账号和密码')
-    return
+/** 【F1-2·技术概念】功能链实例：小明点「确认预约」→ 浏览器用 **Vue** 发 **HTTP** **JSON** 到 **REST API** → **Controller** 转 **Service** 写 **MySQL** → 返回 **JSON** `… 本处职责：小明点确认预约时，call 发 POST /api/reservations，body 为 JSON*/
+async function call(method, url, data, config) { // 【行】进入代码块
+  const res = await api.request({ method, url, data, ...config }) // 【行】声明并赋值变量 `res`
+  return res.data.data // 【行】返回本函数计算结果给调用方
+}
+/** 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：小明 POST /auth/login，保存 token 进 localStorage*/
+async function loginStudent() { // 【行】进入代码块
+  if (authLoading.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (!studentLogin.username.trim() || !studentLogin.password) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('请输入学号和密码') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  authLoading.value = true
-  try {
-    const data = await call('post', '/admin/auth/login', adminLogin)
-    afterLogin(data.token, data.adminInfo.role === 'SUPER_ADMIN' ? 'SUPER_ADMIN' : 'ADMIN', data.adminInfo)
-  } catch (e) {
-    notify(e.message || '登录失败')
-  } finally {
-    authLoading.value = false
+  authLoading.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+  try { // 【行】进入代码块
+    const data = await call('post', '/auth/login', studentLogin) // 【行】带 JWT 调用后端 REST API
+    afterLogin(data.token, 'STUDENT', data.userInfo) // 【行】执行本行语句，推进功能链中的当前步骤
+  } catch (e) { // 【行】进入代码块
+    notify(e.message || '登录失败') // 【行】执行本行语句，推进功能链中的当前步骤
+  } finally { // 【行】进入代码块
+    authLoading.value = false // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
-/** 【F2-1·步骤6】实例：登录成功后 token 写入 localStorage，后续请求带 Bearer */
-async function afterLogin(t, r, info) {
-  token.value = t
-  role.value = r
+/** 【F2-2·管理员登录】功能链实例：管理员切到「管理员登录」→ 输入 `admin` / `admin123` → 进入管理端签到页；`superadmin` 侧栏额外显示「设置」「管理员管理」。 本处职责：admin POST /admin/auth/login*/
+async function loginAdmin() { // 【行】进入代码块
+  if (authLoading.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (!adminLogin.account.trim() || !adminLogin.password) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('请输入管理员账号和密码') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
+  }
+  authLoading.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+  try { // 【行】进入代码块
+    const data = await call('post', '/admin/auth/login', adminLogin) // 【行】带 JWT 调用后端 REST API
+    afterLogin(data.token, data.adminInfo.role === 'SUPER_ADMIN' ? 'SUPER_ADMIN' : 'ADMIN', data.adminInfo) // 【行】执行本行语句，推进功能链中的当前步骤
+  } catch (e) { // 【行】进入代码块
+    notify(e.message || '登录失败') // 【行】执行本行语句，推进功能链中的当前步骤
+  } finally { // 【行】进入代码块
+    authLoading.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+  }
+}
+/** 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：登录成功后 token 写入 localStorage，后续请求带 Bearer*/
+async function afterLogin(t, r, info) { // 【行】进入代码块
+  token.value = t // 【行】执行本行语句，推进功能链中的当前步骤
+  role.value = r // 【行】执行本行语句，推进功能链中的当前步骤
   me.value = info || {}
-  localStorage.setItem('token', t)
-  localStorage.setItem('role', r)
-  notify('登录成功')
-  await bootstrap(false)
+  localStorage.setItem('token', t) // 【行】执行本行语句，推进功能链中的当前步骤
+  localStorage.setItem('role', r) // 【行】执行本行语句，推进功能链中的当前步骤
+  notify('登录成功') // 【行】执行本行语句，推进功能链中的当前步骤
+  await bootstrap(false) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-/** 【F2-3·步骤2】实例：小李提交注册表单 POST /auth/register */
-async function register() {
-  if (authLoading.value) return
-  if (!registerForm.studentNo.trim() || !registerForm.name.trim() || !registerForm.password) {
-    notify('请填写学号、姓名和密码')
-    return
+/** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：小李提交注册表单 POST /auth/register*/
+async function register() { // 【行】进入代码块
+  if (authLoading.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (!registerForm.studentNo.trim() || !registerForm.name.trim() || !registerForm.password) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('请填写学号、姓名和密码') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (!/^\d{12}$/.test(registerForm.studentNo.trim())) {
-    notify('学号须为 12 位数字')
-    return
+  if (!/^\d{12}$/.test(registerForm.studentNo.trim())) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('学号须为 12 位数字') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (!/^[\u4e00-\u9fa5]{2,10}$/.test(registerForm.name.trim())) {
-    notify('姓名须为 2-10 个汉字')
-    return
+  if (!/^[\u4e00-\u9fa5]{2,10}$/.test(registerForm.name.trim())) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('姓名须为 2-10 个汉字') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (!/^\d{4}$/.test(registerForm.grade)) {
-    notify('年级须为 4 位年份')
-    return
+  if (!/^\d{4}$/.test(registerForm.grade)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('年级须为 4 位年份') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (!registerForm.phone.trim() || !/^1\d{10}$/.test(registerForm.phone.trim())) {
-    notify('请输入 11 位中国大陆手机号')
-    return
+  if (!registerForm.phone.trim() || !/^1\d{10}$/.test(registerForm.phone.trim())) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('请输入 11 位中国大陆手机号') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (!registerForm.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email.trim())) {
-    notify('邮箱格式不正确')
-    return
+  if (!registerForm.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email.trim())) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('邮箱格式不正确') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (!registerForm.materialUrl) {
-    notify('请上传身份材料')
-    return
+  if (!registerForm.materialUrl) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('请上传身份材料') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (registerForm.password !== registerPassword2.value) {
-    notify('两次密码输入不一致')
-    return
+  if (registerForm.password !== registerPassword2.value) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('两次密码输入不一致') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (registerForm.password.length < 6 || registerForm.password.length > 20) {
-    notify('密码长度须为 6-20 位')
-    return
+  if (registerForm.password.length < 6 || registerForm.password.length > 20) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('密码长度须为 6-20 位') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (!/(?=.*[A-Za-z])(?=.*\d)/.test(registerForm.password)) {
-    notify('密码须同时包含字母和数字')
-    return
+  if (!/(?=.*[A-Za-z])(?=.*\d)/.test(registerForm.password)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('密码须同时包含字母和数字') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  authLoading.value = true
-  try {
-    await call('post', '/auth/register', { ...registerForm })
-    registerOpen.value = false
-    registerPassword2.value = ''
-    notify('注册申请已提交，请等待管理员审核')
-  } catch (e) {
-    notify(e.message || '注册失败')
-  } finally {
-    authLoading.value = false
+  authLoading.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+  try { // 【行】进入代码块
+    await call('post', '/auth/register', { ...registerForm }) // 【行】带 JWT 调用后端 REST API
+    registerOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    registerPassword2.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('注册申请已提交，请等待管理员审核') // 【行】执行本行语句，推进功能链中的当前步骤
+  } catch (e) { // 【行】进入代码块
+    notify(e.message || '注册失败') // 【行】执行本行语句，推进功能链中的当前步骤
+  } finally { // 【行】进入代码块
+    authLoading.value = false // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 function logout() {
@@ -2402,22 +2560,22 @@ function switchAdminAccount() {
   loginRole.value = 'admin'
 }
 /** @param silent 页面刷新时用旧 token 恢复会话：失败则静默清 token，避免登录页弹 SQL 报错 */
-/** 【F2-1·步骤8】实例：刷新页面后 bootstrap 用 localStorage token 调 GET /auth/me 恢复小明会话 */
-async function bootstrap(silent = true) {
-  if (!token.value) return
-  try {
-    me.value = await call('get', '/auth/me')
-    syncProfileForm()
-    await Promise.all([loadRooms(), loadAnnouncements()])
-    if (role.value === 'STUDENT') {
-      await Promise.all([loadReservations(), loadNotifications(), loadCredit(), loadStudyStats()])
-    } else {
-      await openAdmin('checkins')
+/** 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：刷新页面后 bootstrap 用 localStorage token 调 GET /auth/me 恢复小明会话*/
+async function bootstrap(silent = true) { // 【行】进入代码块
+  if (!token.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    me.value = await call('get', '/auth/me') // 【行】带 JWT 调用后端 REST API
+    syncProfileForm() // 【行】执行本行语句，推进功能链中的当前步骤
+    await Promise.all([loadRooms(), loadAnnouncements()]) // 【行】执行本行语句，推进功能链中的当前步骤
+    if (role.value === 'STUDENT') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      await Promise.all([loadReservations(), loadNotifications(), loadCredit(), loadStudyStats()]) // 【行】执行本行语句，推进功能链中的当前步骤
+    } else { // 【行】进入代码块
+      await openAdmin('checkins') // 【行】执行本行语句，推进功能链中的当前步骤
     }
-  } catch (e) {
-    clearSession('')
-    if (!silent) {
-      notify(e.message || '登录后加载失败，请重试')
+  } catch (e) { // 【行】进入代码块
+    clearSession('') // 【行】执行本行语句，推进功能链中的当前步骤
+    if (!silent) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      notify(e.message || '登录后加载失败，请重试') // 【行】执行本行语句，推进功能链中的当前步骤
     }
   }
 }
@@ -2426,13 +2584,13 @@ async function loadRooms() {
   if (!reservationForm.roomId && rooms.value[0]) reservationForm.roomId = rooms.value[0].id
   await loadAvailableSeats()
 }
-/** 【F3-1·步骤3】实例：GET /seats/available，刷新绿色可选座位 */
-async function loadAvailableSeats() {
-  if (!reservationForm.roomId) return
-  normalizeReservationTimes()
-  ensureEndAfterStart()
-  seats.value = await call('get', '/seats/available', null, { params: { roomId: reservationForm.roomId, date: reservationForm.date, startTime: reservationForm.startTime, endTime: reservationForm.endTime } })
-  selectedSeat.value = null
+/** 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：GET /seats/available，刷新绿色可选座位*/
+async function loadAvailableSeats() { // 【行】进入代码块
+  if (!reservationForm.roomId) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  normalizeReservationTimes() // 【行】执行本行语句，推进功能链中的当前步骤
+  ensureEndAfterStart() // 【行】执行本行语句，推进功能链中的当前步骤
+  seats.value = await call('get', '/seats/available', null, { params: { roomId: reservationForm.roomId, date: reservationForm.date, startTime: reservationForm.startTime, endTime: reservationForm.endTime } }) // 【行】带 JWT 调用后端 REST API
+  selectedSeat.value = null // 【行】执行本行语句，推进功能链中的当前步骤
 }
 async function handleRoomChange() {
   normalizeReservationTimes()
@@ -2478,36 +2636,36 @@ function seatUnavailableText(seat) {
   if (seat?.reserveState === 'reserved') return '当前时段已被预约'
   return '不可预约'
 }
-/** 【F3-1·步骤4】实例：小明确认 A-12，POST /reservations 后跳转签到页 */
-async function createReservation() {
-  try {
-    ensureEndAfterStart()
-    ensureReservationTimeAllowed()
-    await call('post', '/reservations', { roomId: reservationForm.roomId, seatId: selectedSeat.value.id, reserveDate: reservationForm.date, startTime: reservationForm.startTime, endTime: reservationForm.endTime })
-    confirmReservationOpen.value = false
-    notify('预约成功')
-    await Promise.all([loadReservations(), loadAvailableSeats()])
-    studentPage.value = 'checkin'
+/** 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：小明确认 A-12，POST /reservations 后跳转签到页*/
+async function createReservation() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    ensureEndAfterStart() // 【行】执行本行语句，推进功能链中的当前步骤
+    ensureReservationTimeAllowed() // 【行】执行本行语句，推进功能链中的当前步骤
+    await call('post', '/reservations', { roomId: reservationForm.roomId, seatId: selectedSeat.value.id, reserveDate: reservationForm.date, startTime: reservationForm.startTime, endTime: reservationForm.endTime }) // 【行】带 JWT 调用后端 REST API
+    confirmReservationOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('预约成功') // 【行】执行本行语句，推进功能链中的当前步骤
+    await Promise.all([loadReservations(), loadAvailableSeats()]) // 【行】执行本行语句，推进功能链中的当前步骤
+    studentPage.value = 'checkin' // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-/** 【F3-3·步骤2】实例：GET /reservations/my 拉取小明全部预约，供列表与签到页轮询 */
-async function loadReservations() {
-  reservations.value = await call('get', '/reservations/my')
+/** 【F3-3·我的预约】功能链实例：小明在「我的 → 我的预约」按 Tab 筛「待使用」→ 看到刚约的 A-12；管理员签到后，签到页每 2 秒轮询同一接口，状态自动变「使用中」。 本处职责：GET /reservations/my 拉取小明全部预约，供列表与签到页轮询*/
+async function loadReservations() { // 【行】进入代码块
+  reservations.value = await call('get', '/reservations/my') // 【行】带 JWT 调用后端 REST API
 }
-/** 【F3-2·步骤1】实例：小明取消待使用预约，提示扣 50 信用分 */
-async function cancelReservation(r) {
-  await call('post', `/reservations/${r.id}/cancel`)
-          notify('已取消预约，扣除 50 信用分')
-  await Promise.all([loadReservations(), loadCredit()])
+/** 【F3-2·取消预约】功能链实例：小明在「我的预约」取消一条「待使用」→ 状态「已取消」→ 信用 **−50**（`credit_cancel_penalty`）→ `reservation_slot` 释放。 本处职责：小明取消待使用预约，提示扣 50 信用分*/
+async function cancelReservation(r) { // 【行】进入代码块
+  await call('post', `/reservations/${r.id}/cancel`) // 【行】带 JWT 调用后端 REST API
+          notify('已取消预约，扣除 50 信用分') // 【行】执行本行语句，推进功能链中的当前步骤
+  await Promise.all([loadReservations(), loadCredit()]) // 【行】执行本行语句，推进功能链中的当前步骤
 }
 async function checkout() {
   confirmCheckout()
 }
-/** 【F2-4·步骤2】实例：小明在设置里改学院/专业，PUT /student/profile */
-async function saveProfile() {
-  try {
-    me.value = await call('put', '/student/profile', profileForm)
-    notify('资料已保存')
+/** 【F2-4·账号资料与安全】功能链实例：小明在「我的 → 设置」改密码 → 成功后强制退出 → 用新密码再登录；或在个人资料里改学院/专业。 本处职责：小明在设置里改学院/专业，PUT /student/profile*/
+async function saveProfile() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    me.value = await call('put', '/student/profile', profileForm) // 【行】带 JWT 调用后端 REST API
+    notify('资料已保存') // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
 async function uploadLayoutImage(e) {
@@ -2536,17 +2694,18 @@ function syncProfileForm() {
     grade: me.value.grade || ''
   })
 }
-/** 【F4-2·步骤4b】实例：小明签退后 loadCredit 拉取 credit_log 与当前积分 */
-async function loadCredit() {
-  credit.value = await call('get', '/credits/my')
+/** 【F4-2·签退与信用】功能链实例：小明使用中点「签退」→ 确认 → 预约「已完成」→ 信用页看到签到 +5 流水与当前分数。 本处职责：小明签退后 loadCredit 拉取 credit_log 与当前积分*/
+async function loadCredit() { // 【行】进入代码块
+  credit.value = await call('get', '/credits/my') // 【行】带 JWT 调用后端 REST API
 }
-/** 【F5-1·步骤2】实例：小明签退后 loadStudyStats 拉取本周学习时长 */
-async function loadStudyStats() {
-  studyStats.value = await call('get', '/statistics/my-study-duration', null, { params: { period: statPeriod.value } })
+/** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：小明签退后 loadStudyStats 拉取学习时长并 sync 起止日期 */
+async function loadStudyStats() { // 【行】进入代码块
+  studyStats.value = await call('get', '/statistics/my-study-duration', null, { params: buildStudyStatsParams() }) // 【行】带 JWT 调用后端 REST API
+  syncStudyStatsDateRangeFromSummary(studyStats.value) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-/** 【F5-2·步骤1】实例：小明首页 loadAnnouncements 展示公告卡片 */
-async function loadAnnouncements() {
-  announcements.value = await call('get', '/announcements')
+/** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：小明首页 loadAnnouncements 展示公告卡片*/
+async function loadAnnouncements() { // 【行】进入代码块
+  announcements.value = await call('get', '/announcements') // 【行】带 JWT 调用后端 REST API
 }
 async function readAnnouncement(a) {
   await call('post', `/announcements/${a.id}/read`)
@@ -2554,36 +2713,43 @@ async function readAnnouncement(a) {
   announcementDetailOpen.value = true
   await loadAnnouncements()
 }
-/** 【F5-2·步骤2】实例：小明首页铃铛 loadNotifications 展示预约成功等站内通知 */
-async function loadNotifications() {
-  notifications.value = await call('get', '/notifications')
+/** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：小明首页铃铛 loadNotifications 展示预约成功等站内通知*/
+async function loadNotifications() { // 【行】进入代码块
+  notifications.value = await call('get', '/notifications') // 【行】带 JWT 调用后端 REST API
 }
 function openNotifications() {
   studentPage.value = 'notifications'
   loadNotifications()
 }
-/** 【F5-2·步骤3】实例：小明点一条通知 POST /notifications/{id}/read */
-async function readNotification(n) {
-  await call('post', `/notifications/${n.id}/read`)
-  await loadNotifications()
+/** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：小明点一条通知 POST /notifications/{id}/read*/
+async function readNotification(n) { // 【行】进入代码块
+  await call('post', `/notifications/${n.id}/read`) // 【行】带 JWT 调用后端 REST API
+  await loadNotifications() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-/** 【F5-2·步骤4】实例：小明点「全部已读」POST /notifications/read-all */
-async function readAllNotifications() {
-  await call('post', '/notifications/read-all')
-  await loadNotifications()
+/** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：小明点「全部已读」POST /notifications/read-all*/
+async function readAllNotifications() { // 【行】进入代码块
+  await call('post', '/notifications/read-all') // 【行】带 JWT 调用后端 REST API
+  await loadNotifications() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-/** 【F5-3·步骤1】实例：小明 POST /feedback 提交座位问题 */
-async function submitFeedback(payload) {
-  const content = typeof payload === 'string' ? payload : payload?.content
-  const severity = typeof payload === 'object' && payload?.severity ? payload.severity : '中'
-  if (!String(content || '').trim()) return
-  await call('post', '/feedback', { content, type: '建议', severity, roomId: reservationForm.roomId, seatId: selectedSeat.value?.id })
-  notify('反馈已提交')
-  studentPage.value = 'profile'
+/** 【F5-3·问题反馈】功能链实例：小明提交「A-12 椅子损坏」→ 管理员标记已处理。 本处职责：小明 POST /feedback 提交座位问题*/
+async function submitFeedback(payload) { // 【行】进入代码块
+  const content = typeof payload === 'string' ? payload : payload?.content // 【行】声明并赋值变量 `content`
+  const severity = typeof payload === 'object' && payload?.severity ? payload.severity : '中' // 【行】声明并赋值变量 `severity`
+  if (!String(content || '').trim()) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  await call('post', '/feedback', { content, type: '建议', severity, roomId: reservationForm.roomId, seatId: selectedSeat.value?.id }) // 【行】带 JWT 调用后端 REST API
+  notify('反馈已提交') // 【行】执行本行语句，推进功能链中的当前步骤
+  studentPage.value = 'profile' // 【行】执行本行语句，推进功能链中的当前步骤
+}
+/** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：openStudyStats 从「我的」进入统计页并首次拉取数据 */
+async function openStudyStats() { // 【行】进入代码块
+  studentPage.value = 'stats' // 【行】切换学生端子页面为学习统计
+  await loadStudyStats() // 【行】异步拉取学习统计数据并写入 studyStats ref
+  drawStudentChart() // 【行】根据最新 studyBars 重绘 ECharts 柱图
 }
 async function changeStatPeriod(period) {
   statPeriod.value = period
   await loadStudyStats()
+  drawStudentChart()
 }
 function statusText(status) {
   return reservationStatusValue(status) || '-'
@@ -2596,13 +2762,13 @@ async function openAdmin(page) {
     await loadRooms()
     if (isSuperAdmin.value) await loadAdminAccounts()
   }
-  /** 【F6-5·步骤1b】实例：管理员预约监管页 GET /admin/reservations 拉全站预约 */
-  if (page === 'reservations') adminReservations.value = await call('get', '/admin/reservations')
-  if (page === 'checkins') {
-    checkins.value = await call('get', '/admin/checkins')
-    scanStudentNo.value = ''
-    scanHint.value = ''
-    await loadLiveReservations()
+  /** 【F6-5·预约监管】功能链实例：小明被标「已违约」→ 管理员在预约管理点「撤销违约」→ 信用分恢复。 本处职责：管理员预约监管页 GET /admin/reservations 拉全站预约*/
+  if (page === 'reservations') adminReservations.value = await call('get', '/admin/reservations') // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  if (page === 'checkins') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    checkins.value = await call('get', '/admin/checkins') // 【行】带 JWT 调用后端 REST API
+    scanStudentNo.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+    scanHint.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadLiveReservations() // 【行】执行本行语句，推进功能链中的当前步骤
   }
   if (page === 'announcements') await loadAnnouncements()
   if (page === 'statistics') {
@@ -2634,23 +2800,23 @@ async function loadSystemConfig() {
   }
 }
 
-/** 【F6-2·步骤2】实例：superadmin saveSystemConfig 写入预约/信用规则 */
-async function saveSystemConfig() {
-  try {
-    const payload = {
-      reservation_advance_days: String(sysConfigForm.reservation_advance_days),
-      reservation_limit_duration: String(sysConfigForm.reservation_limit_duration),
-      reservation_limit_daily: String(sysConfigForm.reservation_limit_daily),
-      credit_checkin_reward: String(sysConfigForm.credit_checkin_reward),
-      credit_cancel_penalty: String(sysConfigForm.credit_cancel_penalty),
-      credit_violation_penalty: String(sysConfigForm.credit_violation_penalty),
-      credit_blocked_threshold: String(sysConfigForm.credit_blocked_threshold),
-      blacklist_days: String(sysConfigForm.blacklist_days)
+/** 【F6-2·系统配置】功能链实例：superadmin 把单次最长预约改为 4 小时 → 保存 → 写入 `system_config.json` → 下次预约立即按新规则校验。 本处职责：superadmin saveSystemConfig 写入预约/信用规则*/
+async function saveSystemConfig() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    const payload = { // 【行】声明并赋值变量 `payload`
+      reservation_advance_days: String(sysConfigForm.reservation_advance_days), // 【行】执行本行语句，推进功能链中的当前步骤
+      reservation_limit_duration: String(sysConfigForm.reservation_limit_duration), // 【行】执行本行语句，推进功能链中的当前步骤
+      reservation_limit_daily: String(sysConfigForm.reservation_limit_daily), // 【行】执行本行语句，推进功能链中的当前步骤
+      credit_checkin_reward: String(sysConfigForm.credit_checkin_reward), // 【行】执行本行语句，推进功能链中的当前步骤
+      credit_cancel_penalty: String(sysConfigForm.credit_cancel_penalty), // 【行】执行本行语句，推进功能链中的当前步骤
+      credit_violation_penalty: String(sysConfigForm.credit_violation_penalty), // 【行】执行本行语句，推进功能链中的当前步骤
+      credit_blocked_threshold: String(sysConfigForm.credit_blocked_threshold), // 【行】执行本行语句，推进功能链中的当前步骤
+      blacklist_days: String(sysConfigForm.blacklist_days) // 【行】执行本行语句，推进功能链中的当前步骤
     }
-    await call('post', '/admin/settings/config', payload)
-    notify('保存配置成功')
-  } catch (e) {
-    notify('保存配置失败: ' + e.message)
+    await call('post', '/admin/settings/config', payload) // 【行】带 JWT 调用后端 REST API
+    notify('保存配置成功') // 【行】执行本行语句，推进功能链中的当前步骤
+  } catch (e) { // 【行】进入代码块
+    notify('保存配置失败: ' + e.message) // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 
@@ -2674,28 +2840,28 @@ function openAdminForm(row = null) {
   })
   adminFormOpen.value = true
 }
-/** 【F6-7·步骤2】实例：superadmin POST/PUT /admin/admins 新增或改普管账号 */
-async function saveAdminAccount() {
-  if (!adminForm.account.trim() || !adminForm.name.trim()) return notify('请填写账号与姓名')
-  if (!adminForm.id && (!adminForm.password || adminForm.password.length < 6)) return notify('请设置至少6位初始密码')
-  try {
-    if (adminForm.id) {
-      await call('put', `/admin/admins/${adminForm.id}`, {
-        name: adminForm.name.trim(),
-        phone: adminForm.phone.trim(),
-        password: adminForm.password || undefined
-      })
-    } else {
-      await call('post', '/admin/admins', {
-        account: adminForm.account.trim(),
-        name: adminForm.name.trim(),
-        phone: adminForm.phone.trim(),
-        password: adminForm.password
-      })
+/** 【F6-7·管理员与日志】功能链实例：superadmin 在「设置 → 操作日志」查看审核/改密等记录；在「管理员管理」新增普管账号。 本处职责：superadmin POST/PUT /admin/admins 新增或改普管账号*/
+async function saveAdminAccount() { // 【行】进入代码块
+  if (!adminForm.account.trim() || !adminForm.name.trim()) return notify('请填写账号与姓名') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (!adminForm.id && (!adminForm.password || adminForm.password.length < 6)) return notify('请设置至少6位初始密码') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    if (adminForm.id) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      await call('put', `/admin/admins/${adminForm.id}`, { // 【行】带 JWT 调用后端 REST API
+        name: adminForm.name.trim(), // 【行】执行本行语句，推进功能链中的当前步骤
+        phone: adminForm.phone.trim(), // 【行】执行本行语句，推进功能链中的当前步骤
+        password: adminForm.password || undefined // 【行】执行本行语句，推进功能链中的当前步骤
+      }) // 【行】执行本行语句，推进功能链中的当前步骤
+    } else { // 【行】进入代码块
+      await call('post', '/admin/admins', { // 【行】带 JWT 调用后端 REST API
+        account: adminForm.account.trim(), // 【行】执行本行语句，推进功能链中的当前步骤
+        name: adminForm.name.trim(), // 【行】执行本行语句，推进功能链中的当前步骤
+        phone: adminForm.phone.trim(), // 【行】执行本行语句，推进功能链中的当前步骤
+        password: adminForm.password // 【行】执行本行语句，推进功能链中的当前步骤
+      }) // 【行】执行本行语句，推进功能链中的当前步骤
     }
-    adminFormOpen.value = false
-    notify('管理员已保存')
-    await loadAdminAccounts()
+    adminFormOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('管理员已保存') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadAdminAccounts() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
 async function disableAdminAccount(row) {
@@ -2732,30 +2898,30 @@ function decorateUserRow(row) {
     statusLabel: accountStatusLabel(row.accountStatus || row.status)
   }
 }
-/** 【F6-3·步骤4】实例：管理员打开用户管理 GET /admin/users 带 keyword/auditStatus 筛选 */
-async function loadUsers() {
-  const params = { keyword: userKeyword.value || undefined }
-  if (userAuditFilter.value) params.auditStatus = userAuditFilter.value
-  users.value = (await call('get', '/admin/users', null, { params })).map(decorateUserRow)
-  userPage.value = 1
+/** 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：管理员打开用户管理 GET /admin/users 带 keyword/auditStatus 筛选*/
+async function loadUsers() { // 【行】进入代码块
+  const params = { keyword: userKeyword.value || undefined } // 【行】初始化 GET 查询参数字典，键名与后端约定一致
+  if (userAuditFilter.value) params.auditStatus = userAuditFilter.value // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  users.value = (await call('get', '/admin/users', null, { params })).map(decorateUserRow) // 【行】带 JWT 调用后端 REST API
+  userPage.value = 1 // 【行】执行本行语句，推进功能链中的当前步骤
 }
-/** 【F6-3·步骤5】实例：管理员导出学生名单 GET /admin/users/export 下载 CSV */
-function exportUsersCsv() {
-  api.get('/admin/users/export', {
-    responseType: 'blob',
-    params: {
-      keyword: userKeyword.value || undefined,
-      auditStatus: userAuditFilter.value || undefined
+/** 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：管理员导出学生名单 GET /admin/users/export 下载 CSV*/
+function exportUsersCsv() { // 【行】进入代码块
+  api.get('/admin/users/export', { // 【行】进入代码块
+    responseType: 'blob', // 【行】执行本行语句，推进功能链中的当前步骤
+    params: { // 【行】进入代码块
+      keyword: userKeyword.value || undefined, // 【行】执行本行语句，推进功能链中的当前步骤
+      auditStatus: userAuditFilter.value || undefined // 【行】执行本行语句，推进功能链中的当前步骤
     }
-  }).then(res => {
-    const url = URL.createObjectURL(res.data)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'student-users.csv'
-    a.click()
-    URL.revokeObjectURL(url)
-    notify('用户 CSV 已导出')
-  }).catch(e => notify(e.message || '导出失败'))
+  }).then(res => { // 【行】进入代码块
+    const url = URL.createObjectURL(res.data) // 【行】声明并赋值变量 `url`
+    const a = document.createElement('a') // 【行】声明并赋值变量 `a`
+    a.href = url // 【行】执行本行语句，推进功能链中的当前步骤
+    a.download = 'student-users.csv' // 【行】执行本行语句，推进功能链中的当前步骤
+    a.click() // 【行】执行本行语句，推进功能链中的当前步骤
+    URL.revokeObjectURL(url) // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('用户 CSV 已导出') // 【行】执行本行语句，推进功能链中的当前步骤
+  }).catch(e => notify(e.message || '导出失败')) // 【行】执行本行语句，推进功能链中的当前步骤
 }
 function openUserDetail(row) {
   userDetail.value = { ...row }
@@ -2768,14 +2934,14 @@ function rejectFromDetail() {
   reject(userDetail.value)
   userDetailOpen.value = false
 }
-/** 【F2-3·步骤4】实例：管理员点「通过」，POST /admin/users/{id}/approve */
-async function approve(row) {
-  const id = resolveUserId(row)
-  if (!id) return notify('无法识别用户 ID')
-  try {
-    await call('post', `/admin/users/${id}/approve`, {})
-    notify('审核通过')
-    await loadUsers()
+/** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：管理员点「通过」，POST /admin/users/{id}/approve*/
+async function approve(row) { // 【行】进入代码块
+  const id = resolveUserId(row) // 【行】声明并赋值变量 `id`
+  if (!id) return notify('无法识别用户 ID') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    await call('post', `/admin/users/${id}/approve`, {}) // 【行】带 JWT 调用后端 REST API
+    notify('审核通过') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadUsers() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
 function reject(row) {
@@ -2791,58 +2957,58 @@ function openChangePassword() {
   changePasswordForm.confirmPassword = ''
   changePasswordOpen.value = true
 }
-/** 【F2-4·步骤1】实例：小明改密码 POST /auth/change-password，成功后强制重新登录 */
-async function submitChangePassword() {
-  if (!changePasswordForm.oldPassword || !changePasswordForm.newPassword || !changePasswordForm.confirmPassword) {
-    return notify('请填写完整密码信息')
+/** 【F2-4·账号资料与安全】功能链实例：小明在「我的 → 设置」改密码 → 成功后强制退出 → 用新密码再登录；或在个人资料里改学院/专业。 本处职责：小明改密码 POST /auth/change-password，成功后强制重新登录*/
+async function submitChangePassword() { // 【行】进入代码块
+  if (!changePasswordForm.oldPassword || !changePasswordForm.newPassword || !changePasswordForm.confirmPassword) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return notify('请填写完整密码信息') // 【行】返回本函数计算结果给调用方
   }
-  if (changePasswordForm.newPassword !== changePasswordForm.confirmPassword) {
-    return notify('两次新密码不一致')
+  if (changePasswordForm.newPassword !== changePasswordForm.confirmPassword) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return notify('两次新密码不一致') // 【行】返回本函数计算结果给调用方
   }
-  if (changePasswordForm.newPassword.length < 6 || changePasswordForm.newPassword.length > 20) {
-    return notify('新密码长度需为 6-20 位')
+  if (changePasswordForm.newPassword.length < 6 || changePasswordForm.newPassword.length > 20) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return notify('新密码长度需为 6-20 位') // 【行】返回本函数计算结果给调用方
   }
-  if (!/(?=.*[A-Za-z])(?=.*\d)/.test(changePasswordForm.newPassword)) {
-    return notify('新密码需同时包含字母和数字')
+  if (!/(?=.*[A-Za-z])(?=.*\d)/.test(changePasswordForm.newPassword)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return notify('新密码需同时包含字母和数字') // 【行】返回本函数计算结果给调用方
   }
-  try {
-    await call('post', '/auth/change-password', {
-      oldPassword: changePasswordForm.oldPassword,
-      newPassword: changePasswordForm.newPassword
-    })
-    changePasswordOpen.value = false
-    notify('密码已修改，请使用新密码重新登录')
-    logout()
+  try { // 【行】进入代码块
+    await call('post', '/auth/change-password', { // 【行】带 JWT 调用后端 REST API
+      oldPassword: changePasswordForm.oldPassword, // 【行】执行本行语句，推进功能链中的当前步骤
+      newPassword: changePasswordForm.newPassword // 【行】执行本行语句，推进功能链中的当前步骤
+    }) // 【行】执行本行语句，推进功能链中的当前步骤
+    changePasswordOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('密码已修改，请使用新密码重新登录') // 【行】执行本行语句，推进功能链中的当前步骤
+    logout() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-/** 【F6-3·步骤2】实例：管理员拒绝小李注册，POST /admin/users/{id}/reject */
-async function confirmReject() {
-  if (!rejectUserId.value) return
-  try {
-    await call('post', `/admin/users/${rejectUserId.value}/reject`, { remark: rejectRemark.value || '资料不符合要求' })
-    rejectOpen.value = false
-    notify('已拒绝')
-    await loadUsers()
+/** 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：管理员拒绝小李注册，POST /admin/users/{id}/reject*/
+async function confirmReject() { // 【行】进入代码块
+  if (!rejectUserId.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    await call('post', `/admin/users/${rejectUserId.value}/reject`, { remark: rejectRemark.value || '资料不符合要求' }) // 【行】带 JWT 调用后端 REST API
+    rejectOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('已拒绝') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadUsers() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-/** 【F6-3·步骤3】实例：管理员禁用违规学生账号 POST /admin/users/{id}/disable */
-async function disable(row) {
-  const id = resolveUserId(row)
-  if (!id) return notify('无法识别用户 ID')
-  try {
-    await call('post', `/admin/users/${id}/disable`)
-    notify('已禁用')
-    await loadUsers()
+/** 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：管理员禁用违规学生账号 POST /admin/users/{id}/disable*/
+async function disable(row) { // 【行】进入代码块
+  const id = resolveUserId(row) // 【行】声明并赋值变量 `id`
+  if (!id) return notify('无法识别用户 ID') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    await call('post', `/admin/users/${id}/disable`) // 【行】带 JWT 调用后端 REST API
+    notify('已禁用') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadUsers() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-/** 【F6-3·步骤6】实例：管理员重新启用学生 POST /admin/users/{id}/enable */
-async function enable(row) {
-  const id = resolveUserId(row)
-  if (!id) return notify('无法识别用户 ID')
-  try {
-    await call('post', `/admin/users/${id}/enable`)
-    notify('已启用')
-    await loadUsers()
+/** 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：管理员重新启用学生 POST /admin/users/{id}/enable*/
+async function enable(row) { // 【行】进入代码块
+  const id = resolveUserId(row) // 【行】声明并赋值变量 `id`
+  if (!id) return notify('无法识别用户 ID') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    await call('post', `/admin/users/${id}/enable`) // 【行】带 JWT 调用后端 REST API
+    notify('已启用') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadUsers() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
 function editRoom(r = {}) {
@@ -2870,86 +3036,86 @@ function editRoom(r = {}) {
     adminSeats.value = []
   }
 }
-/** 【F6-4·步骤2】实例：superadmin 保存自习室 POST/PUT /admin/rooms，同步座位网格 */
-async function saveRoom() {
-  if (!roomForm.name?.trim()) return notify('请填写自习室名称')
-  if (!roomForm.location?.trim()) return notify('请填写自习室位置')
-  if (isSuperAdmin.value && !roomForm.id && !roomForm.managerId) return notify('请选择自习室负责人')
-  const method = roomForm.id ? 'put' : 'post'
-  const url = roomForm.id ? `/admin/rooms/${roomForm.id}` : '/admin/rooms'
-  try {
-    const payload = {
-      roomCode: roomForm.roomCode || `ROOM-${Date.now()}`,
-      name: roomForm.name.trim(),
-      location: roomForm.location.trim(),
-      floor: roomForm.floor || '1楼',
-      openTime: roomForm.openTime || '07:00:00',
-      closeTime: roomForm.closeTime || '22:30:00',
-      facilities: roomForm.facilities || '空调,WiFi',
-      layoutImageUrl: roomForm.layoutImageUrl || '',
-      rowCount: roomForm.rowCount || 4,
-      colCount: roomForm.colCount || 6,
-      status: roomStatusValue(roomForm.status) || '开放'
+/** 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：superadmin 保存自习室 POST/PUT /admin/rooms，同步座位网格*/
+async function saveRoom() { // 【行】进入代码块
+  if (!roomForm.name?.trim()) return notify('请填写自习室名称') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (!roomForm.location?.trim()) return notify('请填写自习室位置') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (isSuperAdmin.value && !roomForm.id && !roomForm.managerId) return notify('请选择自习室负责人') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  const method = roomForm.id ? 'put' : 'post' // 【行】声明并赋值变量 `method`
+  const url = roomForm.id ? `/admin/rooms/${roomForm.id}` : '/admin/rooms' // 【行】声明并赋值变量 `url`
+  try { // 【行】进入代码块
+    const payload = { // 【行】声明并赋值变量 `payload`
+      roomCode: roomForm.roomCode || `ROOM-${Date.now()}`, // 【行】执行本行语句，推进功能链中的当前步骤
+      name: roomForm.name.trim(), // 【行】执行本行语句，推进功能链中的当前步骤
+      location: roomForm.location.trim(), // 【行】执行本行语句，推进功能链中的当前步骤
+      floor: roomForm.floor || '1楼', // 【行】执行本行语句，推进功能链中的当前步骤
+      openTime: roomForm.openTime || '07:00:00', // 【行】执行本行语句，推进功能链中的当前步骤
+      closeTime: roomForm.closeTime || '22:30:00', // 【行】执行本行语句，推进功能链中的当前步骤
+      facilities: roomForm.facilities || '空调,WiFi', // 【行】执行本行语句，推进功能链中的当前步骤
+      layoutImageUrl: roomForm.layoutImageUrl || '', // 【行】执行本行语句，推进功能链中的当前步骤
+      rowCount: roomForm.rowCount || 4, // 【行】执行本行语句，推进功能链中的当前步骤
+      colCount: roomForm.colCount || 6, // 【行】执行本行语句，推进功能链中的当前步骤
+      status: roomStatusValue(roomForm.status) || '开放' // 【行】执行本行语句，推进功能链中的当前步骤
     }
-    if (isSuperAdmin.value && roomForm.managerId) payload.managerId = roomForm.managerId
-    const isCreate = !roomForm.id
-    const saved = await call(method, url, payload)
-    if (saved?.id) roomForm.id = saved.id
-    notify(isCreate ? '自习室已创建，可在下方编辑座位' : '自习室已保存，座位网格已同步，可继续在下方编辑座位')
-    await loadRooms()
-    await loadAdminSeats()
-    if (reservationForm.roomId && Number(reservationForm.roomId) === Number(roomForm.id)) {
-      await loadAvailableSeats()
+    if (isSuperAdmin.value && roomForm.managerId) payload.managerId = roomForm.managerId // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    const isCreate = !roomForm.id // 【行】声明并赋值变量 `isCreate`
+    const saved = await call(method, url, payload) // 【行】带 JWT 调用后端 REST API
+    if (saved?.id) roomForm.id = saved.id // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify(isCreate ? '自习室已创建，可在下方编辑座位' : '自习室已保存，座位网格已同步，可继续在下方编辑座位') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadRooms() // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadAdminSeats() // 【行】执行本行语句，推进功能链中的当前步骤
+    if (reservationForm.roomId && Number(reservationForm.roomId) === Number(roomForm.id)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      await loadAvailableSeats() // 【行】执行本行语句，推进功能链中的当前步骤
     }
   } catch (e) { notify(e.message || '保存失败') }
 }
-/** 【F6-4·步骤3】实例：superadmin DELETE /admin/rooms/{id} 删除空自习室 */
-async function deleteRoom(r) {
-  try {
-    await call('delete', `/admin/rooms/${r.id}`)
-    notify('已删除')
-    await loadRooms()
+/** 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：superadmin DELETE /admin/rooms/{id} 删除空自习室*/
+async function deleteRoom(r) { // 【行】进入代码块
+  try { // 【行】进入代码块
+    await call('delete', `/admin/rooms/${r.id}`) // 【行】带 JWT 调用后端 REST API
+    notify('已删除') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadRooms() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-/** 【F6-4·步骤2b】实例：编辑室弹窗 GET /admin/rooms/{id}/seats 拉座位网格 */
-async function loadAdminSeats() {
-  if (!roomFormOpen.value || !roomForm.id) {
-    adminSeats.value = []
-    return
+/** 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：编辑室弹窗 GET /admin/rooms/{id}/seats 拉座位网格*/
+async function loadAdminSeats() { // 【行】进入代码块
+  if (!roomFormOpen.value || !roomForm.id) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    adminSeats.value = [] // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  adminSeats.value = await call('get', `/admin/rooms/${roomForm.id}/seats`)
+  adminSeats.value = await call('get', `/admin/rooms/${roomForm.id}/seats`) // 【行】带 JWT 调用后端 REST API
 }
 async function toggleSeat(s) {
   const nextStatus = seatStatusValue(s.status) === '空闲' ? '停用' : '空闲'
   await call('put', `/admin/seats/${s.id}`, { ...s, isSeat: s.is_seat, cellCategory: s.cell_category, seatType: s.seat_type, hasPower: s.has_power, nearWindow: s.near_window, quietZone: s.quiet_zone, hotSeat: s.hot_seat, status: nextStatus })
   await loadAdminSeats()
 }
-/** 【F4-1·步骤3】实例：admin 输入小明学号 POST /admin/checkin/scan */
-async function scanCheckin() {
-  if (scanBusy.value) return
-  const studentNo = scanStudentNo.value.trim()
-  if (!studentNo) {
-    notify('请输入学生学号')
-    return
+/** 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：admin 输入小明学号 POST /admin/checkin/scan*/
+async function scanCheckin() { // 【行】进入代码块
+  if (scanBusy.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  const studentNo = scanStudentNo.value.trim() // 【行】声明并赋值变量 `studentNo`
+  if (!studentNo) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('请输入学生学号') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  scanBusy.value = true
-  scanHint.value = `正在提交签到（学号 ${studentNo}）…`
-  try {
-    await call('post', '/admin/checkin/scan', { studentNo })
-    notify('签到成功')
-    scanStudentNo.value = ''
-    scanHint.value = '签到成功。可继续输入学号或拍照扫码下一位学生。'
-    try {
-      checkins.value = await call('get', '/admin/checkins')
-      await loadLiveReservations()
-    } catch {
+  scanBusy.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+  scanHint.value = `正在提交签到（学号 ${studentNo}）…` // 【行】执行本行语句，推进功能链中的当前步骤
+  try { // 【行】进入代码块
+    await call('post', '/admin/checkin/scan', { studentNo }) // 【行】带 JWT 调用后端 REST API
+    notify('签到成功') // 【行】执行本行语句，推进功能链中的当前步骤
+    scanStudentNo.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+    scanHint.value = '签到成功。可继续输入学号或拍照扫码下一位学生。' // 【行】执行本行语句，推进功能链中的当前步骤
+    try { // 【行】进入代码块
+      checkins.value = await call('get', '/admin/checkins') // 【行】带 JWT 调用后端 REST API
+      await loadLiveReservations() // 【行】执行本行语句，推进功能链中的当前步骤
+    } catch { // 【行】进入代码块
       /* 列表刷新失败不影响签到结果 */
     }
-  } catch (e) {
-    scanHint.value = e.message || '签到失败，请重试或检查网络'
-    notify(e.message || '签到失败')
-  } finally {
-    scanBusy.value = false
+  } catch (e) { // 【行】进入代码块
+    scanHint.value = e.message || '签到失败，请重试或检查网络' // 【行】执行本行语句，推进功能链中的当前步骤
+    notify(e.message || '签到失败') // 【行】执行本行语句，推进功能链中的当前步骤
+  } finally { // 【行】进入代码块
+    scanBusy.value = false // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 /** 从拍照/二维码文本解析学号（支持纯学号或旧版 token 二维码） */
@@ -2965,10 +3131,10 @@ function normalizeStudentNoFromScan(raw) {
   } catch { /* 非 token */ }
   return ''
 }
-/** 【F4-1·步骤3b】实例：admin 拍照/选图，jsQR 解析学号后提交签到（非视频流） */
-function triggerPhotoScan() {
-  if (scanBusy.value) return
-  scanPhotoInput.value?.click()
+/** 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：admin 拍照/选图，jsQR 解析学号后提交签到（非视频流）*/
+function triggerPhotoScan() { // 【行】进入代码块
+  if (scanBusy.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  scanPhotoInput.value?.click() // 【行】执行本行语句，推进功能链中的当前步骤
 }
 function loadImageFromUrl(url) {
   return new Promise((resolve, reject) => {
@@ -3041,68 +3207,68 @@ async function decodeQrFromImageFile(file) {
     URL.revokeObjectURL(url)
   }
 }
-/** 【F4-1·步骤3b】实例：照片解码出学号后自动 POST scan，完成小明签到 */
-async function onScanPhotoSelected(ev) {
-  const file = ev.target?.files?.[0]
-  if (ev.target) ev.target.value = ''
-  if (!file || scanBusy.value) return
-  scanBusy.value = true
-  scanHint.value = '正在识别照片（已自动压缩，请稍候）…'
-  try {
-    const raw = await decodeQrFromImageFile(file)
-    if (!raw) {
-      scanHint.value = '未识别到二维码（与手机好坏无关，常因拍屏摩尔纹/相册 HEIC）。请直接输入学号，或让学生把二维码放大、斜 30° 再拍。'
-      notify(scanHint.value)
-      return
+/** 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：照片解码出学号后自动 POST scan，完成小明签到*/
+async function onScanPhotoSelected(ev) { // 【行】进入代码块
+  const file = ev.target?.files?.[0] // 【行】声明并赋值变量 `file`
+  if (ev.target) ev.target.value = '' // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  if (!file || scanBusy.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  scanBusy.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+  scanHint.value = '正在识别照片（已自动压缩，请稍候）…' // 【行】执行本行语句，推进功能链中的当前步骤
+  try { // 【行】进入代码块
+    const raw = await decodeQrFromImageFile(file) // 【行】声明并赋值变量 `raw`
+    if (!raw) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      scanHint.value = '未识别到二维码（与手机好坏无关，常因拍屏摩尔纹/相册 HEIC）。请直接输入学号，或让学生把二维码放大、斜 30° 再拍。' // 【行】执行本行语句，推进功能链中的当前步骤
+      notify(scanHint.value) // 【行】执行本行语句，推进功能链中的当前步骤
+      return // 【行】执行本行语句，推进功能链中的当前步骤
     }
-    const studentNo = normalizeStudentNoFromScan(raw)
-    if (!/^\d{10,20}$/.test(studentNo)) {
-      scanHint.value = '识别内容不是有效学号，请让学生出示签到页的学号二维码，或手动输入学号。'
-      notify(scanHint.value)
-      return
+    const studentNo = normalizeStudentNoFromScan(raw) // 【行】声明并赋值变量 `studentNo`
+    if (!/^\d{10,20}$/.test(studentNo)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      scanHint.value = '识别内容不是有效学号，请让学生出示签到页的学号二维码，或手动输入学号。' // 【行】执行本行语句，推进功能链中的当前步骤
+      notify(scanHint.value) // 【行】执行本行语句，推进功能链中的当前步骤
+      return // 【行】执行本行语句，推进功能链中的当前步骤
     }
-    scanStudentNo.value = studentNo
-    scanHint.value = `已识别学号 ${studentNo}，正在提交签到…`
-    await call('post', '/admin/checkin/scan', { studentNo })
-    notify('签到成功')
-    scanStudentNo.value = ''
-    scanHint.value = '签到成功。可继续输入学号或拍照扫码下一位学生。'
-    try {
-      checkins.value = await call('get', '/admin/checkins')
-      await loadLiveReservations()
+    scanStudentNo.value = studentNo // 【行】执行本行语句，推进功能链中的当前步骤
+    scanHint.value = `已识别学号 ${studentNo}，正在提交签到…` // 【行】执行本行语句，推进功能链中的当前步骤
+    await call('post', '/admin/checkin/scan', { studentNo }) // 【行】带 JWT 调用后端 REST API
+    notify('签到成功') // 【行】执行本行语句，推进功能链中的当前步骤
+    scanStudentNo.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+    scanHint.value = '签到成功。可继续输入学号或拍照扫码下一位学生。' // 【行】执行本行语句，推进功能链中的当前步骤
+    try { // 【行】进入代码块
+      checkins.value = await call('get', '/admin/checkins') // 【行】带 JWT 调用后端 REST API
+      await loadLiveReservations() // 【行】执行本行语句，推进功能链中的当前步骤
     } catch { /* ignore */ }
-  } catch (e) {
-    const msg = e.message || '照片解析或签到失败'
-    scanHint.value = msg.includes('timeout') ? '请求超时，请确认与电脑同一 WiFi 后重试' : msg
-    notify(scanHint.value)
-  } finally {
-    scanBusy.value = false
+  } catch (e) { // 【行】进入代码块
+    const msg = e.message || '照片解析或签到失败' // 【行】声明并赋值变量 `msg`
+    scanHint.value = msg.includes('timeout') ? '请求超时，请确认与电脑同一 WiFi 后重试' : msg // 【行】执行本行语句，推进功能链中的当前步骤
+    notify(scanHint.value) // 【行】执行本行语句，推进功能链中的当前步骤
+  } finally { // 【行】进入代码块
+    scanBusy.value = false // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
-/** 【F4-1·步骤2】实例：refreshCheckinQr 用 createQrSvg(学号) 生成 SVG QR */
-async function refreshCheckinQr() {
-  const no = studentNoDisplay.value
-  if (!no || no === '—') {
-    checkinQrSvg.value = ''
-    return
+/** 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：refreshCheckinQr 用 createQrSvg(学号) 生成 SVG QR*/
+async function refreshCheckinQr() { // 【行】进入代码块
+  const no = studentNoDisplay.value // 【行】声明并赋值变量 `no`
+  if (!no || no === '—') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    checkinQrSvg.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  try {
-    checkinQrSvg.value = await createQrSvg(no)
-  } catch {
-    checkinQrSvg.value = ''
+  try { // 【行】进入代码块
+    checkinQrSvg.value = await createQrSvg(no) // 【行】执行本行语句，推进功能链中的当前步骤
+  } catch { // 【行】进入代码块
+    checkinQrSvg.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 function editAnnouncement(a = {}) {
   Object.assign(announcementForm, { id: a.id, title: a.title || '', content: a.content || '', type: a.type || '系统通知', pinned: !!a.pinned })
   announcementDialog.value = true
 }
-/** 【F5-2·步骤5】实例：管理员发布公告 POST/PUT /admin/announcements */
-async function saveAnnouncement() {
-  const payload = { ...announcementForm, pinned: announcementForm.pinned ? 1 : 0, status: 'PUBLISHED' }
-  await call(announcementForm.id ? 'put' : 'post', announcementForm.id ? `/admin/announcements/${announcementForm.id}` : '/admin/announcements', payload)
-  announcementDialog.value = false
-  notify('公告已保存')
-  await loadAnnouncements()
+/** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：管理员发布公告 POST/PUT /admin/announcements*/
+async function saveAnnouncement() { // 【行】进入代码块
+  const payload = { ...announcementForm, pinned: announcementForm.pinned ? 1 : 0, status: 'PUBLISHED' } // 【行】声明并赋值变量 `payload`
+  await call(announcementForm.id ? 'put' : 'post', announcementForm.id ? `/admin/announcements/${announcementForm.id}` : '/admin/announcements', payload) // 【行】带 JWT 调用后端 REST API
+  announcementDialog.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+  notify('公告已保存') // 【行】执行本行语句，推进功能链中的当前步骤
+  await loadAnnouncements() // 【行】执行本行语句，推进功能链中的当前步骤
 }
 function openFeedbackHandle(row) {
   feedbackHandleForm.id = row.id
@@ -3112,17 +3278,17 @@ function openFeedbackHandle(row) {
   feedbackHandleForm.handleResult = ''
   feedbackHandleOpen.value = true
 }
-/** 【F5-3·步骤2】实例：管理员 PUT /admin/feedback/{id} 标记已处理并通知学生 */
-async function submitFeedbackHandle() {
-  if (!feedbackHandleForm.handleResult?.trim()) return notify('请填写处理说明')
-  try {
-    await call('put', `/admin/feedback/${feedbackHandleForm.id}`, {
-      status: '已处理',
-      handleResult: feedbackHandleForm.handleResult.trim()
-    })
-    feedbackHandleOpen.value = false
-    notify('反馈已处理，已通知学生')
-    adminFeedback.value = await call('get', '/admin/feedback')
+/** 【F5-3·问题反馈】功能链实例：小明提交「A-12 椅子损坏」→ 管理员标记已处理。 本处职责：管理员 PUT /admin/feedback/{id} 标记已处理并通知学生*/
+async function submitFeedbackHandle() { // 【行】进入代码块
+  if (!feedbackHandleForm.handleResult?.trim()) return notify('请填写处理说明') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    await call('put', `/admin/feedback/${feedbackHandleForm.id}`, { // 【行】带 JWT 调用后端 REST API
+      status: '已处理', // 【行】执行本行语句，推进功能链中的当前步骤
+      handleResult: feedbackHandleForm.handleResult.trim() // 【行】执行本行语句，推进功能链中的当前步骤
+    }) // 【行】执行本行语句，推进功能链中的当前步骤
+    feedbackHandleOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('反馈已处理，已通知学生') // 【行】执行本行语句，推进功能链中的当前步骤
+    adminFeedback.value = await call('get', '/admin/feedback') // 【行】带 JWT 调用后端 REST API
   } catch (e) { notify(e.message) }
 }
 function openRevokeViolation(row) {
@@ -3135,16 +3301,16 @@ function openRevokeViolation(row) {
   revokeViolationForm.remark = ''
   revokeViolationOpen.value = true
 }
-/** 【F6-5·步骤2】实例：管理员撤销小明违约，POST revoke-violation 恢复信用分 */
-async function submitRevokeViolation() {
-  if (!revokeViolationForm.id) return
-  try {
-    await call('post', `/admin/reservations/${revokeViolationForm.id}/revoke-violation`, {
-      remark: revokeViolationForm.remark?.trim() || ''
-    })
-    revokeViolationOpen.value = false
-    notify('违约已撤销，信用分已恢复')
-    adminReservations.value = await call('get', '/admin/reservations')
+/** 【F6-5·预约监管】功能链实例：小明被标「已违约」→ 管理员在预约管理点「撤销违约」→ 信用分恢复。 本处职责：管理员撤销小明违约，POST revoke-violation 恢复信用分*/
+async function submitRevokeViolation() { // 【行】进入代码块
+  if (!revokeViolationForm.id) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    await call('post', `/admin/reservations/${revokeViolationForm.id}/revoke-violation`, { // 【行】带 JWT 调用后端 REST API
+      remark: revokeViolationForm.remark?.trim() || '' // 【行】执行本行语句，推进功能链中的当前步骤
+    }) // 【行】执行本行语句，推进功能链中的当前步骤
+    revokeViolationOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('违约已撤销，信用分已恢复') // 【行】执行本行语句，推进功能链中的当前步骤
+    adminReservations.value = await call('get', '/admin/reservations') // 【行】带 JWT 调用后端 REST API
   } catch (e) { notify(e.message) }
 }
 async function addAdminSeat() {
@@ -3156,52 +3322,52 @@ async function addAdminSeat() {
     await loadRooms()
   } catch (e) { notify(e.message) }
 }
-/** 【F6-4·步骤5】实例：超管 DELETE /admin/seats/{id} 删除单个座位格 */
-async function deleteSeatEdit() {
-  if (!seatEditForm.id) return
-  const seatId = seatEditForm.id
-  const seatLabel = seatEditForm.seat_no || '该座位'
-  seatEditOpen.value = false
-  await nextTick()
-  openModalConfirm('删除座位', `确定删除座位 ${seatLabel} 吗？删除后不可恢复。`, async () => {
-    try {
-      await call('delete', `/admin/seats/${seatId}`)
-      notify('座位已删除')
-      await loadAdminSeats()
-      await loadRooms()
+/** 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：超管 DELETE /admin/seats/{id} 删除单个座位格*/
+async function deleteSeatEdit() { // 【行】进入代码块
+  if (!seatEditForm.id) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  const seatId = seatEditForm.id // 【行】声明并赋值变量 `seatId`
+  const seatLabel = seatEditForm.seat_no || '该座位' // 【行】声明并赋值变量 `seatLabel`
+  seatEditOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+  await nextTick() // 【行】执行本行语句，推进功能链中的当前步骤
+  openModalConfirm('删除座位', `确定删除座位 ${seatLabel} 吗？删除后不可恢复。`, async () => { // 【行】进入代码块
+    try { // 【行】进入代码块
+      await call('delete', `/admin/seats/${seatId}`) // 【行】带 JWT 调用后端 REST API
+      notify('座位已删除') // 【行】执行本行语句，推进功能链中的当前步骤
+      await loadAdminSeats() // 【行】执行本行语句，推进功能链中的当前步骤
+      await loadRooms() // 【行】执行本行语句，推进功能链中的当前步骤
     } catch (e) { notify(e.message) }
-  })
+  }) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-/** 【F6-1·步骤2】实例：管理员统计页 loadAdminStatistics 拉取报表 */
-async function loadAdminStatistics() {
-  try {
-    const params = buildAdminStatsParams()
-    adminStatsReport.value = await call('get', '/admin/statistics/report', null, { params })
-    syncAdminStatsDateRangeFromSummary(adminStatsReport.value.summary || {})
-    await nextTick()
-    drawUsageChart()
+/** 【F6-1·统计与CSV】功能链实例：管理员打开统计页，切换当期/往期与报表类型，查看图表并导出 CSV 本处职责：管理员统计页 loadAdminStatistics 拉取报表*/
+async function loadAdminStatistics() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    const params = buildAdminStatsParams() // 【行】初始化 GET 查询参数字典，键名与后端约定一致
+    adminStatsReport.value = await call('get', '/admin/statistics/report', null, { params }) // 【行】带 JWT 调用后端 REST API
+    syncAdminStatsDateRangeFromSummary(adminStatsReport.value.summary || {}) // 【行】执行本行语句，推进功能链中的当前步骤
+    await nextTick() // 【行】执行本行语句，推进功能链中的当前步骤
+    drawUsageChart() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-/** 【F6-1·步骤3】实例：管理员点「导出报表」，downloadReport 下载 CSV blob */
-function downloadReport(reportType = 'usage') {
-  const params = buildAdminStatsParams()
-  params.reportType = reportType
-  api.get('/admin/statistics/export', { responseType: 'blob', params }).then(res => {
-    const url = URL.createObjectURL(res.data)
-    const a = document.createElement('a')
-    a.href = url
-    const labels = {
-      usage: '座位使用率报表.csv',
-      reservation: '预约量趋势报表.csv',
-      peak: '高峰时段分析报表.csv',
-      activity: '用户活跃度报表.csv',
-      studyDuration: '自习时长排名报表.csv',
-      credit: '信用与违约统计报表.csv'
+/** 【F6-1·统计与CSV】功能链实例：管理员打开统计页，切换当期/往期与报表类型，查看图表并导出 CSV 本处职责：管理员点「导出报表」，downloadReport 下载 CSV blob*/
+function downloadReport(reportType = 'usage') { // 【行】进入代码块
+  const params = buildAdminStatsParams() // 【行】初始化 GET 查询参数字典，键名与后端约定一致
+  params.reportType = reportType // 【行】执行本行语句，推进功能链中的当前步骤
+  api.get('/admin/statistics/export', { responseType: 'blob', params }).then(res => { // 【行】进入代码块
+    const url = URL.createObjectURL(res.data) // 【行】声明并赋值变量 `url`
+    const a = document.createElement('a') // 【行】声明并赋值变量 `a`
+    a.href = url // 【行】执行本行语句，推进功能链中的当前步骤
+    const labels = { // 【行】声明并赋值变量 `labels`
+      usage: '座位使用率报表.csv', // 【行】执行本行语句，推进功能链中的当前步骤
+      reservation: '预约量趋势报表.csv', // 【行】执行本行语句，推进功能链中的当前步骤
+      peak: '高峰时段分析报表.csv', // 【行】执行本行语句，推进功能链中的当前步骤
+      activity: '用户活跃度报表.csv', // 【行】执行本行语句，推进功能链中的当前步骤
+      studyDuration: '自习时长排名报表.csv', // 【行】执行本行语句，推进功能链中的当前步骤
+      credit: '信用与违约统计报表.csv' // 【行】执行本行语句，推进功能链中的当前步骤
     }
-    a.download = labels[reportType] || `${reportType}-report.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  })
+    a.download = labels[reportType] || `${reportType}-report.csv` // 【行】执行本行语句，推进功能链中的当前步骤
+    a.click() // 【行】执行本行语句，推进功能链中的当前步骤
+    URL.revokeObjectURL(url) // 【行】执行本行语句，推进功能链中的当前步骤
+  }) // 【行】执行本行语句，推进功能链中的当前步骤
 }
 function handleExportCommand(command) {
   let type = command
@@ -3217,18 +3383,19 @@ function handleExportCommand(command) {
   }
   downloadReport(type)
 }
-/** 【F5-1·步骤1】实例：drawStudentChart 用 ECharts 渲染学习时长柱状图 */
-function drawStudentChart() {
-  nextTick(() => {
-    const el = studentChart.value
-    if (!el) return
-    echarts.init(el).setOption({
-      tooltip: hourTooltip(),
-      xAxis: { type: 'category', name: '日期', data: (studyStats.value.series || []).map(x => String(x.label).slice(5, 10)) },
-      yAxis: hourYAxis(),
-      series: [{ name: '学习时长', type: 'bar', data: (studyStats.value.series || []).map(x => Number(((Number(x.minutes || 0)) / 60).toFixed(1))), itemStyle: { color: '#5f73fb' } }]
-    })
-  })
+/** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：drawStudentChart 用 ECharts 渲染学习时长柱状图 */
+function drawStudentChart() { // 【行】根据最新 studyBars 重绘 ECharts 柱图
+  nextTick(() => { // 【行】进入代码块
+    const el = studentChart.value // 【行】声明并赋值变量 `el`
+    if (!el) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+    const bars = studyBars.value // 【行】声明并赋值变量 `bars`
+    echarts.init(el).setOption({ // 【行】进入代码块
+      tooltip: hourTooltip(), // 【行】执行本行语句，推进功能链中的当前步骤
+      xAxis: { type: 'category', name: statPeriod.value === 'year' ? '月份' : '日期', data: bars.map(b => b.label) }, // 【行】执行本行语句，推进功能链中的当前步骤
+      yAxis: hourYAxis(), // 【行】执行本行语句，推进功能链中的当前步骤
+      series: [{ name: '学习时长', type: 'bar', data: bars.map(b => Number(b.value || 0)), itemStyle: { color: '#5f73fb' } }] // 【行】执行本行语句，推进功能链中的当前步骤
+    }) // 【行】执行本行语句，推进功能链中的当前步骤
+  }) // 【行】执行本行语句，推进功能链中的当前步骤
 }
 function drawUsageChart() {
   if (!usageChart.value) return

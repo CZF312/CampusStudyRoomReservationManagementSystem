@@ -12,35 +12,35 @@ import java.util.List;
 import java.sql.Connection;
 
 /**
- * 【F1-1·步骤2】实例：启动时 JDBC 建表并导入 database-full.sql 演示数据
+ * 【F1-1·环境启动】功能链实例：组长双击 `start.bat` → PowerShell 导入 `database-full.sql` 建库 `study_room_reservation` → Spring Boot 监听 8080 → 浏览器打开登录页 → `… 本处职责：启动时 JDBC 建表并导入 database-full.sql 演示数据
  */
 @Component
-public class DatabaseInitializer implements CommandLineRunner {
-    private final JdbcTemplate jdbc;
-    private final PasswordEncoder passwordEncoder;
+public class DatabaseInitializer implements CommandLineRunner { // 【行】进入方法体或分支块
+    private final JdbcTemplate jdbc; // 【行】执行本行 Java 语句
+    private final PasswordEncoder passwordEncoder; // 【行】执行本行 Java 语句
     /** 缓存数据库类型，避免重复打开连接导致连接池耗尽。 */
-    private Boolean h2Database;
+    private Boolean h2Database; // 【行】执行本行 Java 语句
 
     /** 每次启动将演示账号密码恢复为文档默认值，避免测试改密后无法登录。生产环境可设为 false。 */
     @Value("${app.demo.sync-accounts-on-startup:true}")
-    private boolean syncAccountsOnStartup;
+    private boolean syncAccountsOnStartup; // 【行】执行本行 Java 语句
 
-    public DatabaseInitializer(JdbcTemplate jdbc, PasswordEncoder passwordEncoder) {
-        this.jdbc = jdbc;
-        this.passwordEncoder = passwordEncoder;
+    public DatabaseInitializer(JdbcTemplate jdbc, PasswordEncoder passwordEncoder) { // 【行】进入方法体或分支块
+        this.jdbc = jdbc; // 【行】执行本行 Java 语句
+        this.passwordEncoder = passwordEncoder; // 【行】执行本行 Java 语句
     }
 
     @Override
-    public void run(String... args) {
-        createTables();
-        migrateThirdDictionarySchema();
-        seedData();
-        if (syncAccountsOnStartup) {
-            syncDemoAccounts();
+    public void run(String... args) { // 【行】进入方法体或分支块
+        createTables(); // 【行】执行本行 Java 语句
+        migrateThirdDictionarySchema(); // 【行】执行本行 Java 语句
+        seedData(); // 【行】执行本行 Java 语句
+        if (syncAccountsOnStartup) { // 【行】按业务条件分支处理
+            syncDemoAccounts(); // 【行】执行本行 Java 语句
         }
     }
 
-    private void createTables() {
+    private void createTables() { // 【行】进入方法体或分支块
         List<String> ddl = List.of(
                 """
                 create table if not exists user_account(
@@ -319,12 +319,12 @@ public class DatabaseInitializer implements CommandLineRunner {
                   index idx_op_log_module(module,created_at)
                 ) charset=utf8mb4
                 """
-        );
-        ddl.forEach(sql -> jdbc.execute(adaptDdl(sql)));
+        ); // 【行】执行本行 Java 语句
+        ddl.forEach(sql -> jdbc.execute(adaptDdl(sql))); // 【行】执行本行 Java 语句
     }
 
     /**
-     * 【F7-2·步骤3】实例：启动时把英文枚举迁移为中文，设施拆表，验收见 verify-v3-dictionary.ps1
+     * 【F7-2·第三版规范化】功能链实例：老师查库见 `status='待使用'`、设施在关联表、无 `temp_leave` 表 —— 第三版字典落地，验收 PASS=17。 | 要点 | 路径 Path · 行号跳转（Lx 含注释行） | | ------------- … 本处职责：启动时把英文枚举迁移为中文，设施拆表，验收见 verify-v3-dictionary.ps1
      */
     private void migrateThirdDictionarySchema() {
         migrateColumns();
@@ -354,7 +354,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         }
     }
 
-    /** 【F7-2·步骤3b】实例：PENDING→待审核、OPEN→开放 等中文枚举批量更新 */
+    /** 【F7-2·第三版规范化】功能链实例：老师查库见 `status='待使用'`、设施在关联表、无 `temp_leave` 表 —— 第三版字典落地，验收 PASS=17。 | 要点 | 路径 Path · 行号跳转（Lx 含注释行） | | ------------- … 本处职责：PENDING→待审核、OPEN→开放 等中文枚举批量更新*/
     private void migrateEnumValues() {
         runQuiet("update user_account set role='学生' where role='STUDENT'");
         runQuiet("update user_account set status='正常' where status='NORMAL'");

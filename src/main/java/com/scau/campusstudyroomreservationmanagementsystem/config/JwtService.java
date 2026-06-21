@@ -24,10 +24,10 @@ public class JwtService {
         this.expireHours = expireHours;
     }
 
-    /** 【F2-1·步骤5】实例：小明/admin 登录成功，签发含 userId/role 的 JWT */
-    public String createToken(CurrentUser user) {
-        Instant now = Instant.now();
-        return Jwts.builder()
+    /** 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：小明/admin 登录成功，签发含 userId/role 的 JWT*/
+    public String createToken(CurrentUser user) { // 【行】进入方法体或分支块
+        Instant now = Instant.now(); // 【行】执行本行 Java 语句
+        return Jwts.builder() // 【行】返回 Service 结果给 Controller，最终序列化为 JSON
                 .subject(user.username())
                 .claims(Map.of(
                         "userId", user.id(),
@@ -37,7 +37,7 @@ public class JwtService {
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(expireHours * 3600)))
                 .signWith(key)
-                .compact();
+                .compact(); // 【行】执行本行 Java 语句
     }
 
     public CurrentUser parse(String token) {

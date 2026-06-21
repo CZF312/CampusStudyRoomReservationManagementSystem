@@ -1,17 +1,17 @@
-# 【F1-1·步骤4】实例：验收 17 项第三版字典，输出 PASS=17
-# V3 data dictionary verification for MySQL snapshot
-# Usage: .\scripts\verify-v3-dictionary.ps1
-#        .\scripts\verify-v3-dictionary.ps1 -Password 123456
+# 【F1-1·环境启动】功能链实例：组长双击 `start.bat` → PowerShell 导入 `database-full.sql` 建库 `study_room_reservation` → Spring Boot 监听 8080 → 浏览器打开登录页 → `… 本处职责：验收 17 项第三版字典，输出 PASS=17
+# V3 data dictionary verification for MySQL snapshot // 【行】执行本行语句，推进功能链中的当前步骤
+# Usage: .\scripts\verify-v3-dictionary.ps1 // 【行】执行本行语句，推进功能链中的当前步骤
+#        .\scripts\verify-v3-dictionary.ps1 -Password 123456 // 【行】执行本行语句，推进功能链中的当前步骤
 
-param(
-    [string]$DbHost = "127.0.0.1",
-    [int]$Port = 3306,
-    [string]$User = "root",
-    [string]$Password = "",
-    [string]$Database = "study_room_reservation"
+param( // 【行】执行本行语句，推进功能链中的当前步骤
+    [string]$DbHost = "127.0.0.1", // 【行】执行本行语句，推进功能链中的当前步骤
+    [int]$Port = 3306, // 【行】执行本行语句，推进功能链中的当前步骤
+    [string]$User = "root", // 【行】执行本行语句，推进功能链中的当前步骤
+    [string]$Password = "", // 【行】执行本行语句，推进功能链中的当前步骤
+    [string]$Database = "study_room_reservation" // 【行】执行本行语句，推进功能链中的当前步骤
 )
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop" // 【行】执行本行语句，推进功能链中的当前步骤
 $scriptRoot = if ($PSScriptRoot) { $PSScriptRoot } elseif ($env:CSRRM_SCRIPT_ROOT) { $env:CSRRM_SCRIPT_ROOT } else { Join-Path (Get-Location) "scripts" }
 $root = Split-Path -Parent $scriptRoot
 

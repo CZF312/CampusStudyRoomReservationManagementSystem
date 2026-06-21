@@ -13,21 +13,21 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 【F2-3·步骤1】实例：小李注册时上传 PDF/图片到 uploads/material
+ * 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：小李注册时上传 PDF/图片到 uploads/material
  */
 @RestController
 @RequestMapping("/api")
-public class UploadController {
+public class UploadController { // 【行】进入方法体或分支块
     private static final Set<String> ALLOWED = Set.of(
-            "image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf");
+            "image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"); // 【行】执行本行 Java 语句
 
-    private final UploadStorage uploadStorage;
+    private final UploadStorage uploadStorage; // 【行】执行本行 Java 语句
 
-    public UploadController(UploadStorage uploadStorage) {
-        this.uploadStorage = uploadStorage;
+    public UploadController(UploadStorage uploadStorage) { // 【行】进入方法体或分支块
+        this.uploadStorage = uploadStorage; // 【行】执行本行 Java 语句
     }
 
-    /** 【F2-3·步骤1】实例：POST /auth/register/upload，返回 materialUrl */
+    /** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：POST /auth/register/upload，返回 materialUrl*/
     @PostMapping("/auth/register/upload")
     public ApiResponse<Map<String, String>> registerUpload(@RequestParam("file") MultipartFile file) throws IOException {
         return uploadInternal(file, "material");

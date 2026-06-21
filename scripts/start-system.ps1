@@ -1,9 +1,9 @@
-# 【F1-1·步骤1b】实例：start.bat 调用本脚本，检测 Java/MySQL 并导入 database-full.sql
-# Campus Study Room Reservation Management System - one-click launcher
-# Environment check -> MySQL password -> DROP database -> import database-full.sql
-# -> verify schema -> write local config -> start backend -> open browser
+# 【F1-1·环境启动】功能链实例：组长双击 `start.bat` → PowerShell 导入 `database-full.sql` 建库 `study_room_reservation` → Spring Boot 监听 8080 → 浏览器打开登录页 → `… 本处职责：start.bat 调用本脚本，检测 Java/MySQL 并导入 database-full.sql
+# Campus Study Room Reservation Management System - one-click launcher // 【行】执行本行语句，推进功能链中的当前步骤
+# Environment check -> MySQL password -> DROP database -> import database-full.sql // 【行】执行本行语句，推进功能链中的当前步骤
+# -> verify schema -> write local config -> start backend -> open browser // 【行】执行本行语句，推进功能链中的当前步骤
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop" // 【行】执行本行语句，推进功能链中的当前步骤
 $scriptRoot = if ($PSScriptRoot) { $PSScriptRoot } elseif ($env:CSRRM_SCRIPT_ROOT) { $env:CSRRM_SCRIPT_ROOT } else { Join-Path (Get-Location) "scripts" }
 $root = Split-Path -Parent $scriptRoot
 Set-Location $root

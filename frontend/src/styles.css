@@ -128,15 +128,32 @@ h2{font-size:26px;margin:20px 4px 14px;color:#273142;font-weight:900}
 .settings-form .el-button{margin-top:8px}
 .admin-report-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 12px}
 .admin-report-toolbar span{color:#667085;font-size:13px;line-height:1.5}
-.admin-stats-range-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 12px;position:relative;overflow:visible}
-.admin-stats-date-picker{width:min(100%,420px)!important;max-width:420px}
-.admin-stats-range-row .btn{height:32px;padding:0 14px;font-size:13px}
-.admin-stats-date-popper{z-index:3000!important;max-width:calc(100vw - 32px)}
-.admin-stats-date-popper .el-date-range-picker{width:min(720px,calc(100vw - 32px))}
-.admin-stats-date-popper .el-picker-panel__sidebar{width:112px}
-.admin-stats-date-popper .el-picker-panel__body{min-width:0}
+.stats-range-tabs{margin-bottom:10px}
+.stats-range-tabs button{font-size:16px;padding:11px}
+.admin-stats-range-row,.student-stats-range-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px;margin:0 0 12px;position:relative;overflow:visible;z-index:2}
+.student-date-range-fields{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%}
+.student-date-sep{color:#64748b;font-size:14px;font-weight:700;padding:0 2px}
+.stats-date-shortcuts{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+.stats-date-shortcuts .btn-sm{height:30px;padding:0 12px;font-size:12px}
+.admin-stats-date-picker,.student-stats-date-picker{width:min(100%,200px)!important;max-width:200px}
+.admin-stats-range-row .admin-stats-date-picker{width:min(100%,420px)!important;max-width:420px}
+.admin-stats-range-row .btn,.student-stats-range-row .btn{height:32px;padding:0 14px;font-size:13px}
+.stats-date-popper-single{z-index:5000!important;background:#fff!important;border:1px solid #e4e7ed!important;box-shadow:0 8px 24px rgba(15,23,42,.12)!important}
+.stats-date-popper-single .el-picker-panel{background:#fff;border:none;box-shadow:none;margin:0}
+.stats-date-popper-single .el-date-picker{width:322px;max-width:calc(100vw - 24px)}
+.stats-date-popper{z-index:5000!important;background:#fff!important;border:1px solid #e4e7ed!important;box-shadow:0 8px 24px rgba(15,23,42,.12)!important}
+.stats-date-popper .el-picker-panel{background:#fff;border:none;box-shadow:none;margin:0}
+.stats-date-popper .el-date-range-picker{width:756px;max-width:calc(100vw - 32px)}
+.stats-date-popper .el-picker-panel__sidebar{width:112px;flex:none;background:#fff}
+.stats-date-popper .el-picker-panel__body{min-width:512px;background:#fff}
+.stats-date-popper .el-picker-panel__body-wrapper{display:flex;flex-wrap:nowrap}
+.stats-date-popper .el-date-range-picker__content{box-sizing:border-box;padding:8px}
 @media (max-width:760px){
-  .admin-stats-date-picker{width:100%!important;max-width:100%}
-  .admin-stats-date-popper .el-date-range-picker{width:calc(100vw - 24px);overflow:auto}
-  .admin-stats-date-popper .el-picker-panel__sidebar{width:96px}
+  .admin-stats-date-picker,.student-stats-date-picker{width:min(48%,180px)!important;max-width:48%}
+  .admin-stats-range-row .admin-stats-date-picker{width:100%!important;max-width:100%}
+  .stats-date-popper .el-date-range-picker{width:min(756px,calc(100vw - 16px))}
+  .stats-date-popper .el-picker-panel__body{min-width:0}
+  .stats-date-popper .el-picker-panel__body-wrapper{flex-direction:column}
+  .stats-date-popper .el-picker-panel__sidebar{width:100%;border-right:0;border-bottom:1px solid #e4e7ed;display:flex;flex-wrap:wrap;gap:4px;padding:8px}
+  .stats-date-popper .el-picker-panel__shortcut{display:inline-block;width:auto;padding:4px 10px}
 }

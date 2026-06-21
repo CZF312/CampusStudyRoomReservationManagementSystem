@@ -24,111 +24,111 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-/** 【F1-2·Service】实例：小明确认预约时 createReservation 在此校验信用/时段并写 MySQL */
-public class AppService {
-    private static final String ROLE_STUDENT_DB = "学生";
-    private static final String ROLE_ADMIN_DB = "普通管理员";
-    private static final String ROLE_SUPER_ADMIN_DB = "超级管理员";
-    private static final String ACCOUNT_NORMAL = "正常";
-    private static final String ACCOUNT_PENDING = "待审核";
-    private static final String ACCOUNT_DISABLED = "禁用";
-    private static final String ACCOUNT_BLACKLIST = "黑名单";
-    private static final String ADMIN_NORMAL = "正常";
-    private static final String ADMIN_LEFT = "离职";
-    private static final String AUDIT_PENDING = "待审核";
-    private static final String AUDIT_APPROVED = "已通过";
-    private static final String AUDIT_REJECTED = "已拒绝";
-    private static final String ROOM_OPEN = "开放";
-    private static final String ROOM_CLOSED = "关闭";
-    private static final String ROOM_MAINTENANCE = "维护中";
-    private static final String SEAT_NORMAL = "空闲";
-    private static final String SEAT_MAINTENANCE = "维修";
-    private static final String SEAT_DISABLED = "停用";
-    private static final String RES_PENDING = "待使用";
-    private static final String RES_USING = "使用中";
-    private static final String RES_COMPLETED = "已完成";
-    private static final String RES_CANCELLED = "已取消";
-    private static final String RES_VIOLATED = "已违约";
-    private static final String SLOT_ACTIVE = "占用";
-    private static final String BLACKLIST_ACTIVE = "生效";
-    private static final String BLACKLIST_RELEASED = "已解除";
-    private static final String CHECKIN_ON_TIME = "准时";
-    private static final String CHECKIN_STUDENT_NO = "学号签到";
-    private static final String CHECKIN_QR = "扫码签到";
-    private static final String FEEDBACK_PENDING = "待处理";
-    private static final String FEEDBACK_DONE = "已处理";
-    private static final String FEEDBACK_SUGGESTION = "建议";
-    private static final String FEEDBACK_SEAT_REPAIR = "座位报修";
-    private static final String FEEDBACK_MEDIUM = "中";
-    private static final String ANNOUNCEMENT_PUBLISHED = "已发布";
-    private static final String ANNOUNCEMENT_SYSTEM = "系统通知";
-    private static final String CREDIT_ON_TIME = "签到奖励";
-    private static final String CREDIT_VIOLATION = "违约扣减";
-    private static final String CREDIT_SYSTEM_RESTORE = "系统恢复";
-    private static final String CREDIT_OTHER = "其他";
+/** 【F1-2·技术概念】功能链实例：小明点「确认预约」→ 浏览器用 **Vue** 发 **HTTP** **JSON** 到 **REST API** → **Controller** 转 **Service** 写 **MySQL** → 返回 **JSON** `… 本处职责：小明确认预约时 createReservation 在此校验信用/时段并写 MySQL*/
+public class AppService { // 【行】进入方法体或分支块
+    private static final String ROLE_STUDENT_DB = "学生"; // 【行】执行本行 Java 语句
+    private static final String ROLE_ADMIN_DB = "普通管理员"; // 【行】执行本行 Java 语句
+    private static final String ROLE_SUPER_ADMIN_DB = "超级管理员"; // 【行】执行本行 Java 语句
+    private static final String ACCOUNT_NORMAL = "正常"; // 【行】执行本行 Java 语句
+    private static final String ACCOUNT_PENDING = "待审核"; // 【行】执行本行 Java 语句
+    private static final String ACCOUNT_DISABLED = "禁用"; // 【行】执行本行 Java 语句
+    private static final String ACCOUNT_BLACKLIST = "黑名单"; // 【行】执行本行 Java 语句
+    private static final String ADMIN_NORMAL = "正常"; // 【行】执行本行 Java 语句
+    private static final String ADMIN_LEFT = "离职"; // 【行】执行本行 Java 语句
+    private static final String AUDIT_PENDING = "待审核"; // 【行】执行本行 Java 语句
+    private static final String AUDIT_APPROVED = "已通过"; // 【行】执行本行 Java 语句
+    private static final String AUDIT_REJECTED = "已拒绝"; // 【行】执行本行 Java 语句
+    private static final String ROOM_OPEN = "开放"; // 【行】执行本行 Java 语句
+    private static final String ROOM_CLOSED = "关闭"; // 【行】执行本行 Java 语句
+    private static final String ROOM_MAINTENANCE = "维护中"; // 【行】执行本行 Java 语句
+    private static final String SEAT_NORMAL = "空闲"; // 【行】执行本行 Java 语句
+    private static final String SEAT_MAINTENANCE = "维修"; // 【行】执行本行 Java 语句
+    private static final String SEAT_DISABLED = "停用"; // 【行】执行本行 Java 语句
+    private static final String RES_PENDING = "待使用"; // 【行】执行本行 Java 语句
+    private static final String RES_USING = "使用中"; // 【行】执行本行 Java 语句
+    private static final String RES_COMPLETED = "已完成"; // 【行】执行本行 Java 语句
+    private static final String RES_CANCELLED = "已取消"; // 【行】执行本行 Java 语句
+    private static final String RES_VIOLATED = "已违约"; // 【行】执行本行 Java 语句
+    private static final String SLOT_ACTIVE = "占用"; // 【行】执行本行 Java 语句
+    private static final String BLACKLIST_ACTIVE = "生效"; // 【行】执行本行 Java 语句
+    private static final String BLACKLIST_RELEASED = "已解除"; // 【行】执行本行 Java 语句
+    private static final String CHECKIN_ON_TIME = "准时"; // 【行】执行本行 Java 语句
+    private static final String CHECKIN_STUDENT_NO = "学号签到"; // 【行】执行本行 Java 语句
+    private static final String CHECKIN_QR = "扫码签到"; // 【行】执行本行 Java 语句
+    private static final String FEEDBACK_PENDING = "待处理"; // 【行】执行本行 Java 语句
+    private static final String FEEDBACK_DONE = "已处理"; // 【行】执行本行 Java 语句
+    private static final String FEEDBACK_SUGGESTION = "建议"; // 【行】执行本行 Java 语句
+    private static final String FEEDBACK_SEAT_REPAIR = "座位报修"; // 【行】执行本行 Java 语句
+    private static final String FEEDBACK_MEDIUM = "中"; // 【行】执行本行 Java 语句
+    private static final String ANNOUNCEMENT_PUBLISHED = "已发布"; // 【行】执行本行 Java 语句
+    private static final String ANNOUNCEMENT_SYSTEM = "系统通知"; // 【行】执行本行 Java 语句
+    private static final String CREDIT_ON_TIME = "签到奖励"; // 【行】执行本行 Java 语句
+    private static final String CREDIT_VIOLATION = "违约扣减"; // 【行】执行本行 Java 语句
+    private static final String CREDIT_SYSTEM_RESTORE = "系统恢复"; // 【行】执行本行 Java 语句
+    private static final String CREDIT_OTHER = "其他"; // 【行】执行本行 Java 语句
     /** 预约开始前可签到分钟数（与前端提示一致） */
-    private static final int CHECKIN_EARLY_MINUTES = 15;
+    private static final int CHECKIN_EARLY_MINUTES = 15; // 【行】执行本行 Java 语句
     /** 预约开始后可签到分钟数；亦用于禁止预约已过期超过该分钟数的时段 */
-    private static final int CHECKIN_LATE_MINUTES = 15;
-    private static final int CREDIT_SCORE_MAX = 500;
+    private static final int CHECKIN_LATE_MINUTES = 15; // 【行】执行本行 Java 语句
+    private static final int CREDIT_SCORE_MAX = 500; // 【行】执行本行 Java 语句
     /** 学生主动取消预约扣分 */
-    private static final int CREDIT_CANCEL_PENALTY = -50;
-    private static final DateTimeFormatter CHECKIN_WINDOW_FMT = DateTimeFormatter.ofPattern("HH:mm");
+    private static final int CREDIT_CANCEL_PENALTY = -50; // 【行】执行本行 Java 语句
+    private static final DateTimeFormatter CHECKIN_WINDOW_FMT = DateTimeFormatter.ofPattern("HH:mm"); // 【行】执行本行 Java 语句
 
-    private final JdbcTemplate jdbc;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final Map<String, String> configMap = new ConcurrentHashMap<>();
-    private static final String CONFIG_FILE_PATH = "system_config.json";
+    private final JdbcTemplate jdbc; // 【行】执行本行 Java 语句
+    private final PasswordEncoder passwordEncoder; // 【行】执行本行 Java 语句
+    private final JwtService jwtService; // 【行】执行本行 Java 语句
+    private final Map<String, String> configMap = new ConcurrentHashMap<>(); // 【行】执行本行 Java 语句
+    private static final String CONFIG_FILE_PATH = "system_config.json"; // 【行】执行本行 Java 语句
 
-    public AppService(JdbcTemplate jdbc, PasswordEncoder passwordEncoder, JwtService jwtService) {
-        this.jdbc = jdbc;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        initConfig();
+    public AppService(JdbcTemplate jdbc, PasswordEncoder passwordEncoder, JwtService jwtService) { // 【行】进入方法体或分支块
+        this.jdbc = jdbc; // 【行】执行本行 Java 语句
+        this.passwordEncoder = passwordEncoder; // 【行】执行本行 Java 语句
+        this.jwtService = jwtService; // 【行】执行本行 Java 语句
+        initConfig(); // 【行】执行本行 Java 语句
     }
 
-    private void initConfig() {
-        File file = new File(CONFIG_FILE_PATH);
-        ObjectMapper mapper = new ObjectMapper();
-        if (file.exists()) {
-            try {
-                Map<String, String> loaded = mapper.readValue(file, new TypeReference<Map<String, String>>() {});
-                configMap.putAll(loaded);
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void initConfig() { // 【行】进入方法体或分支块
+        File file = new File(CONFIG_FILE_PATH); // 【行】执行本行 Java 语句
+        ObjectMapper mapper = new ObjectMapper(); // 【行】执行本行 Java 语句
+        if (file.exists()) { // 【行】按业务条件分支处理
+            try { // 【行】进入方法体或分支块
+                Map<String, String> loaded = mapper.readValue(file, new TypeReference<Map<String, String>>() {}); // 【行】执行本行 Java 语句
+                configMap.putAll(loaded); // 【行】执行本行 Java 语句
+            } catch (IOException e) { // 【行】进入方法体或分支块
+                e.printStackTrace(); // 【行】执行本行 Java 语句
             }
         }
         // Fill defaults if missing
-        configMap.putIfAbsent("reservation_advance_days", "7");
-        configMap.putIfAbsent("reservation_limit_duration", "4");
-        configMap.putIfAbsent("reservation_limit_daily", "3");
-        configMap.putIfAbsent("credit_checkin_reward", "5");
-        configMap.putIfAbsent("credit_cancel_penalty", "-50");
-        configMap.putIfAbsent("credit_violation_penalty", "-50");
-        configMap.putIfAbsent("credit_blocked_threshold", "0");
-        configMap.putIfAbsent("blacklist_days", "7");
+        configMap.putIfAbsent("reservation_advance_days", "7"); // 【行】执行本行 Java 语句
+        configMap.putIfAbsent("reservation_limit_duration", "4"); // 【行】执行本行 Java 语句
+        configMap.putIfAbsent("reservation_limit_daily", "3"); // 【行】执行本行 Java 语句
+        configMap.putIfAbsent("credit_checkin_reward", "5"); // 【行】执行本行 Java 语句
+        configMap.putIfAbsent("credit_cancel_penalty", "-50"); // 【行】执行本行 Java 语句
+        configMap.putIfAbsent("credit_violation_penalty", "-50"); // 【行】执行本行 Java 语句
+        configMap.putIfAbsent("credit_blocked_threshold", "0"); // 【行】执行本行 Java 语句
+        configMap.putIfAbsent("blacklist_days", "7"); // 【行】执行本行 Java 语句
         
-        saveConfigToFile();
+        saveConfigToFile(); // 【行】执行本行 Java 语句
     }
 
-    private void saveConfigToFile() {
-        File file = new File(CONFIG_FILE_PATH);
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(file, configMap);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void saveConfigToFile() { // 【行】进入方法体或分支块
+        File file = new File(CONFIG_FILE_PATH); // 【行】执行本行 Java 语句
+        ObjectMapper mapper = new ObjectMapper(); // 【行】执行本行 Java 语句
+        try { // 【行】进入方法体或分支块
+            mapper.writerWithDefaultPrettyPrinter().writeValue(file, configMap); // 【行】执行本行 Java 语句
+        } catch (IOException e) { // 【行】进入方法体或分支块
+            e.printStackTrace(); // 【行】执行本行 Java 语句
         }
     }
 
-    /** 【F6-2·步骤1b】实例：superadmin 打开配置页，读取 system_config.json 当前规则 */
+    /** 【F6-2·系统配置】功能链实例：superadmin 把单次最长预约改为 4 小时 → 保存 → 写入 `system_config.json` → 下次预约立即按新规则校验。 本处职责：superadmin 打开配置页，读取 system_config.json 当前规则*/
     public Map<String, String> getSystemConfig(CurrentUser admin) {
         requireSuperAdmin(admin);
         return new HashMap<>(configMap);
     }
 
-    /** 【F6-2·步骤2b】实例：superadmin 保存预约/信用规则到 system_config.json */
+    /** 【F6-2·系统配置】功能链实例：superadmin 把单次最长预约改为 4 小时 → 保存 → 写入 `system_config.json` → 下次预约立即按新规则校验。 本处职责：superadmin 保存预约/信用规则到 system_config.json*/
     public void updateSystemConfig(CurrentUser admin, Map<String, String> newConfig) {
         requireSuperAdmin(admin);
         if (newConfig == null) return;
@@ -160,7 +160,7 @@ public class AppService {
         }
     }
 
-    /** 【F2-3·步骤2】实例：小李注册，待审核 + 初始信用 300 */
+    /** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：小李注册，待审核 + 初始信用 300*/
     public Map<String, Object> register(Map<String, Object> req) {
         String studentNo = text(req, "studentNo", "username");
         String password = text(req, "password");
@@ -181,7 +181,7 @@ public class AppService {
         return Map.of("registerId", userId, "auditStatus", AUDIT_PENDING);
     }
 
-    /** 【F2-1·步骤4】实例：小明登录，BCrypt 校验；待审核则 403 */
+    /** 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：小明登录，BCrypt 校验；待审核则 403*/
     public Map<String, Object> loginStudent(Map<String, Object> req) {
         String username = text(req, "username", "studentNo");
         String password = text(req, "password");
@@ -191,7 +191,7 @@ public class AppService {
         }
         String status = String.valueOf(account.get("status"));
         if (statusIs(status, ACCOUNT_PENDING, "PENDING")) {
-            // 【F2-3·步骤3】实例：小李未审核时登录，返回「注册资料待审核」
+            // 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：小李未审核时登录，返回「注册资料待审核」
             throw new BusinessException(403, "注册资料待审核，请耐心等待");
         }
         if (statusIs(status, ACCOUNT_DISABLED, "DISABLED")) {
@@ -206,7 +206,7 @@ public class AppService {
         return Map.of("token", jwtService.createToken(user), "userInfo", studentInfo(user));
     }
 
-    /** 【F2-2·步骤4】实例：admin 校验 admin_account 后签发 JWT */
+    /** 【F2-2·管理员登录】功能链实例：管理员切到「管理员登录」→ 输入 `admin` / `admin123` → 进入管理端签到页；`superadmin` 侧栏额外显示「设置」「管理员管理」。 本处职责：admin 校验 admin_account 后签发 JWT*/
     public Map<String, Object> loginAdmin(Map<String, Object> req) {
         String accountName = text(req, "account", "username");
         String password = text(req, "password");
@@ -280,7 +280,7 @@ public class AppService {
         return jdbc.queryForList("select * from seat where room_id=? order by row_no,col_no", roomId);
     }
 
-    /** 【F3-1·步骤3】实例：排除 reservation_slot 已占座位，返回 available/free */
+    /** 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：排除 reservation_slot 已占座位，返回 available/free*/
     public List<Map<String, Object>> availableSeats(Long roomId, String date, String start, String end) {
         LocalDate d = parseDate(date);
         LocalTime st = parseTime(start);
@@ -313,7 +313,7 @@ public class AppService {
     }
 
     /**
-     * 【F3-1·步骤5–8 / F7-1·步骤2】实例：多表写在同一 Spring 事务内，失败则回滚
+     * 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：多表写在同一 Spring 事务内，失败则回滚
      */
     @Transactional
     public Map<String, Object> createReservation(CurrentUser user, Map<String, Object> req) {
@@ -370,22 +370,22 @@ public class AppService {
         LocalDateTime now = LocalDateTime.now();
         String no = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
                 + String.format("%08d", Math.floorMod(System.currentTimeMillis(), 100_000_000L));
-        // 【F3-1·步骤6】实例：INSERT reservation，status=「待使用」
+        // 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：INSERT reservation，status=「待使用」
         jdbc.update("insert into reservation(reservation_no,user_id,room_id,seat_id,reserve_date,start_time,end_time,status,created_at,updated_at) values(?,?,?,?,?,?,?,?,?,?)",
                 no, user.id(), roomId, seatId, Date.valueOf(date), Time.valueOf(start), Time.valueOf(end), RES_PENDING, now, now);
         Long reservationId = jdbc.queryForObject("select id from reservation where reservation_no=?", Long.class, no);
         try {
-            // 【F3-1·步骤7】实例：按 10 分钟切 slot；唯一索引防 A-12 被双人占
+            // 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：按 10 分钟切 slot；唯一索引防 A-12 被双人占
             for (LocalDateTime slot : slots(date, start, end)) {
                 jdbc.update("insert into reservation_slot(reservation_id,seat_id,slot_start,slot_end,status) values(?,?,?,?,?)",
                         reservationId, seatId, slot, slot.plusMinutes(10), SLOT_ACTIVE);
             }
         } catch (DuplicateKeyException ex) {
-            // 【F7-1·步骤3】实例：uk_seat_slot 唯一冲突 → 409，无显式 FOR UPDATE
+            // 【F7-1·DB与Java分工】功能链实例：小明与小红同时抢 A-12 同一时段 → 第二个 INSERT `reservation_slot` 触发 `uk_seat_slot` 冲突 → 409；任一步失败则 `@Transactional` 整段回滚。 **MySQL 用… 本处职责：uk_seat_slot 唯一冲突 → 409，无显式 FOR UPDATE
             throw new BusinessException(409, "该座位当前时段已被预约");
         }
         notifyUser(user.id(), "预约成功", "你的座位预约已创建，请按时签到。", "预约", reservationId);
-        // 【F3-1·步骤8】实例：返回详情，前端跳转签到页
+        // 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：返回详情，前端跳转签到页
         return reservationDetail(reservationId);
     }
 
@@ -427,7 +427,7 @@ public class AppService {
         return row;
     }
 
-    /** 【F3-2·步骤2–3】实例：小明取消待使用预约，释放 slot 并扣 credit_cancel_penalty */
+    /** 【F3-2·取消预约】功能链实例：小明在「我的预约」取消一条「待使用」→ 状态「已取消」→ 信用 **−50**（`credit_cancel_penalty`）→ `reservation_slot` 释放。 本处职责：小明取消待使用预约，释放 slot 并扣 credit_cancel_penalty*/
     @Transactional
     public void cancelReservation(CurrentUser user, Long id) {
         Map<String, Object> r = reservationDetail(id);
@@ -481,7 +481,7 @@ public class AppService {
         return result;
     }
 
-    /** 【F4-2·步骤3】实例：小明签退，status→已完成，记录 actualMinutes */
+    /** 【F4-2·签退与信用】功能链实例：小明使用中点「签退」→ 确认 → 预约「已完成」→ 信用页看到签到 +5 流水与当前分数。 本处职责：小明签退，status→已完成，记录 actualMinutes*/
     @Transactional
     public Map<String, Object> checkout(CurrentUser user, Long id) {
         Map<String, Object> r = reservationDetail(id);
@@ -509,50 +509,56 @@ public class AppService {
         return Map.of("score", profile == null ? 0 : profile.get("credit_score"), "logs", logs);
     }
 
-    /** 【F5-1·步骤2c】实例：小明打开学习统计，按周/月汇总已完成预约学习时长 */
-    public Map<String, Object> myStudyDuration(CurrentUser user, String period) {
-        String normalized = period == null || period.isBlank() ? "week" : period;
+    /** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：myStudyDuration 按 statsDateWhereCondition 聚合 JDBC 并返回 series */
+    public Map<String, Object> myStudyDuration(CurrentUser user, String period, String rangeMode,
+                                             String startDate, String endDate) {
+        String normalized = period == null || period.isBlank() ? "week" : period.toLowerCase();
+        String mode = rangeMode == null || rangeMode.isBlank() ? "current" : rangeMode.toLowerCase();
+        ResolvedStatsRange range = resolveStatsRange(mode, startDate, endDate);
+        String dateWhere = statsDateWhereCondition(normalized, "reserve_date", mode, range);
         String minutesExpr = durationMinutesExpression("reservation");
+        String used = usedReservationPredicate("reservation");
         List<Map<String, Object>> rows;
-        if ("day".equalsIgnoreCase(normalized)) {
+        if ("year".equals(normalized) || ("month".equals(normalized) && isPastRange(mode))) {
+            // date_format 必须直接写在模板里用 %% 转义，不能经 %s 插入否则 MySQL 收到字面量 %Y-%m
+            rows = jdbc.queryForList("""
+                    select date_format(reserve_date,'%%Y-%%m') label, sum(%s) minutes
+                    from reservation
+                    where user_id=? and %s and %s
+                    group by date_format(reserve_date,'%%Y-%%m')
+                    order by date_format(reserve_date,'%%Y-%%m')
+                    """.formatted(minutesExpr, used, dateWhere), user.id());
+        } else if ("day".equals(normalized) && !isPastRange(mode)) {
             rows = jdbc.queryForList("""
                     select hour(sign_in_time) label, sum(%s) minutes
                     from reservation
-                    where user_id=? and %s
-                      and reserve_date=current_date()
+                    where user_id=? and %s and %s
                     group by hour(sign_in_time)
                     order by hour(sign_in_time)
-                    """.formatted(minutesExpr, usedReservationPredicate("reservation")), user.id());
-        } else if ("year".equalsIgnoreCase(normalized)) {
-            rows = jdbc.queryForList("""
-                    select date_format(reserve_date,'%Y-%m') label, sum(%s) minutes
-                    from reservation
-                    where user_id=? and %s
-                      and reserve_date >= date_sub(current_date(), interval 365 day)
-                    group by date_format(reserve_date,'%Y-%m')
-                    order by label
-                    """.formatted(minutesExpr, usedReservationPredicate("reservation")), user.id());
-        } else if ("month".equalsIgnoreCase(normalized)) {
+                    """.formatted(minutesExpr, used, dateWhere), user.id());
+        } else if ("month".equals(normalized)) {
             rows = jdbc.queryForList("""
                     select concat('第', floor((day(reserve_date)-1)/7)+1, '周') label, sum(%s) minutes
                     from reservation
-                    where user_id=? and %s
-                      and reserve_date between date_sub(current_date(), interval 29 day) and current_date()
+                    where user_id=? and %s and %s
                     group by floor((day(reserve_date)-1)/7)
                     order by floor((day(reserve_date)-1)/7)
-                    """.formatted(minutesExpr, usedReservationPredicate("reservation")), user.id());
+                    """.formatted(minutesExpr, used, dateWhere), user.id());
         } else {
-            int days = 7;
             rows = jdbc.queryForList("""
                     select reserve_date label, sum(%s) minutes
                     from reservation
-                    where user_id=? and %s
-                      and reserve_date between date_sub(current_date(), interval ? day) and current_date()
+                    where user_id=? and %s and %s
                     group by reserve_date
                     order by reserve_date
-                    """.formatted(minutesExpr, usedReservationPredicate("reservation")), user.id(), days - 1);
+                    """.formatted(minutesExpr, used, dateWhere), user.id());
         }
+
         int total = rows.stream().mapToInt(r -> intValue(r.get("minutes"))).sum();
+        int studyDayCount = jdbc.queryForObject("""
+                select count(distinct reserve_date) from reservation
+                where user_id=? and %s and %s
+                """.formatted(used, dateWhere), Integer.class, user.id());
         int reservationCount = jdbc.queryForObject("select count(*) from reservation where user_id=?", Integer.class, user.id());
         int checkinCount = jdbc.queryForObject("""
                 select count(*) from checkin_record where user_id=? and result in (?, 'ON_TIME')
@@ -560,8 +566,23 @@ public class AppService {
         int violationCount = jdbc.queryForObject("""
                 select count(*) from reservation where user_id=? and %s
                 """.formatted(violatedReservationPredicate("reservation")), Integer.class, user.id());
-        return Map.of("period", normalized, "totalMinutes", total, "series", rows,
-                "reservationCount", reservationCount, "checkinCount", checkinCount, "violationCount", violationCount);
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("period", normalized);
+        result.put("rangeMode", mode);
+        result.put("totalMinutes", total);
+        result.put("series", rows);
+        result.put("studyDayCount", studyDayCount);
+        result.put("reservationCount", reservationCount);
+        result.put("checkinCount", checkinCount);
+        result.put("violationCount", violationCount);
+        result.put("periodLabel", periodLabel(normalized, mode));
+        result.put("rangeWindowLabel", rangeWindowLabel(normalized, mode, range));
+        if (range != null) {
+            result.put("startDate", range.start().toString());
+            result.put("endDate", range.end().toString());
+        }
+        return result;
     }
 
     public List<Map<String, Object>> announcements() {
@@ -584,7 +605,7 @@ public class AppService {
         jdbc.update("update notification_message set read_flag=1,read_at=? where user_id=? and read_flag=0", LocalDateTime.now(), user.id());
     }
 
-    /** 【F5-3·步骤1b】实例：小明提交「A-12 椅子损坏」，写入 feedback_ticket */
+    /** 【F5-3·问题反馈】功能链实例：小明提交「A-12 椅子损坏」→ 管理员标记已处理。 本处职责：小明提交「A-12 椅子损坏」，写入 feedback_ticket*/
     public Map<String, Object> createFeedback(CurrentUser user, Map<String, Object> req) {
         LocalDateTime now = LocalDateTime.now();
         String severity = dbFeedbackSeverity(text(req, "severity", FEEDBACK_MEDIUM));
@@ -599,7 +620,7 @@ public class AppService {
         return jdbc.queryForList("select * from feedback_ticket where user_id=? order by created_at desc", user.id());
     }
 
-    /** 【F2-4·步骤1b】实例：小明/管理员改密，BCrypt 校验原密码后更新哈希 */
+    /** 【F2-4·账号资料与安全】功能链实例：小明在「我的 → 设置」改密码 → 成功后强制退出 → 用新密码再登录；或在个人资料里改学院/专业。 本处职责：小明/管理员改密，BCrypt 校验原密码后更新哈希*/
     public void changePassword(CurrentUser user, Map<String, Object> req) {
         String oldPassword = text(req, "oldPassword");
         String newPassword = text(req, "newPassword");
@@ -635,7 +656,7 @@ public class AppService {
         return Map.of("ok", true);
     }
 
-    /** 【F6-6·步骤2b】实例：签到页底部列出待签到/使用中预约（普管仅本室） */
+    /** 【F6-6·运营看板】功能链实例：管理员打开签到页 → 底部实时列表显示「待签到 / 使用中」预约；学生签到页轮询同步状态。 本处职责：签到页底部列出待签到/使用中预约（普管仅本室）*/
     public List<Map<String, Object>> liveReservations(CurrentUser admin) {
         String liveWhere = sqlWhereWithRoomScope(admin, "r", activeReservationPredicate("r"), null);
         String liveSql = sqlJoin("""
@@ -722,7 +743,7 @@ public class AppService {
         return text;
     }
 
-    /** 【F2-3·步骤4】实例：管理员通过小李注册，audit→已通过、账号→正常 */
+    /** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：管理员通过小李注册，audit→已通过、账号→正常*/
     public void auditUser(CurrentUser admin, Long id, boolean approve, String remark) {
         String audit = approve ? AUDIT_APPROVED : AUDIT_REJECTED;
         String status = approve ? ACCOUNT_NORMAL : ACCOUNT_DISABLED;
@@ -736,7 +757,7 @@ public class AppService {
         jdbc.update("update user_account set status=?,updated_at=? where id=?", dbAccountStatus(status), LocalDateTime.now(), id);
     }
 
-    /** 【F6-4·步骤2b】实例：保存自习室并同步 row×col 座位网格 */
+    /** 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：保存自习室并同步 row×col 座位网格*/
     @Transactional
     public Map<String, Object> saveRoom(CurrentUser admin, Long id, Map<String, Object> req) {
         boolean creating = id == null;
@@ -905,7 +926,7 @@ public class AppService {
         return jdbc.queryForList(reservationSql);
     }
 
-    /** 【F6-5·步骤2b】实例：管理员撤销违约，恢复信用并写 operation_log */
+    /** 【F6-5·预约监管】功能链实例：小明被标「已违约」→ 管理员在预约管理点「撤销违约」→ 信用分恢复。 本处职责：管理员撤销违约，恢复信用并写 operation_log*/
     @Transactional
     public Map<String, Object> revokeViolation(CurrentUser admin, Long reservationId, String remark) {
         Map<String, Object> r = reservationDetail(reservationId);
@@ -962,7 +983,7 @@ public class AppService {
     }
 
     /**
-     * 【F4-1·步骤5–7】实例：管理员输入小明学号，窗口±15min 内改「使用中」+5 分。
+     * 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：管理员输入小明学号，窗口±15min 内改「使用中」+5 分。
      */
     @Transactional
     public Map<String, Object> scanCheckin(CurrentUser admin, Map<String, Object> req) {
@@ -1015,7 +1036,7 @@ public class AppService {
             throw new BusinessException(404, "该学生当前没有待签到的预约");
         }
         Map<String, Object> room = room(num(r.get("room_id")));
-        // 【F4-1·步骤6】实例：普管 admin 只能签自己负责的自习室
+        // 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：普管 admin 只能签自己负责的自习室
         if (!admin.isSuperAdmin() && !Objects.equals(num(room.get("manager_id")), admin.id())) {
             throw new BusinessException(403, "无权限为该自习室签到，请使用 superadmin 或该自习室管理员账号");
         }
@@ -1027,7 +1048,7 @@ public class AppService {
         Long rid = num(r.get("id"));
         Long uid = num(r.get("user_id"));
         jdbc.update("delete from checkin_record where reservation_id=?", rid);
-        // 【F4-1·步骤7】实例：写 checkin_record，预约→使用中，信用+5
+        // 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：写 checkin_record，预约→使用中，信用+5
         jdbc.update("update reservation set status=?,sign_in_time=?,updated_at=? where id=?", RES_USING, now, now, rid);
         jdbc.update("insert into checkin_record(reservation_id,user_id,admin_id,checkin_method,checkin_time,result) values(?,?,?,?,?,?)",
                 rid, uid, admin.id(), checkinMethod, now, CHECKIN_ON_TIME);
@@ -1047,7 +1068,7 @@ public class AppService {
         return jdbc.queryForList(checkinSql);
     }
 
-    /** 【F5-2·步骤3】实例：管理员发布公告，小明首页公告卡片可见 */
+    /** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：管理员发布公告，小明首页公告卡片可见*/
     public Map<String, Object> saveAnnouncement(CurrentUser admin, Long id, Map<String, Object> req) {
         LocalDateTime now = LocalDateTime.now();
         if (id == null) {
@@ -1215,7 +1236,7 @@ public class AppService {
         return statisticsReport(admin, period, roomId, rangeMode, null, null);
     }
 
-    /** 【F6-1·步骤2b】实例：管理员统计页聚合使用率、高峰时段等报表数据 */
+    /** 【F6-1·统计与CSV】功能链实例：管理员打开统计页，切换当期/往期与报表类型，查看图表并导出 CSV 本处职责：管理员统计页聚合使用率、高峰时段等报表数据*/
     public Map<String, Object> statisticsReport(CurrentUser admin, String period, Long roomId, String rangeMode,
                                                 String startDate, String endDate) {
         String p = period == null || period.isBlank() ? "day" : period.toLowerCase();
@@ -1477,7 +1498,7 @@ public class AppService {
         return jdbc.queryForList(feedbackSql);
     }
 
-    /** 【F5-3·步骤2】实例：管理员将反馈标为已处理 */
+    /** 【F5-3·问题反馈】功能链实例：小明提交「A-12 椅子损坏」→ 管理员标记已处理。 本处职责：管理员将反馈标为已处理*/
     public void handleFeedback(CurrentUser admin, Long id, Map<String, Object> req) {
         Map<String, Object> ticket = one("select * from feedback_ticket where id=?", id);
         if (ticket == null) {
@@ -1497,7 +1518,7 @@ public class AppService {
         writeOperationLog(admin, "FEEDBACK", "HANDLE", "FEEDBACK", id, result);
     }
 
-    /** 【F2-4·步骤2b】实例：小明更新学院/专业等 student_profile 字段 */
+    /** 【F2-4·账号资料与安全】功能链实例：小明在「我的 → 设置」改密码 → 成功后强制退出 → 用新密码再登录；或在个人资料里改学院/专业。 本处职责：小明更新学院/专业等 student_profile 字段*/
     public Map<String, Object> updateProfile(CurrentUser user, Map<String, Object> req) {
         jdbc.update("""
                 update student_profile set name=?,gender=?,college=?,major=?,grade=?,phone=?,email=?,updated_at=?
@@ -1515,7 +1536,7 @@ public class AppService {
         return studentInfo(user);
     }
 
-    /** 【F6-7·步骤2b】实例：superadmin 查看安全与操作日志列表 */
+    /** 【F6-7·管理员与日志】功能链实例：superadmin 在「设置 → 操作日志」查看审核/改密等记录；在「管理员管理」新增普管账号。 本处职责：superadmin 查看安全与操作日志列表*/
     public List<Map<String, Object>> operationLogs(CurrentUser admin) {
         if (admin.isSuperAdmin()) {
             return jdbc.queryForList("select * from operation_log order by created_at desc limit 200");
@@ -1542,7 +1563,7 @@ public class AppService {
 
     /** 超级管理员：新增图书馆管理员账号 */
     @Transactional
-    /** 【F6-7·步骤2b】实例：superadmin 创建新管理员账号 */
+    /** 【F6-7·管理员与日志】功能链实例：superadmin 在「设置 → 操作日志」查看审核/改密等记录；在「管理员管理」新增普管账号。 本处职责：superadmin 创建新管理员账号*/
     public Map<String, Object> createAdminAccount(CurrentUser admin, Map<String, Object> req) {
         requireSuperAdmin(admin);
         String account = text(req, "account").trim();
@@ -1606,7 +1627,7 @@ public class AppService {
         }
     }
 
-    /** 【F4-3·步骤1】实例：纠正「使用中」但签到时间不在窗口的异常记录 */
+    /** 【F4-3·定时维护】功能链实例：小明约了 14:00 未到馆 → 14:15 后任务把单标「已违约」扣 50 分；若使用中过 `end_time` 未签退则自动签退。 本处职责：纠正「使用中」但签到时间不在窗口的异常记录*/
     public void scheduledProcessInvalidCheckin() {
         List<Map<String, Object>> rows = jdbc.queryForList("""
                 select id, user_id, reserve_date, start_time, end_time, sign_in_time
@@ -1620,7 +1641,7 @@ public class AppService {
         }
     }
 
-    /** 【F4-3·步骤2】实例：小明未在开始后 15min 内签到→已违约 -50 */
+    /** 【F4-3·定时维护】功能链实例：小明约了 14:00 未到馆 → 14:15 后任务把单标「已违约」扣 50 分；若使用中过 `end_time` 未签退则自动签退。 本处职责：小明未在开始后 15min 内签到→已违约 -50*/
     public void scheduledProcessNoShow() {
         LocalDateTime deadline = LocalDateTime.now().minusMinutes(15);
         List<Map<String, Object>> rows = jdbc.queryForList("""
@@ -1644,7 +1665,7 @@ public class AppService {
         }
     }
 
-    /** 【F4-3·步骤3】实例：使用中且过 end_time 自动签退→已完成 */
+    /** 【F4-3·定时维护】功能链实例：小明约了 14:00 未到馆 → 14:15 后任务把单标「已违约」扣 50 分；若使用中过 `end_time` 未签退则自动签退。 本处职责：使用中且过 end_time 自动签退→已完成*/
     public void scheduledProcessAutoCheckout() {
         List<Map<String, Object>> rows = jdbc.queryForList("""
                 select id,user_id,sign_in_time,reserve_date,end_time from reservation
@@ -1660,7 +1681,7 @@ public class AppService {
         }
     }
 
-    /** 【F4-3·步骤4】实例：黑名单期满，积分恢复至 10、账号正常 */
+    /** 【F4-3·定时维护】功能链实例：小明约了 14:00 未到馆 → 14:15 后任务把单标「已违约」扣 50 分；若使用中过 `end_time` 未签退则自动签退。 本处职责：黑名单期满，积分恢复至 10、账号正常*/
     public void scheduledProcessBlacklistRelease() {
         List<Map<String, Object>> rows = jdbc.queryForList("""
                 select user_id,id from blacklist_record where status in (?, 'ACTIVE') and end_time <= ?
@@ -1934,7 +1955,7 @@ public class AppService {
         jdbc.update("delete from reservation_slot where reservation_id=?", reservationId);
     }
 
-    /** 【F5-2·步骤3b】实例：小明预约成功后，写入 notification_message 站内通知 */
+    /** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：小明预约成功后，写入 notification_message 站内通知*/
     private void notifyUser(Long userId, String title, String content, String type, Long relatedId) {
         jdbc.update("insert into notification_message(user_id,title,content,type,related_id,created_at) values(?,?,?,?,?,?)",
                 userId, title, content, dbNotificationType(type), relatedId, LocalDateTime.now());

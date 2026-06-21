@@ -14,46 +14,46 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 【F1-2·REST API】实例：小明确认预约 POST /api/reservations 由此类接收并转发 Service
+ * 【F1-2·技术概念】功能链实例：小明点「确认预约」→ 浏览器用 **Vue** 发 **HTTP** **JSON** 到 **REST API** → **Controller** 转 **Service** 写 **MySQL** → 返回 **JSON** `… 本处职责：小明确认预约 POST /api/reservations 由此类接收并转发 Service
  * REST 接口层：全部 /api 路径入口。
  * 理解/答辩文档：docs/09-理解与讲解/01-项目理解指南.md · 02-答辩讲解手册.md
  */
 @RestController
 @RequestMapping("/api")
-public class AppController {
-    private final AppService app;
+public class AppController { // 【行】进入方法体或分支块
+    private final AppService app; // 【行】执行本行 Java 语句
 
-    public AppController(AppService app) {
-        this.app = app;
+    public AppController(AppService app) { // 【行】进入方法体或分支块
+        this.app = app; // 【行】执行本行 Java 语句
     }
 
     // —— 认证与账号：F2-3 / F2-1 / F2-2 ——
 
-    /** 【F2-3·步骤2】实例：小李 POST 注册，写入待审核账号与 credit=300 */
+    /** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：小李 POST 注册，写入待审核账号与 credit=300*/
     @PostMapping("/auth/register")
     public ApiResponse<Map<String, Object>> register(@RequestBody Map<String, Object> req) {
         return ApiResponse.ok(app.register(req));
     }
 
-    /** 【F2-1·步骤3】实例：小明 POST /auth/login，转发至 loginStudent */
+    /** 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：小明 POST /auth/login，转发至 loginStudent*/
     @PostMapping("/auth/login")
     public ApiResponse<Map<String, Object>> login(@RequestBody Map<String, Object> req) {
         return ApiResponse.ok(app.loginStudent(req));
     }
 
-    /** 【F2-2·步骤3】实例：admin 登录，转发至 loginAdmin */
+    /** 【F2-2·管理员登录】功能链实例：管理员切到「管理员登录」→ 输入 `admin` / `admin123` → 进入管理端签到页；`superadmin` 侧栏额外显示「设置」「管理员管理」。 本处职责：admin 登录，转发至 loginAdmin*/
     @PostMapping("/admin/auth/login")
     public ApiResponse<Map<String, Object>> adminLogin(@RequestBody Map<String, Object> req) {
         return ApiResponse.ok(app.loginAdmin(req));
     }
 
-    /** 【F2-1·步骤8b】实例：bootstrap 刷新后 GET /auth/me 恢复小明或 admin 会话信息 */
+    /** 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：bootstrap 刷新后 GET /auth/me 恢复小明或 admin 会话信息*/
     @GetMapping("/auth/me")
     public ApiResponse<Map<String, Object>> me(@AuthenticationPrincipal CurrentUser user) {
         return ApiResponse.ok(user.isStudent() ? app.studentInfo(user) : app.adminInfo(user));
     }
 
-    /** 【F2-4·步骤1】实例：小明改密码 POST /auth/change-password */
+    /** 【F2-4·账号资料与安全】功能链实例：小明在「我的 → 设置」改密码 → 成功后强制退出 → 用新密码再登录；或在个人资料里改学院/专业。 本处职责：小明改密码 POST /auth/change-password*/
     @PostMapping("/auth/change-password")
     public ApiResponse<Void> changePassword(@AuthenticationPrincipal CurrentUser user,
                                             @RequestBody Map<String, Object> req) {
@@ -66,7 +66,7 @@ public class AppController {
         return ApiResponse.ok(app.studentInfo(user));
     }
 
-    /** 【F2-4·步骤2】实例：小明 PUT /student/profile 更新资料 */
+    /** 【F2-4·账号资料与安全】功能链实例：小明在「我的 → 设置」改密码 → 成功后强制退出 → 用新密码再登录；或在个人资料里改学院/专业。 本处职责：小明 PUT /student/profile 更新资料*/
     @PutMapping("/student/profile")
     public ApiResponse<Map<String, Object>> updateProfile(@AuthenticationPrincipal CurrentUser user,
                                                            @RequestBody Map<String, Object> req) {
@@ -75,7 +75,7 @@ public class AppController {
 
     // —— 自习室与预约：F3-1 / F3-2 ——
 
-    /** 【F3-1·步骤1b】实例：小明打开预约页，GET /api/rooms 拉自习室列表 */
+    /** 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：小明打开预约页，GET /api/rooms 拉自习室列表*/
     @GetMapping("/rooms")
     public ApiResponse<List<Map<String, Object>>> rooms(@AuthenticationPrincipal CurrentUser user) {
         return ApiResponse.ok(app.rooms(user));
@@ -91,7 +91,7 @@ public class AppController {
         return ApiResponse.ok(app.seats(id));
     }
 
-    /** 【F3-1·步骤3】实例：小明选 14:00–16:00，查 A 自习室未被 slot 占用的绿色座位 */
+    /** 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：小明选 14:00–16:00，查 A 自习室未被 slot 占用的绿色座位*/
     @GetMapping("/seats/available")
     public ApiResponse<List<Map<String, Object>>> availableSeats(@RequestParam Long roomId,
                                                                   @RequestParam String date,
@@ -100,14 +100,14 @@ public class AppController {
         return ApiResponse.ok(app.availableSeats(roomId, date, startTime, endTime));
     }
 
-    /** 【F3-1·步骤4】实例：小明确认 A-12 后 POST，转发 createReservation */
+    /** 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：小明确认 A-12 后 POST，转发 createReservation*/
     @PostMapping("/reservations")
     public ApiResponse<Map<String, Object>> createReservation(@AuthenticationPrincipal CurrentUser user,
                                                                @RequestBody Map<String, Object> req) {
         return ApiResponse.ok(app.createReservation(user, req));
     }
 
-    /** 【F3-3·步骤2b】实例：小明「我的预约」GET /reservations/my */
+    /** 【F3-3·我的预约】功能链实例：小明在「我的 → 我的预约」按 Tab 筛「待使用」→ 看到刚约的 A-12；管理员签到后，签到页每 2 秒轮询同一接口，状态自动变「使用中」。 本处职责：小明「我的预约」GET /reservations/my*/
     @GetMapping("/reservations/my")
     public ApiResponse<List<Map<String, Object>>> myReservations(@AuthenticationPrincipal CurrentUser user,
                                                                   @RequestParam(required = false) String status,
@@ -120,7 +120,7 @@ public class AppController {
         return ApiResponse.ok(app.reservationDetail(id));
     }
 
-    /** 【F3-2·步骤1】实例：小明取消「待使用」预约，转发 cancelReservation */
+    /** 【F3-2·取消预约】功能链实例：小明在「我的预约」取消一条「待使用」→ 状态「已取消」→ 信用 **−50**（`credit_cancel_penalty`）→ `reservation_slot` 释放。 本处职责：小明取消「待使用」预约，转发 cancelReservation*/
     @PostMapping("/reservations/{id}/cancel")
     public ApiResponse<Void> cancel(@AuthenticationPrincipal CurrentUser user, @PathVariable Long id) {
         app.cancelReservation(user, id);
@@ -135,23 +135,26 @@ public class AppController {
         return ApiResponse.ok(app.qrCode(user));
     }
 
-    /** 【F4-2·步骤2】实例：小明 POST 签退，转发 checkout */
+    /** 【F4-2·签退与信用】功能链实例：小明使用中点「签退」→ 确认 → 预约「已完成」→ 信用页看到签到 +5 流水与当前分数。 本处职责：小明 POST 签退，转发 checkout*/
     @PostMapping("/reservations/{id}/checkout")
     public ApiResponse<Map<String, Object>> checkout(@AuthenticationPrincipal CurrentUser user, @PathVariable Long id) {
         return ApiResponse.ok(app.checkout(user, id));
     }
 
-    /** 【F4-2·步骤4】实例：小明签退后查 credit_log 流水与当前积分 */
+    /** 【F4-2·签退与信用】功能链实例：小明使用中点「签退」→ 确认 → 预约「已完成」→ 信用页看到签到 +5 流水与当前分数。 本处职责：小明签退后查 credit_log 流水与当前积分*/
     @GetMapping("/credits/my")
     public ApiResponse<Map<String, Object>> credit(@AuthenticationPrincipal CurrentUser user) {
         return ApiResponse.ok(app.credit(user));
     }
 
-    /** 【F5-1·步骤2b】实例：小明打开学习统计，GET 按周/月聚合学习时长 */
+    /** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：GET /statistics/my-study-duration 接收 period、rangeMode、起止日期并转发 Service */
     @GetMapping("/statistics/my-study-duration")
     public ApiResponse<Map<String, Object>> myStudyDuration(@AuthenticationPrincipal CurrentUser user,
-                                                             @RequestParam(required = false) String period) {
-        return ApiResponse.ok(app.myStudyDuration(user, period));
+                                                             @RequestParam(required = false) String period,
+                                                             @RequestParam(defaultValue = "current") String rangeMode,
+                                                             @RequestParam(required = false) String startDate,
+                                                             @RequestParam(required = false) String endDate) {
+        return ApiResponse.ok(app.myStudyDuration(user, period, rangeMode, startDate, endDate));
     }
 
     @GetMapping("/announcements")
@@ -198,7 +201,7 @@ public class AppController {
         return ApiResponse.ok(app.dashboard(user));
     }
 
-    /** 【F6-6·步骤2b】实例：签到页 GET /admin/live-reservations */
+    /** 【F6-6·运营看板】功能链实例：管理员打开签到页 → 底部实时列表显示「待签到 / 使用中」预约；学生签到页轮询同步状态。 本处职责：签到页 GET /admin/live-reservations*/
     @GetMapping("/admin/live-reservations")
     public ApiResponse<List<Map<String, Object>>> liveReservations(@AuthenticationPrincipal CurrentUser user) {
         return ApiResponse.ok(app.liveReservations(user));
@@ -232,7 +235,7 @@ public class AppController {
         return ApiResponse.ok(null);
     }
 
-    /** 【F6-3·步骤2b】实例：管理员拒绝注册 POST reject，auditUser(approve=false) */
+    /** 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：管理员拒绝注册 POST reject，auditUser(approve=false)*/
     @PostMapping("/admin/users/{id}/reject")
     public ApiResponse<Void> reject(@AuthenticationPrincipal CurrentUser admin, @PathVariable Long id,
                                     @RequestBody(required = false) Map<String, Object> req) {
@@ -240,7 +243,7 @@ public class AppController {
         return ApiResponse.ok(null);
     }
 
-    /** 【F6-3·步骤3b】实例：禁用学生账号 POST disable */
+    /** 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：禁用学生账号 POST disable*/
     @PostMapping("/admin/users/{id}/disable")
     public ApiResponse<Void> disable(@PathVariable Long id) {
         app.setUserStatus(id, "DISABLED");
@@ -315,7 +318,7 @@ public class AppController {
         return ApiResponse.ok(app.adminReservations(user));
     }
 
-    /** 【F6-5·步骤2b】实例：撤销违约 POST /admin/reservations/{id}/revoke-violation */
+    /** 【F6-5·预约监管】功能链实例：小明被标「已违约」→ 管理员在预约管理点「撤销违约」→ 信用分恢复。 本处职责：撤销违约 POST /admin/reservations/{id}/revoke-violation*/
     @PostMapping("/admin/reservations/{id}/revoke-violation")
     public ApiResponse<Map<String, Object>> revokeViolation(@AuthenticationPrincipal CurrentUser user,
                                                              @PathVariable Long id,
@@ -324,7 +327,7 @@ public class AppController {
         return ApiResponse.ok(app.revokeViolation(user, id, remark));
     }
 
-    /** 【F4-1·步骤4】实例：管理员扫小明学号，转发 scanCheckin */
+    /** 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：管理员扫小明学号，转发 scanCheckin*/
     @PostMapping("/admin/checkin/scan")
     public ApiResponse<Map<String, Object>> scan(@AuthenticationPrincipal CurrentUser user,
                                                   @RequestBody Map<String, Object> req) {
@@ -370,7 +373,7 @@ public class AppController {
         return ApiResponse.ok(app.statisticsUsage(user, period, roomId, rangeMode, startDate, endDate));
     }
 
-    /** 【F6-1·步骤2c】实例：管理员统计页切换「高峰分析」GET /admin/statistics/peak */
+    /** 【F6-1·统计与CSV】功能链实例：管理员打开统计页，切换当期/往期与报表类型，查看图表并导出 CSV 本处职责：管理员统计页切换「高峰分析」GET /admin/statistics/peak*/
     @GetMapping("/admin/statistics/peak")
     public ApiResponse<List<Map<String, Object>>> peak(@AuthenticationPrincipal CurrentUser user,
                                                         @RequestParam(defaultValue = "day") String period,
@@ -437,7 +440,7 @@ public class AppController {
         return ApiResponse.ok(null);
     }
 
-    /** 【F6-7·步骤2b】实例：superadmin GET /admin/operation-logs */
+    /** 【F6-7·管理员与日志】功能链实例：superadmin 在「设置 → 操作日志」查看审核/改密等记录；在「管理员管理」新增普管账号。 本处职责：superadmin GET /admin/operation-logs*/
     @GetMapping("/admin/operation-logs")
     public ApiResponse<List<Map<String, Object>>> operationLogs(@AuthenticationPrincipal CurrentUser user) {
         return ApiResponse.ok(app.operationLogs(user));

@@ -51,7 +51,7 @@
 
 | 方法 | 路径 | F 节 | 状态 | 说明 |
 |------|------|------|------|------|
-| GET | `/statistics/my-study-duration` | F5.1 | 主链 | ECharts 学习统计 |
+| GET | `/statistics/my-study-duration` | F5.1 | 主链 | 学习统计；`period` + `rangeMode` + 可选日期 |
 | GET | `/announcements` | F5.2 | 主链 | 首页公告卡片 |
 | POST | `/announcements/{id}/read` | F5.2 | 主链 | 公告已读 |
 | GET | `/notifications` | F5.2 | 主链 | 铃铛未读 |

@@ -112,48 +112,48 @@ CREATE TABLE `study_room` (
   CONSTRAINT `fk_study_room_manager` FOREIGN KEY (`manager_id`) REFERENCES `admin_account` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- 【F7-2·步骤2】实例：设施拆为 facility + study_room_facility 关联表
-CREATE TABLE `facility` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(20) NOT NULL,
-  `created_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- 【F7-2·第三版规范化】功能链实例：老师查库见 `status='待使用'`、设施在关联表、无 `temp_leave` 表 —— 第三版字典落地，验收 PASS=17。 | 要点 | 路径 Path · 行号跳转（Lx 含注释行） | | ------------- … 本处职责：设施拆为 facility + study_room_facility 关联表
+CREATE TABLE `facility` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `id` bigint NOT NULL AUTO_INCREMENT, // 【行】执行本行语句，推进功能链中的当前步骤
+  `name` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `created_at` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  PRIMARY KEY (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  UNIQUE KEY `name` (`name`) // 【行】执行本行语句，推进功能链中的当前步骤
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
-CREATE TABLE `study_room_facility` (
-  `room_id` bigint NOT NULL,
-  `facility_id` bigint NOT NULL,
-  PRIMARY KEY (`room_id`,`facility_id`),
-  KEY `idx_room_facility_facility` (`facility_id`),
-  CONSTRAINT `fk_room_facility_room` FOREIGN KEY (`room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_room_facility_facility` FOREIGN KEY (`facility_id`) REFERENCES `facility` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `study_room_facility` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `room_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `facility_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  PRIMARY KEY (`room_id`,`facility_id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_room_facility_facility` (`facility_id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_room_facility_room` FOREIGN KEY (`room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE, // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_room_facility_facility` FOREIGN KEY (`facility_id`) REFERENCES `facility` (`id`) // 【行】执行本行语句，推进功能链中的当前步骤
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
-CREATE TABLE `seat` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `room_id` bigint NOT NULL,
-  `seat_no` varchar(10) NOT NULL,
-  `row_no` int NOT NULL,
-  `col_no` int NOT NULL,
-  `is_seat` tinyint NOT NULL DEFAULT '1',
-  `cell_category` varchar(20) NOT NULL,
-  `seat_type` varchar(10) NOT NULL,
-  `has_power` tinyint NOT NULL DEFAULT '0',
-  `near_window` tinyint NOT NULL DEFAULT '0',
-  `quiet_zone` tinyint NOT NULL DEFAULT '0',
-  `hot_seat` tinyint NOT NULL DEFAULT '0',
-  `status` varchar(20) NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_room_seat` (`room_id`,`seat_no`),
-  KEY `idx_seat_room_status` (`room_id`,`status`),
-  KEY `idx_seat_feature` (`room_id`,`has_power`,`near_window`,`quiet_zone`),
-  CONSTRAINT `fk_seat_room` FOREIGN KEY (`room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=415 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `seat` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `id` bigint NOT NULL AUTO_INCREMENT, // 【行】执行本行语句，推进功能链中的当前步骤
+  `room_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `seat_no` varchar(10) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `row_no` int NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `col_no` int NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `is_seat` tinyint NOT NULL DEFAULT '1', // 【行】执行本行语句，推进功能链中的当前步骤
+  `cell_category` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `seat_type` varchar(10) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `has_power` tinyint NOT NULL DEFAULT '0', // 【行】执行本行语句，推进功能链中的当前步骤
+  `near_window` tinyint NOT NULL DEFAULT '0', // 【行】执行本行语句，推进功能链中的当前步骤
+  `quiet_zone` tinyint NOT NULL DEFAULT '0', // 【行】执行本行语句，推进功能链中的当前步骤
+  `hot_seat` tinyint NOT NULL DEFAULT '0', // 【行】执行本行语句，推进功能链中的当前步骤
+  `status` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `created_at` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `updated_at` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  PRIMARY KEY (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  UNIQUE KEY `uk_room_seat` (`room_id`,`seat_no`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_seat_room_status` (`room_id`,`status`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_seat_feature` (`room_id`,`has_power`,`near_window`,`quiet_zone`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_seat_room` FOREIGN KEY (`room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE // 【行】执行本行语句，推进功能链中的当前步骤
+) ENGINE=InnoDB AUTO_INCREMENT=415 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
--- 【F1-2·MySQL】实例：小明确认预约后 reservation 表多一行，status=待使用
+-- 【F1-2·技术概念】功能链实例：小明点「确认预约」→ 浏览器用 **Vue** 发 **HTTP** **JSON** 到 **REST API** → **Controller** 转 **Service** 写 **MySQL** → 返回 **JSON** `… 本处职责：小明确认预约后 reservation 表多一行，status=待使用
 CREATE TABLE `reservation` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `reservation_no` varchar(16) NOT NULL,
