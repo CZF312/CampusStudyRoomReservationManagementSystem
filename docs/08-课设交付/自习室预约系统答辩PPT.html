@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园自习室预约管理系统课程设计答辩PPT</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --accent: #00a3c4;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --bg-light: #f7fafc;
+            --card-bg: #ffffff;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans CJK SC", sans-serif;
+            background-color: #111;
+            color: var(--text-dark);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 1000px;
+            height: 562.5px; /* 16:9 aspect ratio */
+            background-color: var(--bg-light);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-deck {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: translateX(100px) scale(0.98);
+            transition: var(--transition);
+            pointer-events: none;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            padding: 40px;
+            background-color: var(--bg-light);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .slide.prev {
+            transform: translateX(-100px) scale(0.98);
+            opacity: 0;
+        }
+
+        /* Slide variations */
+        .slide-cover {
+            grid-template-columns: 1fr;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #fff;
+            position: relative;
+        }
+
+        .slide-cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(0,163,196,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* Slide typography */
+        .slide-title-wrapper {
+            margin-bottom: 25px;
+        }
+
+        .slide-num {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .slide-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .cover-title {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            background: linear-gradient(120deg, #ffffff, #93c5fd, #00a3c4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover-subtitle {
+            font-size: 18px;
+            color: #94a3b8;
+            margin-bottom: 50px;
+            font-weight: 400;
+        }
+
+        /* Layout Elements */
+        .content-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding-right: 20px;
+        }
+
+        .content-right {
+            position: relative;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.04);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Cards list */
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            padding: 14px 18px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px -1px rgba(0,0,0,0.04);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .card-desc {
+            font-size: 12.5px;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        /* Mockup screen */
+        .mockup-screen {
+            width: 100%;
+            height: 100%;
+            background-color: #f1f5f9;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mockup-header {
+            height: 20px;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            gap: 4px;
+        }
+
+        .mockup-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #94a3b8;
+        }
+
+        .mockup-body {
+            flex: 1;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .screenshot-placeholder {
+            width: 90%;
+            height: 80%;
+            border: 2px dashed #94a3b8;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255,255,255,0.7);
+        }
+
+        .placeholder-text {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .placeholder-hint {
+            font-size: 10px;
+            color: var(--text-light);
+        }
+
+        /* Navigation controls */
+        .nav-controls {
+            height: 45px;
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+        }
+
+        .author-tag {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            background-color: var(--accent);
+        }
+
+        .progress-dot-bar {
+            display: flex;
+            gap: 6px;
+        }
+
+        .progress-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            transition: var(--transition);
+        }
+
+        .progress-dot.active {
+            background-color: var(--accent);
+            width: 18px;
+            border-radius: 3px;
+        }
+
+        /* Cover metadata */
+        .cover-meta {
+            display: flex;
+            gap: 30px;
+            font-size: 13px;
+            color: #94a3b8;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+        }
+
+        /* Diagram shapes */
+        .db-diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .db-table-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 6px;
+        }
+
+        .db-table-name {
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 2px;
+            margin-bottom: 4px;
+        }
+
+        .db-table-column {
+            font-size: 8.5px;
+            color: #475569;
+            margin-bottom: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pk-icon {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .fk-icon {
+            color: #2563eb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+        <div class="slide-deck" id="deck">
+
+            <!-- SLIDE 1: COVER -->
+            <div class="slide slide-cover active">
+                <h1 class="cover-title">校园自习室预约管理系统</h1>
+                <p class="cover-subtitle">基于 Spring Boot + Vue 3 的精细化自习室数据库设计与实现</p>
+                <div class="cover-meta">
+                    <div>汇报人：软件工程 8 班</div>
+                    <div>专业：软件工程</div>
+                    <div>指导教师：评委老师</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: BACKGROUND -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">02 / Background & Objectives</span>
+                        <h2 class="slide-title">项目背景与系统定位</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">高校自习室“占座”痛点</div>
+                            <div class="card-desc">传统高校自习室恶意占座高发，导致有限的空间资源严重浪费。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">信用追踪体系缺失</div>
+                            <div class="card-desc">缺乏对爽约、早退等行为的自动化数据追踪，学生守约惩戒难落实。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">数据化决策支撑</div>
+                            <div class="card-desc">为管理层提供座位使用率分析、高峰段热度等动态报表辅助运营。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="screenshot-placeholder">
+                        <div class="placeholder-text">【业务需求漏斗图】</div>
+                        <div class="placeholder-hint">自习室预约 ➜ 签到校验 ➜ 信用奖惩</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: REQUIREMENTS -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">03 / Requirements & Flows</span>
+                        <h2 class="slide-title">需求分析与核心业务流程</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">三级权限角色隔离</div>
+                            <div class="card-desc">学生（注册与实名材料大图比对）| 普通管理员（现场核验）| 超级管理员（规则控制）。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">预约生命周期流转</div>
+                            <div class="card-desc">待使用 ➔ 使用中 ➔ 已完成 / 已违约（自动触发信用扣减与黑名单）。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="screenshot-placeholder">
+                        <div class="placeholder-text">【预约生命周期状态图】</div>
+                        <div class="placeholder-hint">使用 UML 状态机展现座位状态跃迁</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: ARCHITECTURE -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">04 / System Architecture</span>
+                        <h2 class="slide-title">系统架构与持久层技术选型</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">前后端分离 SPA 模式</div>
+                            <div class="card-desc">Vue 3 + Element Plus + Spring Boot 3.5 + Spring Security + JWT 鉴权保护。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">持久层决策：JdbcTemplate 替代 ORM</div>
+                            <div class="card-desc">弃用 JPA/Hibernate，由原生 SQL 与 JdbcTemplate 驱动，百分之百控制 SQL 执行效率，规避级联开销。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="screenshot-placeholder">
+                        <div class="placeholder-text">【三层技术架构图】</div>
+                        <div class="placeholder-hint">Vue3 表现层 ➜ SpringBoot 业务层 ➜ MySQL8 存储层</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: DATABASE 3NF -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">05 / DB Design - Normalization</span>
+                        <h2 class="slide-title">数据库设计：3NF 规约与多值解耦</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">消除多值：设施表独立</div>
+                            <div class="card-desc">将自习室 `facilities` 逗号多值字段拆为独立的 `facility` 表及 `study_room_facility` 关联表，防事务更新异常。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">消除传递依赖与冗余</div>
+                            <div class="card-desc">自习室移除了“座位总数”等可计算冗余字段，由 Seat 表关联动态 Count，实现第三范式。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="db-diagram">
+                        <div class="db-table-card">
+                            <div class="db-table-name">study_room</div>
+                            <div class="db-table-column"><span>id (PK)</span><span class="pk-icon">🔑</span></div>
+                            <div class="db-table-column">room_code</div>
+                            <div class="db-table-column">manager_id</div>
+                        </div>
+                        <div class="db-table-card">
+                            <div class="db-table-name">room_facility</div>
+                            <div class="db-table-column"><span>room_id (FK)</span><span class="fk-icon">🔗</span></div>
+                            <div class="db-table-column"><span>facility_id (FK)</span><span class="fk-icon">🔗</span></div>
+                        </div>
+                        <div class="db-table-card">
+                            <div class="db-table-name">facility</div>
+                            <div class="db-table-column"><span>id (PK)</span><span class="pk-icon">🔑</span></div>
+                            <div class="db-table-column">name</div>
+                        </div>
+                    </div>
+                    <div class="placeholder-hint" style="margin-top: 10px;">三范式解耦后的关联模型</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: DATABASE SLOTS -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">06 / DB Design - Conflict Prevention</span>
+                        <h2 class="slide-title">高精度防冲突：离散时间片设计</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">区间判断在高并发下的死锁痛点</div>
+                            <div class="card-desc">在预约主表上直接对时间区间 `Overlaps` 进行并发检查极难在行锁中得到保证。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">30分钟时间片打散：唯一性规约</div>
+                            <div class="card-desc">预订 9:00-11:00 会打碎为 4 个离散 `reservation_slot` 单元，在此表建立 `(seat_id, slot_start, status)` 联合唯一物理索引。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="screenshot-placeholder">
+                        <div class="placeholder-text">【联合唯一索引机制示意图】</div>
+                        <div class="placeholder-hint">并发请求时，通过 Unique Key 约束强制阻断冲突事务</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: BACKEND ENGINE -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">07 / Backend Service Engine</span>
+                        <h2 class="slide-title">后端核心控制与定时调度服务</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">资格链式校验</div>
+                            <div class="card-desc">实名正常状态校验 ➔ 信用分核算限制 ➔ 每日预约次数限制 ➔ 细粒度冲突锁表。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">ScheduledTaskService 每分钟自动流转</div>
+                            <div class="card-desc">15分钟未到扣信用50分并冻结黑名单 ➜ 到期自动签退释放座位 ➜ 黑名单过期解冻恢复信用。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="screenshot-placeholder">
+                        <div class="placeholder-text">【定时任务状态转移图】</div>
+                        <div class="placeholder-hint">违约扫描定时器 & 自动签离业务流</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: STUDENT APP -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">08 / Student App Features</span>
+                        <h2 class="slide-title">学生端功能清单与预约核心逻辑</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">网格可视化座位图交互</div>
+                            <div class="card-desc">自主筛选靠窗/电源/静音特征座位，直接在移动端点击网格实现一键待签预约。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">信用追踪与自习分析图表</div>
+                            <div class="card-desc">信用流水 Timeline 全透明，引入 ECharts 折线图深度展示学生周/月/年自习成长轨迹。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="mockup-screen">
+                        <div class="mockup-header">
+                            <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+                        </div>
+                        <div class="mockup-body">
+                            <div class="screenshot-placeholder">
+                                <div class="placeholder-text">【学生端座位网格预约界面截图】</div>
+                                <div class="placeholder-hint">请在此插入学生端网格选座与图表截图</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: ADMIN APP -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">09 / Admin Panel Features</span>
+                        <h2 class="slide-title">管理员端功能清单与报表动态导出</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">图形化座位网格维护</div>
+                            <div class="card-desc">管理员可实时在后台定义自习室行列规模、批量关闭故障座位。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">多维度联动报表导出（V3.1 亮点）</div>
+                            <div class="card-desc">导出报表联动图表参数。支持 6 种数据明细动态过滤导出，做到“所见即所得”。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="mockup-screen">
+                        <div class="mockup-header">
+                            <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+                        </div>
+                        <div class="mockup-body">
+                            <div class="screenshot-placeholder">
+                                <div class="placeholder-text">【管理员统计报表下拉导出截图】</div>
+                                <div class="placeholder-hint">请在此插入统计图表与动态报表导出菜单截图</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: SPECIAL CONFIG -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">10 / System Config & Logs</span>
+                        <h2 class="slide-title">特色设计：系统设置与操作审计日志</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">8 项全局参数持久化配置（V3.1 特性）</div>
+                            <div class="card-desc">违约额度、取消罚分等写入 `system_config.json`，超级管理员专属后台实时控制，免重新部署。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">管理员操作审计追踪</div>
+                            <div class="card-desc">对注册材料审核、违约撤销、账户禁用等重要改动记录审计，全程可溯源。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="mockup-screen">
+                        <div class="mockup-header">
+                            <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+                        </div>
+                        <div class="mockup-body">
+                            <div class="screenshot-placeholder">
+                                <div class="placeholder-text">【超级管理员配置双 Tab 截图】</div>
+                                <div class="placeholder-hint">请在此插入超级管理员设置页与操作审计列表截图</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: TESTING -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">11 / Validation & Tests</span>
+                        <h2 class="slide-title">系统测试与数据库约束自检</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">17 项完整性自检验收</div>
+                            <div class="card-desc">执行自研 `verify-v3-dictionary.ps1`，自动校验外键数（24个）、表结构、中文枚举以及空值约束。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">Maven 全链路单元测试</div>
+                            <div class="card-desc">包含预约锁表冲突测试、定时任务临界阀值测试，保证代码业务覆盖率。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="screenshot-placeholder">
+                        <div class="placeholder-text">【自动化测试通过控制台截图】</div>
+                        <div class="placeholder-hint">17/17 DB checks PASS & Maven test logs</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 12: CONCLUSION -->
+            <div class="slide">
+                <div class="content-left">
+                    <div class="slide-title-wrapper">
+                        <span class="slide-num">12 / Technology Summary</span>
+                        <h2 class="slide-title">关键技术总结与系统演进思考</h2>
+                    </div>
+                    <ul class="feature-list">
+                        <li class="feature-card">
+                            <div class="card-title">开发收获与反思</div>
+                            <div class="card-desc">深入实践了数据库 3NF 关系规约；以离散时间片联合索引完成了事务安全的冲突阻断。</div>
+                        </li>
+                        <li class="feature-card">
+                            <div class="card-title">后续高并发架构演进</div>
+                            <div class="card-desc">1. 引入 Redis 缓存分布式锁，拦截冗余库请求。<br>2. 引入 RabbitMQ 延时队列，实现毫秒级超期违约释放。</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="screenshot-placeholder">
+                        <div class="placeholder-text">【高并发演进系统拓扑图】</div>
+                        <div class="placeholder-hint">Redis Cache ➜ RabbitMQ Queue ➜ MySQL 8</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 13: END -->
+            <div class="slide slide-cover">
+                <h1 class="cover-title">谢谢观看，请老师批评指正！</h1>
+                <p class="cover-subtitle">校园自习室预约管理系统课程设计答辩</p>
+                <div class="progress-dot-bar" style="margin-top: 40px;">
+                    <span style="font-size: 14px; color: #94a3b8;">Q & A 环节</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Navigation bar -->
+        <div class="nav-controls">
+            <div class="author-tag">校园自习室预约管理系统答辩 - SCAU SE</div>
+            <div class="progress-dot-bar" id="dotBar"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="prevSlide()">◀ 上一页</button>
+                <button class="nav-btn" onclick="nextSlide()">下一页 ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dotBar = document.getElementById('dotBar');
+
+        // Create navigation dots dynamically
+        slides.forEach((slide, idx) => {
+            const dot = document.createElement('div');
+            dot.classList.add('progress-dot');
+            if (idx === 0) dot.classList.add('active');
+            dot.onclick = () => goToSlide(idx);
+            dotBar.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.progress-dot');
+
+        function updateDeck() {
+            slides.forEach((slide, idx) => {
+                slide.classList.remove('active', 'prev');
+                if (idx === currentSlide) {
+                    slide.classList.add('active');
+                } else if (idx < currentSlide) {
+                    slide.classList.add('prev');
+                }
+            });
+
+            dots.forEach((dot, idx) => {
+                dot.classList.remove('active');
+                if (idx === currentSlide) dot.classList.add('active');
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateDeck();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateDeck();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateDeck();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>

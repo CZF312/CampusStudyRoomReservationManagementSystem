@@ -1,0 +1,31 @@
+╔══════════════════════════════════════════════════════════════╗
+║  校园自习室预约管理系统 — 快速开始                            ║
+╚══════════════════════════════════════════════════════════════╝
+
+【环境要求】
+  JDK 21 或更高版本
+  MySQL 8.x（服务已启动，mysql 命令在 PATH 中）
+
+【三步启动】
+  1. 解压完整发布包，进入含 pom.xml 的目录
+  2. 双击 start.bat（或 start.vbs / start.cmd）
+  3. 按提示输入本机 MySQL root 密码
+
+【自动完成的操作】
+  ✓ 检测 Java / MySQL 环境
+  ✓ 生成本地配置文件 application-local.properties
+  ✓ 清空旧库 study_room_reservation 并导入 database-full.sql
+  ✓ 校验数据库结构与演示数据（17 项自动检查）
+  ✓ 启动后端服务（窗口标题 CSRRMS-Backend，请勿关闭）
+  ✓ 打开浏览器 http://localhost:8080
+
+【演示账号】
+  学生    202225220101 / 123456
+  管理员  admin / admin123
+
+【常见问题】
+  MySQL 连接失败 → 确认 root 密码正确，cmd 执行 mysql -u root -p 测试
+  8080 被占用     → 关闭占用进程或结束旧的 CSRRMS-Backend 窗口
+  页面无数据      → 重新运行 start.bat（每次启动会重新导入标准数据）
+
+详细说明见 INSTALL.md、DIRECTORY.md

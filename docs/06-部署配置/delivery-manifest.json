@@ -1,0 +1,20 @@
+{
+  "product": "Campus Study Room Reservation Management System",
+  "version": "3.0.0",
+  "generatedAt": "2026-05-29",
+  "quickStart": "QUICKSTART.txt",
+  "launcherBat": "start.bat",
+  "launcherPs1": "scripts/start-system.ps1",
+  "installGuide": "INSTALL.md",
+  "directoryGuide": "DIRECTORY.md",
+  "database": {
+    "fullSql": "docs/06-部署配置/database-full.sql",
+    "schemaSql": "docs/06-部署配置/schema.sql",
+    "dataSql": "docs/06-部署配置/data.sql",
+    "initSql": "docs/06-部署配置/init-local-database.sql"
+  },
+  "demoAccounts": {
+    "student": "202225220101 / 123456",
+    "admin": "admin / admin123"
+  }
+}

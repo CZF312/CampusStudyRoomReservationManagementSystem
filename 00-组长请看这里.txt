@@ -1,0 +1,28 @@
+╔══════════════════════════════════════════════════════════════╗
+║  校园自习室预约系统 · 验收/部署 · 从这里开始                  ║
+╚══════════════════════════════════════════════════════════════╝
+
+【推荐启动方式】
+
+  双击项目根目录下的：  start.bat  （或 start.vbs）
+
+  按提示输入本机 MySQL root 密码，等待浏览器打开 http://localhost:8080
+
+【自动完成的操作】
+  ✓ 检测 Java / MySQL
+  ✓ 写入 application-local.properties（本机专用，不入 Git）
+  ✓ 清空旧库并导入 database-full.sql
+  ✓ 17 项数据库验收
+  ✓ 启动后端（窗口 CSRRMS-Backend，请勿关闭）
+
+【演示账号（系统登录，不是 MySQL 密码）】
+  学生    202225220101 / 123456
+  管理员  admin / admin123
+  超管    superadmin / super123
+
+【环境要求】JDK 21+、MySQL 8（服务已启动，mysql 在 PATH）
+
+【旧版入口兼容】
+  组长一键启动.bat / .vbs 已自动跳转到同一套启动脚本，与 start.bat 等价。
+
+【详细说明】QUICKSTART.txt、INSTALL.md、DIRECTORY.md

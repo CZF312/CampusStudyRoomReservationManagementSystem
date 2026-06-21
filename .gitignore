@@ -1,0 +1,53 @@
+HELP.md
+target/
+*.docx~
+~$*
+.m2-home/
+.m2-repo/
+.tools/
+*.zip
+*.log
+backups/
+frontend/node_modules/
+uploads/*
+!uploads/README.md
+!uploads/material/
+!uploads/material/**
+!uploads/layout/
+!uploads/layout/**
+!uploads/common/
+!uploads/common/**
+application-local.properties
+application-shared.properties
+SHARED_DATABASE.txt
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/

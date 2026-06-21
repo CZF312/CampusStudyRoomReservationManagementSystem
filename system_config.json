@@ -1,0 +1,10 @@
+{
+  "reservation_advance_days" : "7",
+  "credit_blocked_threshold" : "0",
+  "credit_violation_penalty" : "-50",
+  "reservation_limit_daily" : "3",
+  "blacklist_days" : "7",
+  "credit_cancel_penalty" : "-50",
+  "credit_checkin_reward" : "5",
+  "reservation_limit_duration" : "4"
+}
