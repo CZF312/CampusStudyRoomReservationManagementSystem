@@ -13,9 +13,14 @@
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+_SCRIPTS = ROOT / "scripts"
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+from principle_enrich import enrich_detail as enrich_detail_sections, enrich_concepts  # noqa: E402
 DOC = ROOT / "docs" / "09-理解与讲解" / "01-项目理解指南.md"
 
 OLD_LABELS = re.compile(
@@ -362,16 +367,113 @@ SYMBOL_DETAIL: dict[str, dict[str, str]] = {
     },
 }
 
-# F1.2 八卡概念专用
+# F1.2 八卡概念专用（零基础详尽五段；段间 <br><br>，段内 <br> 分条）
 CONCEPT_CARDS: dict[str, str] = {
-    "Browser 浏览器": "**① 相关概念**：浏览器负责渲染 HTML/CSS/JS，通过 HTTP 访问服务器。**② 链路与职责**：用户双击 start.bat 后访问 `http://localhost:8080`，Spring Boot 返回 `static/index.html`，Vue 挂载到 `#app`。**③ 底层实现**：`index.html` 引入 Vite 打包的 `assets/index-*.js`；同源端口无需 CORS 配前端 dev server。**④ 设计取舍**：前后端同 jar 部署，答辩只需开一个 8080。**⑤ 答辩要点**：问端口？答 8080，静态+`/api` 同一 Tomcat。",
-    "Vue 单页框架": "**① 相关概念**：Vue3 响应式 UI，`ref/computed` 驱动 DOM。**② 链路与职责**：`studentPage`/`adminPage` 字符串切换子视图，URL 不变。**③ 底层实现**：全站单文件 `App.vue`；`studentPage='stats'` 等 v-if 模板；Element Plus 组件库。**④ 设计取舍**：课设规模单文件可维护，避免过度拆包。**⑤ 答辩要点**：问为何不用 Vue Router？答：子页面少，字符串路由足够且链接简单。",
-    "HTTP 请求": "**① 相关概念**：HTTP 方法 GET/POST/PUT/DELETE；Header 携带 Content-Type 与 Authorization。**② 链路与职责**：`call(method,path,body,{params})` 封装 axios。**③ 底层实现**：baseURL `/api`；JWT 从 localStorage 读入 Bearer；code≠200 时 ElMessage 报错。**④ 设计取舍**：统一 call 减少重复拦截器代码。**⑤ 答辩要点**：问 API 前缀？答 `/api`，context-path 在 application.properties。",
-    "JSON 数据格式": "**① 相关概念**：JSON 键值对序列化；Java 用 Jackson 自动映射 DTO。**② 链路与职责**：请求体 `{studentId,password}`；响应 `{code:200,data:{token,...}}`。**③ 底层实现**：`ApiResponse<T>` 字段 code/message/data；前端只解构 data。**④ 设计取舍**：统一包装便于前端判错。**⑤ 答辩要点**：问成功标志？答 code=200，不是 HTTP 204。",
-    "REST API": "**① 相关概念**：资源名词 URL + HTTP 动词表达操作。**② 链路与职责**：如 POST `/api/reservations` 创建预约。**③ 底层实现**：`AppController` 类级 `@RequestMapping(\"/api\")`；方法级 `@PostMapping`。**④ 设计取舍**：Controller 薄、Service 厚。**⑤ 答辩要点**：问 REST 吗？答 是，资源风格 URL+动词，非严格 HATEOAS。",
-    "Service 业务层": "**① 相关概念**：业务规则、事务边界、JDBC 访问。**② 链路与职责**：Controller 只转发，Service 写 SQL 与校验。**③ 底层实现**：`AppService` 大类含 60+ 方法；`JdbcTemplate`；中文 status 枚举。**④ 设计取舍**：未用 JPA，因报表动态 SQL 多（见 F7.1）。**⑤ 答辩要点**：问为何 JDBC？答 统计/导出 SQL 灵活、答辩可指具体 SQL 字符串。",
-    "MySQL 数据库": "**① 相关概念**：InnoDB 表、外键、索引、视图。**② 链路与职责**：持久化 16 张业务表。**③ 底层实现**：`reservation` 等 DDL 见 schema.sql L156+；启动导入 database-full.sql。**④ 设计取舍**：第三版中文枚举直接存 VARCHAR，便于答辩肉读。**⑤ 答辩要点**：问几表？答 16 业务表+1 视图 v_room_daily_usage。",
-    "JWT 令牌": "**① 相关概念**：Header.Payload.Signature；无服务端 Session。**② 链路与职责**：登录签发，之后每请求带 Bearer。**③ 底层实现**：`JwtAuthFilter.doFilterInternal` 解析；`JwtService.createToken` HS256 签名；claims 含 userId、role。**④ 设计取舍**：SPA 友好，水平扩展不需 Session 粘滞。**⑤ 答辩要点**：问怎么 logout？答 前端删 token；服务端无黑名单时 token 到期前仍有效。",
+    "Browser 浏览器": (
+        "**① 相关概念**：**浏览器**=Chrome/Edge 等看网页的程序；**HTTP**=浏览器向服务器「要页面/要数据」的协议；**localhost:8080**=本机 Spring Boot 地址。<br>"
+        "**本行符号**：浏览器是整个系统的「入口」，用户所有操作从这里开始。<br><br>"
+        "**② 链路与职责**：【本节一条龙】小明点确认预约 → 浏览器发 HTTP → 后端写库 → 浏览器显示结果。<br>"
+        "【零基础·你能看到的层】双击 start.bat 后访问 `http://localhost:8080`，Tomcat 返回 `index.html`，再加载 JS，Vue 画出登录页。<br>"
+        "**本行在链中的位置**：没有浏览器就没有「用户」；F1.2 八卡第一环。<br>"
+        "**输入**：用户打开 URL。**输出**：渲染页面。**失败时**：8080 未启动则无法访问。<br><br>"
+        "**③ 底层实现**：**怎么读代码**：静态资源在 `src/main/resources/static/`；`/` 映射到 index.html。<br>"
+        "**技术细节**：Vite 打包的 `assets/index-*.js` 含整个 Vue；与 `/api` 同源无需 CORS。<br><br>"
+        "**④ 设计取舍**：**为何同端口 8080**：答辩只开一个端口；clone 后无需 Node 也能跑预构建 static。<br>"
+        "**若不这样做**：前后端 dev 需 5173+8080 两端口，答辩易忘开前端。<br><br>"
+        "**⑤ 答辩要点**：问：怎么访问？答：浏览器打开 8080。<br>"
+        "问：为什么要浏览器？答：Web 系统，所有交互经 HTTP，浏览器是客户端。"
+    ),
+    "Vue 单页框架": (
+        "**① 相关概念**：**Vue**=数据 ref 变则页面自动变；**SPA**=切换子页不整页刷新；**ref/computed**=响应式变量。<br>"
+        "**本行符号**：Vue 管「页面长什么样、点按钮调哪个函数」。<br><br>"
+        "**② 链路与职责**：点确认预约 → Vue 收集 form → call() POST → 改列表展示。<br>"
+        "【零基础·表现层】`studentPage='reservation'` 显示选座；`'home'` 显示首页，URL 仍是 `/`。<br>"
+        "**输入**：点击与表单。**输出**：改 ref 或发 HTTP。**失败时**：ElMessage 提示。<br><br>"
+        "**③ 底层实现**：读 `frontend/src/App.vue`；搜 studentPage 看子页切换；Element Plus 组件库。<br>"
+        "**技术细节**：Vue3 Composition API；课设用字符串路由未上 Vue Router。<br><br>"
+        "**④ 设计取舍**：**为何单文件 App.vue**：子页有限，答辩找代码快；字符串路由比 Router 配置直观。<br>"
+        "**若不这样做**：多文件跳转讲解预约链路过散。<br><br>"
+        "**⑤ 答辩要点**：问：为何叫单页？答：只加载一次 HTML，之后 Vue 改 DOM。<br>"
+        "问：Vue 与后端分工？答：Vue 管界面；算信用写库在后端。"
+    ),
+    "HTTP 请求": (
+        "**① 相关概念**：**GET**=取数据；**POST**=提交；**Header**=如 Authorization Bearer token；**axios**=发 HTTP 的库。<br>"
+        "**本行符号**：HTTP 是浏览器与 Spring Boot 的对话语言。<br><br>"
+        "**② 链路与职责**：call('post','/reservations') → Tomcat → Controller → Service → JSON 响应。<br>"
+        "【零基础·表现层】Network 面板可见 `/api/...`；body.code=200 为业务成功。<br>"
+        "**输入**：method、path、body、JWT。**输出**：JSON。**失败时**：401/403 或 message 中文错误。<br><br>"
+        "**③ 底层实现**：App.vue 搜 function call；baseURL `/api`；自动加 Bearer。<br>"
+        "**技术细节**：Content-Type application/json；Spring @RequestBody 转 DTO。<br><br>"
+        "**④ 设计取舍**：**为何封装 call()**：统一 token、统一解析 code、统一 toast。<br>"
+        "**若不这样做**：漏 JWT 会已登录仍 401。<br><br>"
+        "**⑤ 答辩要点**：问：API 前缀？答 `/api`，例 `http://localhost:8080/api/auth/login`。<br>"
+        "问：GET vs POST？答：GET 查，POST 改状态/创建。"
+    ),
+    "JSON 数据格式": (
+        "**① 相关概念**：**JSON**=`{\"键\":值}` 文本；**DTO**=传输结构；**Jackson**=Java 自动转 JSON。<br>"
+        "**本行符号**：前后端只通过 JSON 交换数据。<br><br>"
+        "**② 链路与职责**：登录 body 含 studentId/password → 响应 `{code:200,data:{token}}`。<br>"
+        "【零基础·表现层】前端 res.data 即 ApiResponse 的 data 字段。<br>"
+        "**输入**：JS 对象。**输出**：JSON 字符串。**失败时**：message 中文（如待审核）。<br><br>"
+        "**③ 底层实现**：Java `ApiResponse.java`；Controller return ApiResponse.ok(...)。<br>"
+        "**技术细节**：camelCase 字段名；中文 status 为字符串。<br><br>"
+        "**④ 设计取舍**：**为何统一包装**：前端只判 code===200；message 人类可读。<br>"
+        "**若不这样做**：各接口返回形态不一，前端难维护。<br><br>"
+        "**⑤ 答辩要点**：问：成功标志？答：JSON 的 code=200，非仅 HTTP 200。<br>"
+        "问：密码会回传吗？答：不会，仅 token 与摘要。"
+    ),
+    "REST API": (
+        "**① 相关概念**：**REST**=URL 表资源、HTTP 动词表操作；如 POST /reservations 创建。<br>"
+        "**本行符号**：REST 是本系统 URL 设计原则。<br><br>"
+        "**② 链路与职责**：GET 查、POST 建/改状态；管理员路径带 /admin/。<br>"
+        "【零基础·接口层】AppController `@RequestMapping(\"/api\")` + 方法级 @PostMapping。<br>"
+        "**输入**：路径/query/body。**输出**：ApiResponse JSON。<br><br>"
+        "**③ 底层实现**：AppController.java 搜 @PostMapping；方法常一行 return service.xxx()。<br>"
+        "**技术细节**：/auth/login 白名单免 JWT。<br><br>"
+        "**④ 设计取舍**：**Controller 极薄**：证明有接口；规则在 Service。<br>"
+        "**若不这样做**：Controller 写 SQL 定时任务无法复用。<br><br>"
+        "**⑤ 答辩要点**：问：是 REST 吗？答：资源风格 URL+动词，课设级足够。<br>"
+        "问：取消为何 POST 非 DELETE？答：课设统一 POST 改状态，与 call 封装一致。"
+    ),
+    "Service 业务层": (
+        "**① 相关概念**：**Service**=业务规则；**JdbcTemplate**=执行 SQL；**BusinessException**=业务失败中文提示。<br>"
+        "**本行符号**：Service 决定「能不能预约、扣多少分」。<br><br>"
+        "**② 链路与职责**：Controller 调 service.createReservation → 校验 → INSERT 表 → notifyUser。<br>"
+        "【零基础·业务层】「能不能做」必须在这里，不在 Vue。<br>"
+        "**输入**：userId、seatId 等。**输出**：DTO/void + 库变更。**失败时**：throw BusinessException。<br><br>"
+        "**③ 底层实现**：AppService.java 按方法名搜；SQL 用 ? 占位防注入。<br>"
+        "**技术细节**：credit_log 流水；中文 status。<br><br>"
+        "**④ 设计取舍**：**为何 JDBC 非 JPA**：动态报表 SQL 多，答辩可指字符串（F7.1）。<br>"
+        "**若不这样做**：复杂统计难讲清 SQL。<br><br>"
+        "**⑤ 答辩要点**：问：SQL 在哪？答：AppService 对应方法或 GitHub【行】注释旁。<br>"
+        "问：定时任务也用 Service？答：是，F4.3 与 Controller 共用规则。"
+    ),
+    "MySQL 数据库": (
+        "**① 相关概念**：**表**=数据集合；**行**=一条记录；**外键**=引用完整性；**InnoDB**=事务引擎。<br>"
+        "**本行符号**：MySQL 持久化全部业务数据。<br><br>"
+        "**② 链路与职责**：Service 执行 SQL → MySQL 存取 → 映射 Java 对象。<br>"
+        "【零基础·数据层】start.bat 导入 database-full.sql，库名 study_room_reservation。<br>"
+        "**输入**：SQL+参数。**输出**：结果集/影响行数。**失败时**：唯一键冲突等转 BusinessException。<br><br>"
+        "**③ 底层实现**：schema.sql 看 DDL；database-full.sql 看演示数据。<br>"
+        "**技术细节**：16 表；reservation+reservation_slot 防双占。<br><br>"
+        "**④ 设计取舍**：**中文 status**：SQL 结果答辩可直接读（F7.2）。<br>"
+        "**若不这样做**：英文 ENUM 答辩易口误。<br><br>"
+        "**⑤ 答辩要点**：问：几表？答：16 业务表 + 1 验收视图。<br>"
+        "问：数据从哪来？答：start.bat 导入 + DatabaseInitializer 补丁。"
+    ),
+    "JWT 令牌": (
+        "**① 相关概念**：**JWT**=三段 Base64；**Bearer**=Authorization Header；**无 Session**=服务端不存会话表。<br>"
+        "**本行符号**：JWT 是登录后的通行证。<br><br>"
+        "**② 链路与职责**：login → createToken → localStorage → 每请求 Bearer → Filter 解析 userId。<br>"
+        "【零基础·配置层】除登录外 `/api/**` 先过 JwtAuthFilter。<br>"
+        "**输入**：userId/role。**输出**：token 串。**失败时**：401 清 token 回登录。<br><br>"
+        "**③ 底层实现**：JwtService 签发/解析；JwtAuthFilter；jwt.secret 在 properties。<br>"
+        "**技术细节**：HS256；payload 无密码；默认 24h 过期。<br><br>"
+        "**④ 设计取舍**：**JWT 非 Session**：SPA 友好、Tomcat 无状态。<br>"
+        "**若不这样做**：Session 需 sticky/Redis，答辩配置重。<br><br>"
+        "**⑤ 答辩要点**：问：token 存哪？答：localStorage。<br>"
+        "问：logout？答：前端删 token；无黑名单则到期前仍有效。"
+    ),
 }
 
 
@@ -387,15 +489,17 @@ def strip_old_principle(text: str) -> str:
 
 
 def extract_symbol(locate: str) -> str:
-    """优先取定位列中第一对反引号内的函数/模块名（不含文件扩展名）。"""
-    for m in re.finditer(r"`([^`]+)`", locate):
-        inner = m.group(1).strip()
-        if re.search(r"\.(vue|java|ps1|bat|sql|css|html|js)$", inner, re.I):
+    """优先取定位列中第一对反引号内的函数/模块/脚本名。"""
+    ticks = [m.group(1).strip() for m in re.finditer(r"`([^`]+)`", locate)]
+    for inner in ticks:
+        if re.search(r"\.(vue|java|sql|css|html|js)$", inner, re.I):
             continue
         if "/" in inner:
             inner = inner.split("/")[-1]
         if inner.lower() not in ("vue", "java", "js", "css"):
             return inner
+    if ticks:
+        return ticks[0].split("/")[-1]
     parts = [p.strip() for p in locate.split("·")]
     for p in parts:
         if "`" in p or "[" in p or "http" in p or not p:
@@ -403,8 +507,7 @@ def extract_symbol(locate: str) -> str:
         if "frontend/" in p or "controller/" in p or "service/" in p:
             continue
         return p.strip()[:36]
-    ticks = re.findall(r"`([^`]+)`", locate)
-    return ticks[0].split("/")[-1] if ticks else "本行"
+    return "本行"
 
 
 def extract_path(locate: str) -> str:
@@ -715,19 +818,35 @@ def infer_detail(
             "profile": "updateProfile",
         }.get(sym, symbol)
         return {
-            "chain": f"「{story_snip}」→ 前端 call `{route}`（Bearer JWT）→ `{symbol}` 绑定参数/CurrentUser → `return ApiResponse.ok(service.{svc}(...))`。",
-            "impl": f"{lr}：`@RestController`；无 SQL；鉴权由 JwtAuthFilter 前置完成。",
-            "design": "HTTP 适配与业务分离；答辩指本行「一行 return service」即可。",
-            "qa": f"问：`{symbol}` 有多厚？答：仅路由+转发，业务在 AppService 同名字符串 SQL 处。",
+            "chain": (
+                f"浏览器已带 JWT 发 HTTP 到 `{route}` → 进入 `{symbol}` 方法 → "
+                f"Spring 自动把 JSON/query 绑成 Java 参数 → 调用 `service.{svc}(...)` → "
+                f"把 Service 返回值包进 ApiResponse 写回浏览器。"
+            ),
+            "impl": (
+                f"{lr}：`@RestController` 类；本方法 `@GetMapping`/`@PostMapping` 等注解即 URL 路径；"
+                f"方法体通常仅 `return ApiResponse.ok(service.{svc}(...))`，不含 SQL；"
+                f"当前用户从 `@AuthenticationPrincipal` 或 SecurityContext 取 userId。"
+            ),
+            "design": "Controller 像「前台接待」：只懂 HTTP，不懂预约规则；所有 if/else 与 SQL 在 Service，定时任务也能调同一 Service。",
+            "qa": f"问：`{symbol}` 有多厚？答：答辩可指行号证明几乎只有一行 return service；问：会做鉴权吗？答：JwtAuthFilter 在进 Controller 前已完成，本方法只取已解析的 userId。",
         }
     if "Service" in layer or "业务" in layer:
         tables = SECTION_GLOSSARY.get(f_code, "").split("、")[0:3]
-        table_hint = "、".join(tables) if tables else "user_account/reservation 等"
+        table_hint = "、".join(tables) if tables else "user_account/reservation/checkin_record 等"
         return {
-            "chain": f"「{story_snip}」→ `{symbol}`：JdbcTemplate 参数化 SQL + 业务校验（BusinessException 中文 message）+ 必要时写 credit_log/notifyUser。",
-            "impl": f"{lr}：`AppService.{symbol}`；涉及表 {table_hint}；status 枚举与 schema.sql 第三版中文 CHECK 一致。",
-            "design": "规则集中 Service，Controller 与 @Scheduled 复用，避免双份逻辑。",
-            "qa": f"问：为何不用 JPA？答：动态报表 SQL 多，JDBC 便于答辩展示 SQL 字符串（F7.1）。",
+            "chain": (
+                f"Controller 把参数传入 `{symbol}` → 本方法先业务校验（状态对不对、是不是本人、信用够不够）→ "
+                f"通过则 JdbcTemplate 执行 INSERT/UPDATE/SELECT → 必要时写 credit_log 或 notifyUser → "
+                f"返回 Map/DTO 给 Controller。"
+            ),
+            "impl": (
+                f"{lr}：`AppService.{symbol}` 内 SQL 字符串 + `jdbcTemplate.query/update`；"
+                f"常见表 {table_hint}；status 字段值必须与 schema.sql 第三版中文 CHECK 一致；"
+                f"失败 `throw new BusinessException(\"中文原因\")`，不会返回 half-done 数据。"
+            ),
+            "design": "业务规则只写一份在 Service：Controller、@Scheduled、导出 CSV 都调这里，改规则不会漏改某一层。",
+            "qa": f"问：为何不用 JPA？答：F6.1/F5.1 动态 SQL 多，JDBC 字符串答辩时可逐行指；问：`{symbol}` 会事务回滚吗？答：关键写操作在 Spring @Transactional 边界内（见方法注解）。",
         }
     if "表现" in layer or "Presentation" in layer:
         verb = "GET" if sym.startswith("load") or sym.startswith("fetch") else "POST/PUT"
@@ -735,10 +854,18 @@ def infer_detail(
         if sym.startswith("load"):
             path_guess = path_guess.replace("GET ", "")
         return {
-            "chain": f"「{story_snip}」→ `{symbol}`：改 ref/弹窗 → `call('{verb.lower()}', '{path_guess}')` → 更新 UI；不直连 MySQL。",
-            "impl": f"{lr}：`App.vue` 中 async 函数或模板 `@click`；JWT 由 call() 从 localStorage 注入 Authorization。",
-            "design": "表现层只交互与展示，权威数据与计算在后端 Service。",
-            "qa": f"问：前端为何不算信用/时长？答：`{symbol}` 只发 HTTP，分数与 status 以 API 响应为准。",
+            "chain": (
+                f"用户操作（点击/切换 Tab/提交表单）触发 `{symbol}` → 改 Vue ref（如 loading=true）→ "
+                f"`await call('{verb.lower()}', '{path_guess}', ...)` 发 HTTP → "
+                f"收到 JSON 后写入 ref/computed → 模板自动刷新 DOM；全程不直连 MySQL。"
+            ),
+            "impl": (
+                f"{lr}：`App.vue` 中 async function 或模板 `@click`/`@change`；"
+                f"`call()` 从 localStorage 取 token 加 Authorization Bearer；"
+                f"成功取 res.data，失败 notify/ElMessage 显示后端 message；块首 `【Fx-y】` 讲整体，块内 `【行】` 逐行。"
+            ),
+            "design": "前端是「遥控器」：只发请求和展示；信用、时长、status 权威值以后端为准，避免换浏览器结果不一致。",
+            "qa": f"问：为何 `{symbol}` 不算信用/时长？答：安全与一致性；分数在 user_account，由 Service 改，前端只 GET 展示。",
         }
     if "配置" in layer or "Config" in layer:
         return {
@@ -864,6 +991,11 @@ def build_principle(
 
     if not detail:
         detail = infer_detail(f_code, story, layer, symbol, locate)
+
+    detail = enrich_detail_sections(
+        f_code, story, layer, symbol, locate, path, detail, line_ref, ROUTE_HINT
+    )
+    concepts = enrich_concepts(concepts, symbol, layer)
 
     chain = detail["chain"]
     impl = detail["impl"]
