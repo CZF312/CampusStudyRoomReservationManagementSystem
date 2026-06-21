@@ -29,5 +29,5 @@
 
 【理解与讲解文档（GitHub 在线阅读，支持页内 F 跳转 + 点代码行）】
   入口：https://github.com/CZF312/CampusStudyRoomReservationManagementSystem/blob/master/docs/09-理解与讲解/00-文档导航.md
-  理解指南（F1–F8）：…/01-项目理解指南.md  （例：…/01-项目理解指南.md#f3-1 跳到「查座预约」）
+  理解指南（F1–F8）：…/01-项目理解指南.md  （例：…/01-项目理解指南.md#user-content-f3-1 跳到「查座预约」）
   答辩手册：…/02-答辩讲解手册.md

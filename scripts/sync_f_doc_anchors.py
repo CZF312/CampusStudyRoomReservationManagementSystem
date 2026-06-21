@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-为 01/02 理解讲解 md 注入页内锚点。
+为 01/02 理解讲解 md 注入页内锚点，并把页内链接改为 GitHub 可跳转格式。
 
-采用「标题行内嵌」格式，Cursor/VS Code 预览最稳定：
+GitHub 渲染会把 HTML id="f1-2" 变成 id="user-content-f1-2"，
+因此目录链接须写 #user-content-f1-2（Cursor/VS Code 预览同样可用）。
+
+标题行内嵌：
   ## <a id="f1"></a>F1 入门基础
 
-勿在正文说明里写 id="f3-1" 字面量，否则会干扰检测。
+发布前必跑（改 md 后）：
+  python scripts/sync_f_doc_anchors.py
 """
 import re
 from pathlib import Path
@@ -14,7 +18,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DOC_DIR = ROOT / "docs" / "09-理解与讲解"
 
-# (标题行前缀正则, anchor id) — 用 ^ 锚定行首，允许标题后还有括号等文字
 ANCHOR_RULES = [
     (r"^## 功能架构目录（根）", "toc"),
     (r"^## F1 入门基础", "f1"),
@@ -55,11 +58,38 @@ ANCHOR_RULES = [
     (r"^### 演示前检查清单", "f8-checklist"),
 ]
 
+F_FRAGMENT = re.compile(
+    r"^(?:user-content-)?(toc|f\d+(?:-\d+)?|f8-qa|f8-checklist)$"
+)
 ANCHOR_TAG = re.compile(r'<a id="[^"]+"></a>')
+LINK_FRAGMENT = re.compile(r"\]\((#[^)]+)\)")
+
+
+def gh_fragment(raw: str) -> str:
+    """#f1-2 或 #user-content-f1-2 → #user-content-f1-2"""
+    frag = raw.lstrip("#")
+    m = F_FRAGMENT.match(frag)
+    if not m:
+        return raw
+    return f"#user-content-{m.group(1)}"
+
+
+def githubify_links(text: str) -> str:
+    """同页 #f 链接改为 GitHub 兼容的 #user-content-f。"""
+
+    def repl(m: re.Match[str]) -> str:
+        return f"]({gh_fragment(m.group(1))})"
+
+    # 先处理 01-项目理解指南.md#f3-1 形式
+    text = re.sub(
+        r"\]\(([^)#]+\.md)(#[^)]+)\)",
+        lambda m: f"]({m.group(1)}{gh_fragment(m.group(2))})",
+        text,
+    )
+    return LINK_FRAGMENT.sub(repl, text)
 
 
 def inject_inline_anchors(text: str) -> tuple[str, int]:
-    """去掉旧锚点标签，在匹配标题行首插入内嵌锚点。"""
     lines = text.splitlines()
     out: list[str] = []
     count = 0
@@ -68,7 +98,6 @@ def inject_inline_anchors(text: str) -> tuple[str, int]:
         matched = False
         for pattern, aid in ANCHOR_RULES:
             if re.match(pattern, stripped):
-                # 保留原标题文字（去掉可能已有的锚点后）
                 title = ANCHOR_TAG.sub("", line).lstrip()
                 if not title.startswith("#"):
                     title = stripped
@@ -83,15 +112,21 @@ def inject_inline_anchors(text: str) -> tuple[str, int]:
 
 def process(path: Path) -> None:
     text = path.read_text(encoding="utf-8")
-    new_text, n = inject_inline_anchors(text)
-    if new_text != text:
-        path.write_text(new_text, encoding="utf-8")
-    print(f"{path.name}: {n} heading anchors")
+    text, n = inject_inline_anchors(text)
+    text = githubify_links(text)
+    path.write_text(text, encoding="utf-8")
+    print(f"{path.name}: {n} heading anchors, links githubified")
 
 
 def main() -> None:
-    process(DOC_DIR / "01-项目理解指南.md")
-    process(DOC_DIR / "02-答辩讲解手册.md")
+    for name in (
+        "00-文档导航.md",
+        "01-项目理解指南.md",
+        "02-答辩讲解手册.md",
+    ):
+        p = DOC_DIR / name
+        if p.exists():
+            process(p)
 
 
 if __name__ == "__main__":
