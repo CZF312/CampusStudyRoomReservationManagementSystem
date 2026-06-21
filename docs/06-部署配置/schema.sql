@@ -154,107 +154,107 @@ CREATE TABLE `seat` ( // 【行】执行本行语句，推进功能链中的当�
 ) ENGINE=InnoDB AUTO_INCREMENT=415 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
 -- 【F1-2·技术概念】功能链实例：小明点「确认预约」→ 浏览器用 **Vue** 发 **HTTP** **JSON** 到 **REST API** → **Controller** 转 **Service** 写 **MySQL** → 返回 **JSON** `… 本处职责：小明确认预约后 reservation 表多一行，status=待使用
-CREATE TABLE `reservation` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `reservation_no` varchar(16) NOT NULL,
-  `user_id` bigint NOT NULL,
-  `room_id` bigint NOT NULL,
-  `seat_id` bigint NOT NULL,
-  `reserve_date` date NOT NULL,
-  `start_time` time NOT NULL,
-  `end_time` time NOT NULL,
-  `status` varchar(20) NOT NULL,
-  `sign_in_time` datetime DEFAULT NULL,
-  `sign_out_time` datetime DEFAULT NULL,
-  `cancel_reason` varchar(200) DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `reservation_no` (`reservation_no`),
-  KEY `idx_res_user_date` (`user_id`,`reserve_date`),
-  KEY `idx_res_room_date` (`room_id`,`reserve_date`),
-  KEY `idx_res_seat_date` (`seat_id`,`reserve_date`),
-  KEY `idx_res_status` (`status`),
-  CONSTRAINT `fk_reservation_user` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`id`),
-  CONSTRAINT `fk_reservation_room` FOREIGN KEY (`room_id`) REFERENCES `study_room` (`id`),
-  CONSTRAINT `fk_reservation_seat` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1851 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `reservation` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `id` bigint NOT NULL AUTO_INCREMENT, // 【行】执行本行语句，推进功能链中的当前步骤
+  `reservation_no` varchar(16) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `user_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `room_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `seat_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `reserve_date` date NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `start_time` time NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `end_time` time NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `status` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `sign_in_time` datetime DEFAULT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `sign_out_time` datetime DEFAULT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `cancel_reason` varchar(200) DEFAULT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `created_at` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `updated_at` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  PRIMARY KEY (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  UNIQUE KEY `reservation_no` (`reservation_no`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_res_user_date` (`user_id`,`reserve_date`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_res_room_date` (`room_id`,`reserve_date`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_res_seat_date` (`seat_id`,`reserve_date`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_res_status` (`status`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_reservation_user` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_reservation_room` FOREIGN KEY (`room_id`) REFERENCES `study_room` (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_reservation_seat` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`) // 【行】执行本行语句，推进功能链中的当前步骤
+) ENGINE=InnoDB AUTO_INCREMENT=1851 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
-CREATE TABLE `reservation_slot` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `reservation_id` bigint NOT NULL,
-  `seat_id` bigint NOT NULL,
-  `slot_start` datetime NOT NULL,
-  `slot_end` datetime NOT NULL,
-  `status` varchar(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_seat_slot` (`seat_id`,`slot_start`), -- 【F7-1】并发防双占：同座同 10 分钟片仅一条
-  KEY `idx_slot_reservation` (`reservation_id`),
-  CONSTRAINT `fk_slot_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_slot_seat` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20380 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `reservation_slot` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `id` bigint NOT NULL AUTO_INCREMENT, // 【行】执行本行语句，推进功能链中的当前步骤
+  `reservation_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `seat_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `slot_start` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `slot_end` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `status` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  PRIMARY KEY (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  UNIQUE KEY `uk_seat_slot` (`seat_id`,`slot_start`), -- 【F7-1】并发防双占：同座同 10 分钟片仅一条 // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_slot_reservation` (`reservation_id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_slot_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE, // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_slot_seat` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`) // 【行】执行本行语句，推进功能链中的当前步骤
+) ENGINE=InnoDB AUTO_INCREMENT=20380 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
-CREATE TABLE `checkin_record` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `reservation_id` bigint NOT NULL,
-  `user_id` bigint NOT NULL,
-  `admin_id` bigint NOT NULL,
-  `checkin_method` varchar(20) NOT NULL,
-  `checkin_time` datetime NOT NULL,
-  `checkout_time` datetime DEFAULT NULL,
-  `result` varchar(20) NOT NULL,
-  `remark` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `reservation_id` (`reservation_id`),
-  KEY `idx_checkin_admin_time` (`admin_id`,`checkin_time`),
-  KEY `idx_checkin_user_time` (`user_id`,`checkin_time`),
-  CONSTRAINT `fk_checkin_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_checkin_user` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`id`),
-  CONSTRAINT `fk_checkin_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin_account` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1562 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `checkin_record` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `id` bigint NOT NULL AUTO_INCREMENT, // 【行】执行本行语句，推进功能链中的当前步骤
+  `reservation_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `user_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `admin_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `checkin_method` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `checkin_time` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `checkout_time` datetime DEFAULT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `result` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `remark` varchar(200) DEFAULT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  PRIMARY KEY (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  UNIQUE KEY `reservation_id` (`reservation_id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_checkin_admin_time` (`admin_id`,`checkin_time`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_checkin_user_time` (`user_id`,`checkin_time`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_checkin_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE, // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_checkin_user` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_checkin_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin_account` (`id`) // 【行】执行本行语句，推进功能链中的当前步骤
+) ENGINE=InnoDB AUTO_INCREMENT=1562 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
-CREATE TABLE `credit_log` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
-  `before_score` int NOT NULL,
-  `change_value` int NOT NULL,
-  `after_score` int NOT NULL,
-  `change_type` varchar(30) NOT NULL,
-  `reason` varchar(100) NOT NULL,
-  `reservation_id` bigint DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_credit_user_time` (`user_id`,`created_at`),
-  KEY `idx_credit_type` (`change_type`),
-  KEY `idx_credit_reservation` (`reservation_id`),
-  CONSTRAINT `fk_credit_user` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`id`),
-  CONSTRAINT `fk_credit_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=451 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `credit_log` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `id` bigint NOT NULL AUTO_INCREMENT, // 【行】执行本行语句，推进功能链中的当前步骤
+  `user_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `before_score` int NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `change_value` int NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `after_score` int NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `change_type` varchar(30) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `reason` varchar(100) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `reservation_id` bigint DEFAULT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `created_at` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  PRIMARY KEY (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_credit_user_time` (`user_id`,`created_at`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_credit_type` (`change_type`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_credit_reservation` (`reservation_id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_credit_user` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_credit_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) // 【行】执行本行语句，推进功能链中的当前步骤
+) ENGINE=InnoDB AUTO_INCREMENT=451 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
-CREATE TABLE `blacklist_record` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint NOT NULL,
-  `start_time` datetime NOT NULL,
-  `end_time` datetime NOT NULL,
-  `reason` varchar(200) NOT NULL,
-  `status` varchar(20) NOT NULL,
-  `released_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_blacklist_user_status` (`user_id`,`status`),
-  KEY `idx_blacklist_end_status` (`end_time`,`status`),
-  CONSTRAINT `fk_blacklist_user` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `blacklist_record` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `id` bigint NOT NULL AUTO_INCREMENT, // 【行】执行本行语句，推进功能链中的当前步骤
+  `user_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `start_time` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `end_time` datetime NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `reason` varchar(200) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `status` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `released_at` datetime DEFAULT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  PRIMARY KEY (`id`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_blacklist_user_status` (`user_id`,`status`), // 【行】执行本行语句，推进功能链中的当前步骤
+  KEY `idx_blacklist_end_status` (`end_time`,`status`), // 【行】执行本行语句，推进功能链中的当前步骤
+  CONSTRAINT `fk_blacklist_user` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`id`) // 【行】执行本行语句，推进功能链中的当前步骤
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; // 【行】执行本行语句，推进功能链中的当前步骤
 
-CREATE TABLE `announcement` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `title` varchar(100) NOT NULL,
-  `content` text NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `pinned` tinyint NOT NULL DEFAULT '0',
-  `scope` varchar(20) NOT NULL,
-  `room_id` bigint DEFAULT NULL,
-  `publisher_id` bigint NOT NULL,
-  `status` varchar(20) NOT NULL,
+CREATE TABLE `announcement` ( // 【行】执行本行语句，推进功能链中的当前步骤
+  `id` bigint NOT NULL AUTO_INCREMENT, // 【行】执行本行语句，推进功能链中的当前步骤
+  `title` varchar(100) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `content` text NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `type` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `pinned` tinyint NOT NULL DEFAULT '0', // 【行】执行本行语句，推进功能链中的当前步骤
+  `scope` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `room_id` bigint DEFAULT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `publisher_id` bigint NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
+  `status` varchar(20) NOT NULL, // 【行】执行本行语句，推进功能链中的当前步骤
   `published_at` datetime DEFAULT NULL,
   `view_count` int NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL,

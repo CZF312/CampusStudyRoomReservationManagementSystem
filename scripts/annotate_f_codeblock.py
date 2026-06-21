@@ -54,8 +54,17 @@ def describe_js_line(stripped: str) -> str | None:
         (r"normalizeStudyStatsDateRange\(\)", "保证开始日期不晚于结束日期"),
         (r"await call\(", "带 JWT 调用后端 REST API"),
         (r"\.value = await call", "把接口 JSON 写入 Vue 响应式 ref"),
-        (r"^async function ", None),
-        (r"^function ", None),
+        (r"^const maxStudyBarValue = computed", "柱图纵轴上限：取 studyBars 最大值与 1 的较大者，避免全 0 时除零"),
+        (r"^const studyAdvice = computed", "根据日报/周期总时长生成中文学习建议文案"),
+        (r"^function syncStudyStatsDateRangeFromSummary", "API 返回 summary 时回写起止日期（仅往期且用户未手动改过）"),
+        (r"^function onStudyStatsStartDateChange", "开始日期变更：纠正逆序后标记 touched 并重新拉数"),
+        (r"^function onStudyStatsEndDateChange", "结束日期变更：纠正逆序后标记 touched 并重新拉数"),
+        (r"^function resetStudyStatsDateRange", "清空往期起止日期并恢复默认统计窗"),
+        (r"^function applyStudyStatsShortcut", "快捷区间按钮：写入起止 ref 并 loadStudyStats"),
+        (r"^const adminProfileInitial = computed", "管理员头像首字母：取姓名或账号首字符"),
+        (r"^const adminNav = computed", "侧栏菜单：超管额外含设置与管理员管理"),
+        (r"^const managerOptions = computed", "筛选可分配自习室的普通管理员列表"),
+        (r"^const decoratedAdminAccounts = computed", "管理员表格行：附加 roleLabel/statusLabel 展示字段"),
     ]
     for pat, hint in pairs:
         if hint and re.search(pat, stripped):
@@ -104,6 +113,9 @@ def describe_vue_template_line(stripped: str) -> str | None:
         return None
     if LINE_MARK.search(stripped):
         return None
+    # 多行组件起始行（尚无 > 或 />）不在行内插注释，避免破坏标签结构
+    if re.match(r"<\w+[^>]*$", stripped) or (stripped.startswith("<") and "<!--" not in stripped and ">" not in stripped and "/>" not in stripped):
+        return None
     if "el-date-picker" in stripped:
         return "Element Plus 日期选择器：独立单月历，避免 daterange 双面板重叠"
     if "studyStatsRangeMode" in stripped:
@@ -148,6 +160,18 @@ def append_comment(line: str, hint: str, lang: str) -> str:
 
 
 def find_block_end(lines: list[str], start: int, lang: str) -> int:
+    if lang == "vue_template":
+        for i in range(start, min(start + 150, len(lines))):
+            if F_HEADER.search(lines[i]):
+                return i - 1
+            if lines[i].strip().startswith("</template>"):
+                return i
+        return min(start + 100, len(lines) - 1)
+    if lang == "js":
+        for i in range(start, min(start + 150, len(lines))):
+            if F_HEADER.search(lines[i]):
+                return i - 1
+        return min(start + 100, len(lines) - 1)
     if lang == "java":
         depth = 0
         started = False
@@ -158,24 +182,7 @@ def find_block_end(lines: list[str], start: int, lang: str) -> int:
             if started and depth <= 0 and i > start:
                 return i
         return min(start + 80, len(lines) - 1)
-    if lang == "js":
-        depth = 0
-        started = False
-        for i in range(start, len(lines)):
-            s = lines[i].strip()
-            depth += s.count("{") - s.count("}")
-            if "{" in s or s.startswith("function") or s.startswith("async function"):
-                started = True
-            if started and depth <= 0 and i > start:
-                return i
-        return min(start + 60, len(lines) - 1)
-    # vue template: until next major section comment or blank + non-template
-    end = start
-    for i in range(start, min(start + 80, len(lines))):
-        if i > start and F_HEADER.search(lines[i]) and "【行】" not in lines[i]:
-            return i - 1
-        end = i
-    return end
+    return min(start + 60, len(lines) - 1)
 
 
 def process_file(path: Path, dry_run: bool) -> int:
@@ -202,9 +209,7 @@ def process_file(path: Path, dry_run: bool) -> int:
             "java" if path.suffix == ".java" else "js"))
         )
         block_start = i + 1
-        block_end = find_block_end(lines, block_start, lang if lang != "vue_template" else "js")
-        if lang == "vue_template":
-            block_end = find_block_end(lines, block_start, "js")
+        block_end = find_block_end(lines, block_start, lang)
         for j in range(block_start, block_end + 1):
             stripped = lines[j].strip()
             if not stripped:

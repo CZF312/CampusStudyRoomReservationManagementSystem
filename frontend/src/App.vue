@@ -9,22 +9,22 @@
       <div class="login-logo-box">🎓</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
       <div class="login-title">校园自习室预约系统</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
       <div class="login-subtitle">{{ loginRole === 'student' ? 'Campus Study Room Reservation' : 'Study Room Admin Console' }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
-      <div class="login-card">
-        <div class="field">
-          <label>学号</label>
-          <input v-model="studentLogin.username" class="input" placeholder="请输入学号" autocomplete="username" />
-        </div>
-        <div class="field">
-          <label>密码</label>
-          <input v-model="studentLogin.password" class="input" type="password" placeholder="请输入密码" autocomplete="current-password" />
-        </div>
-        <button type="button" class="btn btn-primary btn-block" :disabled="authLoading" @click="loginStudent">{{ authLoading ? '登录中…' : '登录' }}</button>
-        <div class="login-links">
-          <button type="button" @click="forgetPassword">忘记密码？</button>
-          <button type="button" @click="openRegister">注册账号 →</button>
-        </div>
-        <button type="button" class="btn btn-outline btn-block" @click="loginRole = 'admin'">🔧 切换管理员登录</button>
-      </div>
+      <div class="login-card"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+        <div class="field"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          <label>学号</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <input v-model="studentLogin.username" class="input" placeholder="请输入学号" autocomplete="username" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+        </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+        <div class="field"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          <label>密码</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <input v-model="studentLogin.password" class="input" type="password" placeholder="请输入密码" autocomplete="current-password" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+        </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+        <button type="button" class="btn btn-primary btn-block" :disabled="authLoading" @click="loginStudent">{{ authLoading ? '登录中…' : '登录' }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+        <div class="login-links"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          <button type="button" @click="forgetPassword">忘记密码？</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          <button type="button" @click="openRegister">注册账号 →</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+        </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+        <button type="button" class="btn btn-outline btn-block" @click="loginRole = 'admin'">🔧 切换管理员登录</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+      </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
       </template>
       <div v-else class="admin-login-card">
         <h2 class="modal-title">管理员登录</h2>
@@ -62,38 +62,38 @@
           <div class="announce-row"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             <article class="announce-card" v-for="a in sortedAnnouncements.slice(0, 4)" :key="a.id" @click="readAnnouncement(a)"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               <div class="announce-tag">📌 {{ a.pinned ? '系统通知' : (a.type || '公告') }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
-              <strong>{{ a.title }}</strong>
-              <p>{{ formatDate(a.published_at || a.created_at) }}</p>
-            </article>
-          </div>
-          <h2 class="section-title">📅 今日预约</h2>
-          <article class="card" v-if="todayReservation">
-            <div class="today-head">
-              <strong>📌 今日预约</strong>
-              <span class="status" :class="todayReservation.status">{{ statusText(todayReservation.status) }}</span>
-            </div>
-            <div class="today-grid">
-              <div class="label">自习室</div><div class="value">{{ todayReservation.roomName }}</div>
-              <div class="label">座位</div><div class="value">{{ todayReservation.seatNo }}</div>
-              <div class="label">时段</div><div class="value">{{ timeRangeText(todayReservation) }}</div>
-            </div>
-          </article>
-          <div v-else class="card empty muted">今日暂无预约，可前往预约页选择座位。</div>
-          <h2 class="section-title">🏠 推荐自习室</h2>
-          <div class="recommend-list">
-            <article class="recommend-item" v-for="r in rooms" :key="r.id" @click="selectRoom(r.id)">
-              <div class="recommend-icon">🏫</div>
-              <div>
-                <strong>{{ r.name }}</strong>
-                <p class="muted">{{ r.location }} · 普通</p>
-              </div>
-              <div class="recommend-badge">余{{ r.availableSeats }}座</div>
-            </article>
-          </div>
-          <div class="hero-banner">
-            <h4>💡 学习小贴士</h4>
-            <p>番茄工作法：每学习 25 分钟休息 5 分钟，建议预约 2-3 小时提高效率。</p>
-          </div>
+              <strong>{{ a.title }}</strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <p>{{ formatDate(a.published_at || a.created_at) }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </article> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <h2 class="section-title">📅 今日预约</h2> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <article class="card" v-if="todayReservation"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="today-head"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <strong>📌 今日预约</strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <span class="status" :class="todayReservation.status">{{ statusText(todayReservation.status) }}</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="today-grid"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <div class="label">自习室</div><div class="value">{{ todayReservation.roomName }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <div class="label">座位</div><div class="value">{{ todayReservation.seatNo }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <div class="label">时段</div><div class="value">{{ timeRangeText(todayReservation) }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </article> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div v-else class="card empty muted">今日暂无预约，可前往预约页选择座位。</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          <h2 class="section-title">🏠 推荐自习室</h2> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="recommend-list"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <article class="recommend-item" v-for="r in rooms" :key="r.id" @click="selectRoom(r.id)"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div class="recommend-icon">🏫</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <strong>{{ r.name }}</strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <p class="muted">{{ r.location }} · 普通</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div class="recommend-badge">余{{ r.availableSeats }}座</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            </article> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="hero-banner"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <h4>💡 学习小贴士</h4> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <p>番茄工作法：每学习 25 分钟休息 5 分钟，建议预约 2-3 小时提高效率。</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
         </template>
 
         <template v-if="studentPage === 'reservation'">
@@ -104,88 +104,88 @@
           <h2>🗓️ 选择日期</h2> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
           <div class="date-rail"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             <button v-for="d in dateOptions" :key="d.date" class="date-pill" :class="{ active: reservationForm.date === d.date }" @click="setReservationDate(d.date)"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
-              <span>{{ d.label }}</span>
-              <strong>{{ d.day }}</strong>
-              <small>{{ d.month }}月</small>
-            </button>
-          </div>
+              <span>{{ d.label }}</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <strong>{{ d.day }}</strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <small>{{ d.month }}月</small> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-          <h2 class="section-title">⏱️ 选择时段</h2>
-          <p v-if="currentRoom" class="scanner-hint">当前自习室开放时间：{{ currentRoomOpenTime }} — {{ currentRoomCloseTime }}（以下选项随所选自习室自动变化）</p>
-          <div class="time-slots">
-            <button v-for="slot in availableQuickTimeSlots" :key="slot.label" type="button" class="time-chip" :class="{ active: isQuickSlotActive(slot), disabled: slot.expired }" :disabled="slot.expired" @click="applyQuickSlot(slot)">{{ slot.label }}{{ slot.expired ? '（已过期）' : '' }}</button>
-          </div>
-          <div class="card reserve-config">
-            <div class="time-select-row">
-              <label>开始</label>
-              <el-select v-model="reservationForm.startTime" placeholder="请选择开始时间" :teleported="false" @change="handleStartTimeChange">
-                <el-option v-for="t in startTimeOptions" :key="`s-${t}`" :label="t" :value="t" />
-              </el-select>
-              <span>→</span>
-              <label>结束</label>
-              <el-select v-model="reservationForm.endTime" placeholder="请选择结束时间" :teleported="false" @change="handleEndTimeChange">
-                <el-option v-for="t in endTimeOptions" :key="`e-${t}`" :label="t" :value="t" />
-              </el-select>
-            </div>
-          </div>
+          <h2 class="section-title">⏱️ 选择时段</h2> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <p v-if="currentRoom" class="scanner-hint">当前自习室开放时间：{{ currentRoomOpenTime }} — {{ currentRoomCloseTime }}（以下选项随所选自习室自动变化）</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="time-slots"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <button v-for="slot in availableQuickTimeSlots" :key="slot.label" type="button" class="time-chip" :class="{ active: isQuickSlotActive(slot), disabled: slot.expired }" :disabled="slot.expired" @click="applyQuickSlot(slot)">{{ slot.label }}{{ slot.expired ? '（已过期）' : '' }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="card reserve-config"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="time-select-row"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <label>开始</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <el-select v-model="reservationForm.startTime" placeholder="请选择开始时间" :teleported="false" @change="handleStartTimeChange"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <el-option v-for="t in startTimeOptions" :key="`s-${t}`" :label="t" :value="t" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </el-select> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <span>→</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <label>结束</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <el-select v-model="reservationForm.endTime" placeholder="请选择结束时间" :teleported="false" @change="handleEndTimeChange"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <el-option v-for="t in endTimeOptions" :key="`e-${t}`" :label="t" :value="t" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </el-select> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-          <h2 class="section-title">🧮 预约配置</h2>
-          <div class="card reserve-config">
-            <label>自习室</label>
-            <el-select v-model="reservationForm.roomId" @change="handleRoomChange">
-              <el-option v-for="r in rooms" :key="r.id" :label="`${r.name}（余${r.availableSeats}）`" :value="r.id" />
-            </el-select>
-          </div>
-          <div class="seat-filters">
-            <button v-for="f in seatFilterOptions" :key="f.key" type="button" class="filter-chip" :class="{ active: seatFilter === f.key }" @click="seatFilter = f.key">{{ f.label }}</button>
-          </div>
-          <div class="legend legend-row">
-            <span><i class="legend-dot free"></i>可选</span><span><i class="legend-dot busy"></i>不可用</span><span><i class="legend-dot sel"></i>已选</span>
-          </div>
+          <h2 class="section-title">🧮 预约配置</h2> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="card reserve-config"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <label>自习室</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-select v-model="reservationForm.roomId" @change="handleRoomChange"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <el-option v-for="r in rooms" :key="r.id" :label="`${r.name}（余${r.availableSeats}）`" :value="r.id" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </el-select> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="seat-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <button v-for="f in seatFilterOptions" :key="f.key" type="button" class="filter-chip" :class="{ active: seatFilter === f.key }" @click="seatFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="legend legend-row"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <span><i class="legend-dot free"></i>可选</span><span><i class="legend-dot busy"></i>不可用</span><span><i class="legend-dot sel"></i>已选</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-          <div class="seat-overview">
-            <div class="seat-overview-head"><strong>🗺️ 座位分布图</strong><span class="muted">{{ currentRoom?.name || '自习室' }}</span></div>
-            <img v-if="roomLayoutImage" class="seat-layout-image" :src="roomLayoutImage" :alt="`${currentRoom?.name || '自习室'}座位分布图`" />
-            <div v-else class="seat-layout-empty">管理员尚未上传该自习室的座位分布图</div>
-          </div>
+          <div class="seat-overview"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="seat-overview-head"><strong>🗺️ 座位分布图</strong><span class="muted">{{ currentRoom?.name || '自习室' }}</span></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <img v-if="roomLayoutImage" class="seat-layout-image" :src="roomLayoutImage" :alt="`${currentRoom?.name || '自习室'}座位分布图`" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div v-else class="seat-layout-empty">管理员尚未上传该自习室的座位分布图</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-          <div class="seat-sections">
-            <section v-for="sec in groupedSeats" :key="sec.name" class="seat-section">
-              <div class="seat-section-title">{{ sec.name }}（可预约 {{ sec.availableCount }}）</div>
-              <div class="seat-section-grid">
-                <button v-for="s in sec.seats" :key="s.id" type="button" class="seat" :class="seatVisualClass(s)" :disabled="!canSelectSeat(s)" @click="openSeatDetail(s)">{{ s.seat_no }}</button>
-              </div>
-            </section>
-          </div>
-          <button class="primary-action reserve-submit" :disabled="!selectedSeat || creditBlocked" @click="openConfirmReservation">确认预约 {{ selectedSeat ? selectedSeat.seat_no : '' }}</button>
+          <div class="seat-sections"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <section v-for="sec in groupedSeats" :key="sec.name" class="seat-section"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div class="seat-section-title">{{ sec.name }}（可预约 {{ sec.availableCount }}）</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <div class="seat-section-grid"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <button v-for="s in sec.seats" :key="s.id" type="button" class="seat" :class="seatVisualClass(s)" :disabled="!canSelectSeat(s)" @click="openSeatDetail(s)">{{ s.seat_no }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </section> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <button class="primary-action reserve-submit" :disabled="!selectedSeat || creditBlocked" @click="openConfirmReservation">确认预约 {{ selectedSeat ? selectedSeat.seat_no : '' }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
         </template>
 
         <template v-if="studentPage === 'checkin'">
           <!-- 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：小明签到页展示学号 QR，等 admin 扫码 -->
           <div class="card check-card check-hero"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             <span class="status" :class="reservationStatusClass(activeReservation?.status) || 'PENDING'">{{ activeReservation ? statusText(activeReservation.status) : '暂无预约' }}</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
-            <div class="timer">{{ timerText }}</div>
-          </div>
-          <div class="card reservation-detail-card checkin-info-card" v-if="activeReservation">
-            <div class="checkin-row"><div class="k">自习室</div><div class="v">{{ activeReservation.roomName }}</div></div>
-            <div class="checkin-row"><div class="k">座位号</div><div class="v">{{ activeReservation.seatNo }}</div></div>
-            <div class="checkin-row"><div class="k">预约时段</div><div class="v">{{ timeRangeText(activeReservation) }}</div></div>
-            <div class="checkin-row"><div class="k">预约日期</div><div class="v">{{ formatDate(activeReservation.reserve_date) }}</div></div>
-          </div>
-          <div class="card check-actions" v-if="activeReservation">
+            <div class="timer">{{ timerText }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="card reservation-detail-card checkin-info-card" v-if="activeReservation"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="checkin-row"><div class="k">自习室</div><div class="v">{{ activeReservation.roomName }}</div></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="checkin-row"><div class="k">座位号</div><div class="v">{{ activeReservation.seatNo }}</div></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="checkin-row"><div class="k">预约时段</div><div class="v">{{ timeRangeText(activeReservation) }}</div></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="checkin-row"><div class="k">预约日期</div><div class="v">{{ formatDate(activeReservation.reserve_date) }}</div></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="card check-actions" v-if="activeReservation"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             <template v-if="isPendingReservation(activeReservation.status)">
-              <div class="check-wait-card card">
-                <strong>等待管理员签到</strong>
-                <p class="check-student-no">学号：<span>{{ studentNoDisplay }}</span></p>
-                <div v-if="checkinQrSvg" class="qr-image checkin-qr" v-html="checkinQrSvg"></div>
-                <p class="muted check-wait-tip">可向管理员<strong>报学号</strong>，或出示上方二维码供管理员<strong>拍照扫码</strong>（无需 token）</p>
-              </div>
-              <div class="check-actions-state">
-                <button type="button" class="round-action warning-round" @click="openFeedbackModal">
-                  <span>💬</span><strong>问题反馈</strong>
-                </button>
-              </div>
-              <div class="check-hint">{{ checkinWindowHint }}</div>
+              <div class="check-wait-card card"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <strong>等待管理员签到</strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <p class="check-student-no">学号：<span>{{ studentNoDisplay }}</span></p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <div v-if="checkinQrSvg" class="qr-image checkin-qr" v-html="checkinQrSvg"></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <p class="muted check-wait-tip">可向管理员<strong>报学号</strong>，或出示上方二维码供管理员<strong>拍照扫码</strong>（无需 token）</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div class="check-actions-state"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <button type="button" class="round-action warning-round" @click="openFeedbackModal"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                  <span>💬</span><strong>问题反馈</strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                </button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div class="check-hint">{{ checkinWindowHint }}</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             </template>
             <template v-else-if="isUsingReservation(activeReservation.status)">
               <div class="check-actions-state">
@@ -232,8 +232,8 @@
           <!-- 【F3-3·我的预约】功能链实例：小明在「我的 → 我的预约」按 Tab 筛「待使用」→ 看到刚约的 A-12；管理员签到后，签到页每 2 秒轮询同一接口，状态自动变「使用中」。 本处职责：小明在「我的预约」按 Tab 筛选，卡片上可取消待使用单 -->
           <div class="filter-row"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             <button v-for="s in reservationTabs" :key="s.key" :class="{ active: reservationStatus === s.key }" @click="reservationStatus = s.key">{{ s.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
-          </div>
-          <ReservationCard v-for="r in shownReservations" :key="r.id" :item="r" :status-text="statusText" @cancel="cancelReservation(r)" />
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <ReservationCard v-for="r in shownReservations" :key="r.id" :item="r" :status-text="statusText" @cancel="cancelReservation(r)" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
         </template>
 
         <template v-if="studentPage === 'credit'">
@@ -267,10 +267,10 @@
           <!-- 【F5-1·学习统计】功能链实例：小明打开学习统计切换当期/往期查看柱图 本处职责：学习统计页模板，含独立起止日期选择与快捷区间按钮 -->
           <div class="period-tabs stats-range-tabs"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
             <button type="button" :class="{ active: studyStatsRangeMode === 'current' }" @click="changeStudyStatsRangeMode('current')">当期</button> <!-- 【行】绑定当期/往期 Tab 高亮与点击切换 -->
-            <button type="button" :class="{ active: studyStatsRangeMode === 'past' }" @click="changeStudyStatsRangeMode('past')">往期</button>
-          </div>
-          <div v-if="studyStatsRangeMode === 'past'" class="student-stats-range-row">
-            <div class="student-date-range-fields">
+            <button type="button" :class="{ active: studyStatsRangeMode === 'past' }" @click="changeStudyStatsRangeMode('past')">往期</button> <!-- 【行】绑定当期/往期 Tab 高亮与点击切换 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div v-if="studyStatsRangeMode === 'past'" class="student-stats-range-row"> <!-- 【行】绑定当期/往期 Tab 高亮与点击切换 -->
+            <div class="student-date-range-fields"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <el-date-picker
                 v-model="studyStatsStartDate"
                 type="date"
@@ -278,12 +278,13 @@
                 placement="bottom-start"
                 placeholder="开始日期"
                 value-format="YYYY-MM-DD"
-                :popper-options="{ strategy: 'fixed' }"
+                :popper-options="statsSingleDatePopperOptions"
+                :popper-style="statsSingleDatePopperStyle"
                 popper-class="stats-date-popper-single"
                 class="student-stats-date-picker"
                 @change="onStudyStatsStartDateChange"
-              />
-              <span class="student-date-sep">至</span>
+              /> <!-- 【行】Element Plus 开始日期：独立单月历，避免 daterange 双面板重叠 -->
+              <span class="student-date-sep">至</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               <el-date-picker
                 v-model="studyStatsEndDate"
                 type="date"
@@ -291,42 +292,43 @@
                 placement="bottom-end"
                 placeholder="结束日期"
                 value-format="YYYY-MM-DD"
-                :popper-options="{ strategy: 'fixed' }"
+                :popper-options="statsSingleDatePopperOptions"
+                :popper-style="statsSingleDatePopperStyle"
                 popper-class="stats-date-popper-single"
                 class="student-stats-date-picker"
                 @change="onStudyStatsEndDateChange"
-              />
-            </div>
-            <div class="stats-date-shortcuts">
-              <button v-for="s in statsRangeShortcuts" :key="s.text" type="button" class="btn btn-outline btn-sm" @click="applyStudyStatsShortcut(s)">{{ s.text }}</button>
-            </div>
-            <button type="button" class="btn btn-outline" @click="resetStudyStatsDateRange">全部历史</button>
-          </div>
-          <p v-if="studyStatsHint" class="scanner-hint">{{ studyStatsHint }}</p>
-          <div class="stats-tabs">
-            <button v-for="p in statPeriods" :key="p.key" :class="{ active: statPeriod === p.key }" @click="changeStatPeriod(p.key)">{{ p.label }}</button>
-          </div>
-          <div class="stat-summary-grid">
-            <div class="card"><strong>{{ totalStudyHours }}</strong><span>小时</span><b>总学习时长</b></div>
-            <div class="card"><strong>{{ averageStudyHours }}</strong><span>小时</span><b>日均时长</b></div>
-            <div class="card"><strong>{{ studyDays }}</strong><span>天</span><b>学习天数</b></div>
-          </div>
-          <div class="card stat-card">
-            <h2>{{ studyChartTitle }}</h2>
-            <div class="bar-chart-lite">
-              <div v-for="b in studyBars" :key="b.label" class="bar-col">
-                <strong>{{ b.value }}<span class="bar-unit">小时</span></strong>
-                <div class="bar-track">
-                  <span :style="{ height: `${barHeight(b.value)}%` }"></span>
-                </div>
-                <small>{{ b.label }}</small>
-              </div>
-            </div>
-          </div>
-          <div class="card study-advice">
-            <strong>📈 学习建议</strong>
-            <p>{{ studyAdvice }}</p>
-          </div>
+              /> <!-- 【行】Element Plus 结束日期：独立单月历，teleported 挂 body -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="stats-date-shortcuts"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button v-for="s in statsRangeShortcuts" :key="s.text" type="button" class="btn btn-outline btn-sm" @click="applyStudyStatsShortcut(s)">{{ s.text }}</button> <!-- 【行】快捷区间按钮：一键写入起止日期并拉数 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <button type="button" class="btn btn-outline" @click="resetStudyStatsDateRange">全部历史</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <p v-if="studyStatsHint" class="scanner-hint">{{ studyStatsHint }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="stats-tabs"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <button v-for="p in statPeriods" :key="p.key" :class="{ active: statPeriod === p.key }" @click="changeStatPeriod(p.key)">{{ p.label }}</button> <!-- 【行】日报~年报周期 Tab 切换 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="stat-summary-grid"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="card"><strong>{{ totalStudyHours }}</strong><span>小时</span><b>总学习时长</b></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="card"><strong>{{ averageStudyHours }}</strong><span>小时</span><b>日均时长</b></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div class="card"><strong>{{ studyDays }}</strong><span>天</span><b>学习天数</b></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="card stat-card"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <h2>{{ studyChartTitle }}</h2> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="bar-chart-lite"> <!-- 【行】轻量柱图：按 studyBars 计算属性渲染每日/每月学习时长 -->
+              <div v-for="b in studyBars" :key="b.label" class="bar-col"> <!-- 【行】轻量柱图：按 studyBars 计算属性渲染每日/每月学习时长 -->
+                <strong>{{ b.value }}<span class="bar-unit">小时</span></strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <div class="bar-track"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                  <span :style="{ height: `${barHeight(b.value)}%` }"></span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <small>{{ b.label }}</small> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          <div class="card study-advice"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <strong>📈 学习建议</strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <p>{{ studyAdvice }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
         </template>
 
         <template v-if="studentPage === 'feedback'">
@@ -337,12 +339,12 @@
         <template v-if="studentPage === 'notifications'">
           <el-button plain @click="readAllNotifications">全部已读</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
           <article class="notif-item" :class="{ read: n.read_flag }" v-for="n in notifications" :key="n.id" @click="readNotification(n)"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
-            <div class="notif-icon">🔔</div>
-            <div>
-              <strong><span v-if="!n.read_flag" class="dot"></span>{{ n.title }}</strong>
-              <p class="muted">{{ n.content }}</p>
-            </div>
-          </article>
+            <div class="notif-icon">🔔</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            <div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <strong><span v-if="!n.read_flag" class="dot"></span>{{ n.title }}</strong> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <p class="muted">{{ n.content }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+          </article> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
         </template>
 
         <template v-if="studentPage === 'settings'">
@@ -410,14 +412,14 @@
             <el-input v-model="userKeyword" placeholder="搜索学号或姓名" @input="loadUsers" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
             <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <button v-for="f in userAuditFilters" :key="f.key" type="button" :class="{ active: userAuditFilter === f.key }" @click="userAuditFilter = f.key; loadUsers()">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
-            </div>
-            <DataTable :rows="pagedUsers" :columns="['student_no','name','college','credit_score','auditLabel','statusLabel']" empty-text="暂无用户数据">
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <DataTable :rows="pagedUsers" :columns="['student_no','name','college','credit_score','auditLabel','statusLabel']" empty-text="暂无用户数据"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               <template #actions="{ row }">
-                <el-button size="small" @click="openUserDetail(row)">详情</el-button>
-                <el-button v-if="isPendingAudit(row.audit_status)" size="small" type="success" @click="approve(row)">通过</el-button>
-                <el-button v-if="isPendingAudit(row.audit_status)" size="small" type="warning" @click="reject(row)">拒绝</el-button>
-                <el-button v-if="!isDisabledAccount(row.accountStatus) && isApprovedAudit(row.audit_status)" size="small" @click="disable(row)">禁用</el-button>
-                <el-button v-if="isDisabledAccount(row.accountStatus)" size="small" @click="enable(row)">启用</el-button>
+                <el-button size="small" @click="openUserDetail(row)">详情</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <el-button v-if="isPendingAudit(row.audit_status)" size="small" type="success" @click="approve(row)">通过</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <el-button v-if="isPendingAudit(row.audit_status)" size="small" type="warning" @click="reject(row)">拒绝</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <el-button v-if="!isDisabledAccount(row.accountStatus) && isApprovedAudit(row.audit_status)" size="small" @click="disable(row)">禁用</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <el-button v-if="isDisabledAccount(row.accountStatus)" size="small" @click="enable(row)">启用</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               </template>
             </DataTable>
             <AdminPager v-model:page="userPage" v-model:page-size="userPageSize" :total="userTotalPages" :count="users.length" />
@@ -434,13 +436,13 @@
             <el-input v-model="adminKeyword" placeholder="搜索账号或姓名" clearable /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
             <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <button v-for="f in adminStatusFilters" :key="f.key" type="button" :class="{ active: adminStatusFilter === f.key }" @click="adminStatusFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
-            </div>
-            <DataTable :rows="pagedAdminAccounts" :columns="adminAccountColumns" empty-text="暂无管理员">
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <DataTable :rows="pagedAdminAccounts" :columns="adminAccountColumns" empty-text="暂无管理员"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               <template #actions="{ row }">
                 <template v-if="isSuperAdmin">
-                  <el-button v-if="!isSuperAdminRole(row.role)" size="small" @click="openAdminForm(row)">编辑</el-button>
-                  <el-button v-if="!isAdminLeft(row.status) && row.id !== me.id && !isSuperAdminRole(row.role)" size="small" type="warning" @click="disableAdminAccount(row)">禁用</el-button>
-                  <el-button v-if="isAdminLeft(row.status)" size="small" type="success" @click="enableAdminAccount(row)">启用</el-button>
+                  <el-button v-if="!isSuperAdminRole(row.role)" size="small" @click="openAdminForm(row)">编辑</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  <el-button v-if="!isAdminLeft(row.status) && row.id !== me.id && !isSuperAdminRole(row.role)" size="small" type="warning" @click="disableAdminAccount(row)">禁用</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  <el-button v-if="isAdminLeft(row.status)" size="small" type="success" @click="enableAdminAccount(row)">启用</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
                 </template>
                 <span v-else class="muted">—</span>
               </template>
@@ -459,21 +461,21 @@
             <el-input v-model="roomKeyword" placeholder="搜索名称、位置或楼层" clearable /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
             <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <button v-for="f in roomStatusFilters" :key="f.key" type="button" :class="{ active: roomStatusFilter === f.key }" @click="roomStatusFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
-            </div>
-            <article class="room-item" v-for="r in pagedRooms" :key="r.id">
-              <div>
-                <div class="room-item-head"><strong>{{ r.name }}</strong><span class="mini-badge active">余 {{ r.availableSeats ?? r.available_seats ?? 0 }}</span></div>
-                <p class="muted">{{ r.location }} · {{ r.floor || '未设置' }} · {{ roomStatusText(r.status) }}</p>
-                <div class="room-tags">
-                  <span v-for="tag in parseRoomFacilities(r)" :key="tag" class="room-tag">{{ tag }}</span>
-                </div>
-              </div>
-              <div>
-                <button type="button" class="btn btn-outline" @click="editRoom(r)">编辑</button>
-                <button v-if="isSuperAdmin" type="button" class="btn btn-danger" @click="deleteRoom(r)">删除</button>
-              </div>
-            </article>
-            <AdminPager v-model:page="roomPage" v-model:page-size="roomPageSize" :total="roomTotalPages" :count="filteredRooms.length" />
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <article class="room-item" v-for="r in pagedRooms" :key="r.id"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <div class="room-item-head"><strong>{{ r.name }}</strong><span class="mini-badge active">余 {{ r.availableSeats ?? r.available_seats ?? 0 }}</span></div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <p class="muted">{{ r.location }} · {{ r.floor || '未设置' }} · {{ roomStatusText(r.status) }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <div class="room-tags"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                  <span v-for="tag in parseRoomFacilities(r)" :key="tag" class="room-tag">{{ tag }}</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <button type="button" class="btn btn-outline" @click="editRoom(r)">编辑</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <button v-if="isSuperAdmin" type="button" class="btn btn-danger" @click="deleteRoom(r)">删除</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </article> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <AdminPager v-model:page="roomPage" v-model:page-size="roomPageSize" :total="roomTotalPages" :count="filteredRooms.length" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
           </template>
 
           <template v-if="adminPage === 'reservations'">
@@ -482,14 +484,14 @@
             <el-input v-model="reservationKeyword" placeholder="搜索学号、姓名、预约号或自习室" clearable /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
             <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <button v-for="f in reservationAdminStatusFilters" :key="f.key" type="button" :class="{ active: reservationStatusFilter === f.key }" @click="reservationStatusFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
-            </div>
-            <el-select v-model="reservationRoomFilter" placeholder="全部自习室" clearable style="min-width:220px;margin-bottom:12px">
-              <el-option v-for="r in rooms" :key="r.id" :label="r.name" :value="r.id" />
-            </el-select>
-            <DataTable :rows="pagedAdminReservations" :columns="['reservation_no','studentName','roomName','seatNo','reserve_date','status','cancel_reason']" empty-text="暂无预约记录">
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-select v-model="reservationRoomFilter" placeholder="全部自习室" clearable style="min-width:220px;margin-bottom:12px"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <el-option v-for="r in rooms" :key="r.id" :label="r.name" :value="r.id" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </el-select> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <DataTable :rows="pagedAdminReservations" :columns="['reservation_no','studentName','roomName','seatNo','reserve_date','status','cancel_reason']" empty-text="暂无预约记录"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               <template #actions="{ row }">
-                <el-button v-if="isViolatedReservation(row._rawStatus)" size="small" type="warning" @click="openRevokeViolation(row)">撤销违约</el-button>
-                <span v-else class="muted">—</span>
+                <el-button v-if="isViolatedReservation(row._rawStatus)" size="small" type="warning" @click="openRevokeViolation(row)">撤销违约</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <span v-else class="muted">—</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               </template>
             </DataTable>
             <AdminPager v-model:page="reservationPage" v-model:page-size="reservationPageSize" :total="reservationTotalPages" :count="filteredAdminReservations.length" />
@@ -499,25 +501,25 @@
             <!-- 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：admin 输入小明学号或拍照扫码签到 -->
             <div class="card scan-box"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <p class="scanner-hint">{{ scanHint || '优先「确认签到」输入学号（最稳）；拍照扫码为辅助，部分手机因照片格式/屏幕摩尔纹可能识别失败。' }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
-              <div class="scanner-toolbar">
-                <button type="button" class="btn btn-primary" :disabled="scanBusy" @click="triggerPhotoScan">{{ scanBusy ? '处理中…' : '拍照扫码' }}</button>
-                <button type="button" class="btn btn-outline" :disabled="scanBusy || !scanStudentNo.trim()" @click="scanCheckin">{{ scanBusy ? '提交中…' : '确认签到' }}</button>
-                <input ref="scanPhotoInput" type="file" accept="image/*" capture="environment" class="scan-photo-input" @change="onScanPhotoSelected" />
-              </div>
-              <div class="scan-student-row">
-                <input v-model="scanStudentNo" class="input" placeholder="请输入学生学号，如 202225220101" maxlength="20" :disabled="scanBusy" @keyup.enter="scanCheckin" />
-              </div>
-            </div>
-            <el-input v-model="checkinKeyword" placeholder="搜索学号、姓名、自习室或座位" clearable />
-            <div class="filter-row user-audit-filters">
-              <button v-for="f in checkinResultFilters" :key="f.key" type="button" :class="{ active: checkinResultFilter === f.key }" @click="checkinResultFilter = f.key">{{ f.label }}</button>
-            </div>
-            <DataTable :rows="pagedCheckins" :columns="['studentName','roomName','seatNo','checkin_time','checkout_time','result']" empty-text="暂无签到记录" />
-            <AdminPager v-model:page="checkinPage" v-model:page-size="checkinPageSize" :total="checkinTotalPages" :count="filteredCheckins.length" />
-            <h3 class="section-title">实时预约</h3>
-            <p class="scanner-hint">待签到、使用中的预约（进入本页时自动刷新）。</p>
-            <DataTable :rows="pagedLiveReservations" :columns="['studentNo','studentName','roomName','seatNo','reserveDate','status']" empty-text="暂无进行中的预约" />
-            <AdminPager v-model:page="liveReservationPage" v-model:page-size="liveReservationPageSize" :total="liveReservationTotalPages" :count="decoratedLiveReservations.length" />
+              <div class="scanner-toolbar"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <button type="button" class="btn btn-primary" :disabled="scanBusy" @click="triggerPhotoScan">{{ scanBusy ? '处理中…' : '拍照扫码' }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <button type="button" class="btn btn-outline" :disabled="scanBusy || !scanStudentNo.trim()" @click="scanCheckin">{{ scanBusy ? '提交中…' : '确认签到' }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <input ref="scanPhotoInput" type="file" accept="image/*" capture="environment" class="scan-photo-input" @change="onScanPhotoSelected" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div class="scan-student-row"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <input v-model="scanStudentNo" class="input" placeholder="请输入学生学号，如 202225220101" maxlength="20" :disabled="scanBusy" @keyup.enter="scanCheckin" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <el-input v-model="checkinKeyword" placeholder="搜索学号、姓名、自习室或座位" clearable /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button v-for="f in checkinResultFilters" :key="f.key" type="button" :class="{ active: checkinResultFilter === f.key }" @click="checkinResultFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <DataTable :rows="pagedCheckins" :columns="['studentName','roomName','seatNo','checkin_time','checkout_time','result']" empty-text="暂无签到记录" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <AdminPager v-model:page="checkinPage" v-model:page-size="checkinPageSize" :total="checkinTotalPages" :count="filteredCheckins.length" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <h3 class="section-title">实时预约</h3> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <p class="scanner-hint">待签到、使用中的预约（进入本页时自动刷新）。</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <DataTable :rows="pagedLiveReservations" :columns="['studentNo','studentName','roomName','seatNo','reserveDate','status']" empty-text="暂无进行中的预约" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <AdminPager v-model:page="liveReservationPage" v-model:page-size="liveReservationPageSize" :total="liveReservationTotalPages" :count="decoratedLiveReservations.length" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
           </template>
 
           <!-- 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：管理员在公告页点「发布公告」打开弹窗 -->
@@ -526,9 +528,9 @@
             <el-button type="primary" @click="editAnnouncement()">发布公告</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
             <article class="card announcement" v-for="a in pagedAnnouncements" :key="a.id"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
               <strong>{{ a.title }}</strong><p>{{ a.content }}</p> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
-              <el-button size="small" @click="editAnnouncement(a)">编辑</el-button>
-            </article>
-            <AdminPager v-model:page="announcementPage" v-model:page-size="announcementPageSize" :total="announcementTotalPages" :count="filteredAnnouncements.length" />
+              <el-button size="small" @click="editAnnouncement(a)">编辑</el-button> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </article> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <AdminPager v-model:page="announcementPage" v-model:page-size="announcementPageSize" :total="announcementTotalPages" :count="filteredAnnouncements.length" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
           </template>
           <template v-if="adminPage === 'statistics'">
             <!-- 【F6-1·统计与CSV】功能链实例：管理员打开统计页，切换当期/往期与报表类型，查看图表并导出 CSV 本处职责：管理员打开统计页，ECharts 展示使用率与趋势 -->
@@ -617,76 +619,76 @@
             <!-- 【F6-2·系统配置】功能链实例：superadmin 把单次最长预约改为 4 小时 → 保存 → 写入 `system_config.json` → 下次预约立即按新规则校验。 本处职责：superadmin 在设置页修改预约时长、信用扣分等规则 -->
             <div class="card" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
               <span>👤 当前管理员：<strong>{{ me.name }}</strong> ({{ me.role }})</span> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
-            </div>
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-            <!-- Tab Headers -->
-            <div class="admin-tab-headers" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #f0f2f5; padding-bottom: 8px;">
-              <button type="button" class="tab-btn" :class="{ active: activeSettingsTab === 'config' }" @click="activeSettingsTab = 'config'" style="padding: 8px 16px; border: none; background: none; font-weight: bold; cursor: pointer; border-radius: 4px; border-bottom: 2px solid transparent; color: #606266; outline: none;">⚙️ 系统参数配置</button>
-              <button type="button" class="tab-btn" :class="{ active: activeSettingsTab === 'logs' }" @click="activeSettingsTab = 'logs'" style="padding: 8px 16px; border: none; background: none; font-weight: bold; cursor: pointer; border-radius: 4px; border-bottom: 2px solid transparent; color: #606266; outline: none;">📝 安全与操作日志</button>
-            </div>
+            <!-- Tab Headers  【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div class="admin-tab-headers" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #f0f2f5; padding-bottom: 8px;"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button type="button" class="tab-btn" :class="{ active: activeSettingsTab === 'config' }" @click="activeSettingsTab = 'config'" style="padding: 8px 16px; border: none; background: none; font-weight: bold; cursor: pointer; border-radius: 4px; border-bottom: 2px solid transparent; color: #606266; outline: none;">⚙️ 系统参数配置</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <button type="button" class="tab-btn" :class="{ active: activeSettingsTab === 'logs' }" @click="activeSettingsTab = 'logs'" style="padding: 8px 16px; border: none; background: none; font-weight: bold; cursor: pointer; border-radius: 4px; border-bottom: 2px solid transparent; color: #606266; outline: none;">📝 安全与操作日志</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-            <!-- Tab 1: Configuration Form -->
-            <div v-if="activeSettingsTab === 'config'" class="card settings-config-panel" style="padding: 24px;">
-              <h3 style="margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">🛠️ 全局业务规则设定</h3>
-              <form @submit.prevent="saveSystemConfig">
-                <!-- Group 1: Booking Rules -->
-                <div class="config-group-title" style="font-weight: bold; color: #409eff; margin-bottom: 12px; font-size: 1.1em;">📅 预约限制规则</div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                  <div class="form-item">
-                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">提前预约天数限制 (天)</label>
-                    <el-input-number v-model="sysConfigForm.reservation_advance_days" :min="1" :max="30" style="width: 100%" />
-                  </div>
-                  <div class="form-item">
-                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">单次最长预约时长 (小时)</label>
-                    <el-input-number v-model="sysConfigForm.reservation_limit_duration" :min="1" :max="24" style="width: 100%" />
-                  </div>
-                  <div class="form-item">
-                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">每日最多预约次数 (次)</label>
-                    <el-input-number v-model="sysConfigForm.reservation_limit_daily" :min="1" :max="10" style="width: 100%" />
-                  </div>
-                </div>
+            <!-- Tab 1: Configuration Form  【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div v-if="activeSettingsTab === 'config'" class="card settings-config-panel" style="padding: 24px;"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <h3 style="margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">🛠️ 全局业务规则设定</h3> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <form @submit.prevent="saveSystemConfig"> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <!-- Group 1: Booking Rules  【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <div class="config-group-title" style="font-weight: bold; color: #409eff; margin-bottom: 12px; font-size: 1.1em;">📅 预约限制规则</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                  <div class="form-item"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">提前预约天数限制 (天)</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-input-number v-model="sysConfigForm.reservation_advance_days" :min="1" :max="30" style="width: 100%" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  <div class="form-item"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">单次最长预约时长 (小时)</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-input-number v-model="sysConfigForm.reservation_limit_duration" :min="1" :max="24" style="width: 100%" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  <div class="form-item"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">每日最多预约次数 (次)</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-input-number v-model="sysConfigForm.reservation_limit_daily" :min="1" :max="10" style="width: 100%" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-                <!-- Group 2: Credit Rules -->
-                <div class="config-group-title" style="font-weight: bold; color: #e6a23c; margin-bottom: 12px; font-size: 1.1em;">🛡️ 信用与惩罚机制</div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                  <div class="form-item">
-                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">准时签到奖励分 (正数)</label>
-                    <el-input-number v-model="sysConfigForm.credit_checkin_reward" :min="1" :max="50" style="width: 100%" />
-                  </div>
-                  <div class="form-item">
-                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">取消预约处罚分 (负数)</label>
-                    <el-input-number v-model="sysConfigForm.credit_cancel_penalty" :min="-200" :max="-1" style="width: 100%" />
-                  </div>
-                  <div class="form-item">
-                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">超时违约处罚分 (负数)</label>
-                    <el-input-number v-model="sysConfigForm.credit_violation_penalty" :min="-200" :max="-1" style="width: 100%" />
-                  </div>
-                  <div class="form-item">
-                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">拉黑信用分阈值 (低于或等于该值拉黑)</label>
-                    <el-input-number v-model="sysConfigForm.credit_blocked_threshold" :min="-100" :max="100" style="width: 100%" />
-                  </div>
-                  <div class="form-item">
-                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">黑名单封禁时长 (天)</label>
-                    <el-input-number v-model="sysConfigForm.blacklist_days" :min="1" :max="365" style="width: 100%" />
-                  </div>
-                </div>
+                <!-- Group 2: Credit Rules  【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                <div class="config-group-title" style="font-weight: bold; color: #e6a23c; margin-bottom: 12px; font-size: 1.1em;">🛡️ 信用与惩罚机制</div> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                  <div class="form-item"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">准时签到奖励分 (正数)</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-input-number v-model="sysConfigForm.credit_checkin_reward" :min="1" :max="50" style="width: 100%" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  <div class="form-item"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">取消预约处罚分 (负数)</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-input-number v-model="sysConfigForm.credit_cancel_penalty" :min="-200" :max="-1" style="width: 100%" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  <div class="form-item"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">超时违约处罚分 (负数)</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-input-number v-model="sysConfigForm.credit_violation_penalty" :min="-200" :max="-1" style="width: 100%" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  <div class="form-item"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">拉黑信用分阈值 (低于或等于该值拉黑)</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-input-number v-model="sysConfigForm.credit_blocked_threshold" :min="-100" :max="100" style="width: 100%" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  <div class="form-item"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                    <label style="display: block; margin-bottom: 6px; font-size: 0.9em; color: #606266;">黑名单封禁时长 (天)</label> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                    <el-input-number v-model="sysConfigForm.blacklist_days" :min="1" :max="365" style="width: 100%" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                  </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+                </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-                <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: right;">
-                  <button type="submit" class="btn btn-primary">💾 保存参数配置</button>
-                </div>
-              </form>
-            </div>
+                <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: right;"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                  <button type="submit" class="btn btn-primary">💾 保存参数配置</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              </form> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
 
-            <!-- Tab 2: Logs -->
-            <div v-show="activeSettingsTab === 'logs'">
-              <h3>最近操作日志</h3>
-              <el-input v-model="logKeyword" placeholder="搜索模块、操作或详情" clearable />
-              <div class="filter-row user-audit-filters">
-                <button v-for="f in logModuleFilters" :key="f.key" type="button" :class="{ active: logModuleFilter === f.key }" @click="logModuleFilter = f.key">{{ f.label }}</button>
-              </div>
-              <DataTable :rows="pagedOperationLogs" :columns="['module','action','target_type','detail','created_at']" empty-text="暂无操作日志" />
-              <AdminPager v-model:page="logPage" v-model:page-size="logPageSize" :total="logTotalPages" :count="filteredOperationLogs.length" />
-            </div>
+            <!-- Tab 2: Logs  【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            <div v-show="activeSettingsTab === 'logs'"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              <h3>最近操作日志</h3> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <el-input v-model="logKeyword" placeholder="搜索模块、操作或详情" clearable /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <div class="filter-row user-audit-filters"> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+                <button v-for="f in logModuleFilters" :key="f.key" type="button" :class="{ active: logModuleFilter === f.key }" @click="logModuleFilter = f.key">{{ f.label }}</button> <!-- 【行】模板 UI 节点：展示学习统计页对应区域 -->
+              </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <DataTable :rows="pagedOperationLogs" :columns="['module','action','target_type','detail','created_at']" empty-text="暂无操作日志" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+              <AdminPager v-model:page="logPage" v-model:page-size="logPageSize" :total="logTotalPages" :count="filteredOperationLogs.length" /> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
+            </div> <!-- 【行】模板标记：绑定数据或事件到 Vue 实例 -->
           </template>
         </main>
       </div>
@@ -1222,135 +1224,138 @@ const selectedSeat = ref(null)
 // 【F1-2·技术概念】功能链实例：小明点「确认预约」→ 浏览器用 **Vue** 发 **HTTP** **JSON** 到 **REST API** → **Controller** 转 **Service** 写 **MySQL** → 返回 **JSON** `… 本处职责：小明点「预约」时 studentPage='reservation'，网址不变只换内容
 const studentPage = ref('home') // 【行】声明并赋值变量 `studentPage`
 const reservationForm = reactive({ date: new Date().toISOString().slice(0, 10), roomId: null, startTime: '09:00', endTime: '11:00' }) // 【行】声明并赋值变量 `reservationForm`
-const reservations = ref([])
-const reservationStatus = ref('ALL')
-const announcements = ref([])
-const notifications = ref([])
-let checkinPollTimer = null
-const credit = ref({ score: 0, logs: [] })
-const studyStats = ref({})
-const studentChart = ref(null)
-const statPeriod = ref('day')
-const announcementDetailOpen = ref(false)
-const activeAnnouncement = ref({})
-const seatDialogOpen = ref(false)
-const pendingSeat = ref(null)
-const seatFilter = ref('all')
-const seatFilterOptions = [
-  { key: 'all', label: '全部' },
-  { key: 'power', label: '有电源' },
-  { key: 'window', label: '靠窗' },
-  { key: 'quiet', label: '静音' },
+const reservations = ref([]) // 【行】声明并赋值变量 `reservations`
+const reservationStatus = ref('ALL') // 【行】声明并赋值变量 `reservationStatus`
+const announcements = ref([]) // 【行】声明并赋值变量 `announcements`
+const notifications = ref([]) // 【行】声明并赋值变量 `notifications`
+let checkinPollTimer = null // 【行】声明并赋值变量 `checkinPollTimer`
+const credit = ref({ score: 0, logs: [] }) // 【行】声明并赋值变量 `credit`
+const studyStats = ref({}) // 【行】声明并赋值变量 `studyStats`
+const studentChart = ref(null) // 【行】声明并赋值变量 `studentChart`
+const statPeriod = ref('day') // 【行】声明并赋值变量 `statPeriod`
+const announcementDetailOpen = ref(false) // 【行】声明并赋值变量 `announcementDetailOpen`
+const activeAnnouncement = ref({}) // 【行】声明并赋值变量 `activeAnnouncement`
+const seatDialogOpen = ref(false) // 【行】声明并赋值变量 `seatDialogOpen`
+const pendingSeat = ref(null) // 【行】声明并赋值变量 `pendingSeat`
+const seatFilter = ref('all') // 【行】声明并赋值变量 `seatFilter`
+const seatFilterOptions = [ // 【行】声明并赋值变量 `seatFilterOptions`
+  { key: 'all', label: '全部' }, // 【行】执行本行语句，推进功能链中的当前步骤
+  { key: 'power', label: '有电源' }, // 【行】执行本行语句，推进功能链中的当前步骤
+  { key: 'window', label: '靠窗' }, // 【行】执行本行语句，推进功能链中的当前步骤
+  { key: 'quiet', label: '静音' }, // 【行】执行本行语句，推进功能链中的当前步骤
   { key: 'hot', label: '热门' }
-]
-const quickTimeSlots = [
-  { label: '08:00-10:00', start: '08:00', end: '10:00' },
-  { label: '10:00-12:00', start: '10:00', end: '12:00' },
-  { label: '14:00-16:00', start: '14:00', end: '16:00' },
+] // 【行】执行本行语句，推进功能链中的当前步骤
+const quickTimeSlots = [ // 【行】声明并赋值变量 `quickTimeSlots`
+  { label: '08:00-10:00', start: '08:00', end: '10:00' }, // 【行】执行本行语句，推进功能链中的当前步骤
+  { label: '10:00-12:00', start: '10:00', end: '12:00' }, // 【行】执行本行语句，推进功能链中的当前步骤
+  { label: '14:00-16:00', start: '14:00', end: '16:00' }, // 【行】执行本行语句，推进功能链中的当前步骤
   { label: '19:00-21:00', start: '19:00', end: '21:00' }
-]
-const RESERVATION_PAST_GRACE_MINUTES = 15
-const CREDIT_SCORE_MAX = 500
-const RES_STATUS_MAP = {
+] // 【行】执行本行语句，推进功能链中的当前步骤
+const RESERVATION_PAST_GRACE_MINUTES = 15 // 【行】声明并赋值变量 `RESERVATION_PAST_GRACE_MINUTES`
+const CREDIT_SCORE_MAX = 500 // 【行】声明并赋值变量 `CREDIT_SCORE_MAX`
+const RES_STATUS_MAP = { // 【行】声明并赋值变量 `RES_STATUS_MAP`
   // 【F7-3·前端状态】功能链实例：见 01 项目理解指南对应节功能链实例 本处职责：库中 PENDING/USING 等映射为页面「待使用」「使用中」
   PENDING: '待使用', USING: '使用中', COMPLETED: '已完成', CANCELLED: '已取消', // 【行】执行本行语句，推进功能链中的当前步骤
   VIOLATED: '已违约', AUTO_CANCELLED: '已违约', AUTO_CHECKOUT: '已完成', // 【行】执行本行语句，推进功能链中的当前步骤
   待签到: '待使用', 违约: '已违约', 超时取消: '已违约', 自动签退: '已完成' // 【行】执行本行语句，推进功能链中的当前步骤
 }
 const AUDIT_STATUS_MAP = { PENDING: '待审核', APPROVED: '已通过', REJECTED: '已拒绝' } // 【行】声明并赋值变量 `AUDIT_STATUS_MAP`
-const ACCOUNT_STATUS_MAP = { NORMAL: '正常', PENDING: '待审核', DISABLED: '禁用', BLACKLIST: '黑名单', 已禁用: '禁用' }
-const ADMIN_STATUS_MAP = { NORMAL: '正常', DISABLED: '离职', 禁用: '离职', 已禁用: '离职', 已离职: '离职' }
-const ADMIN_ROLE_MAP = { ADMIN: '普通管理员', NORMAL_ADMIN: '普通管理员', SUPER_ADMIN: '超级管理员' }
-const ROOM_STATUS_MAP = { OPEN: '开放', CLOSED: '关闭', MAINTENANCE: '维护中', MAINTAINING: '维护中' }
-const SEAT_STATUS_MAP = { NORMAL: '空闲', DAMAGED: '维修', MAINTAINING: '维修', DISABLED: '停用', 禁用: '停用' }
-const FEEDBACK_STATUS_MAP = { PENDING: '待处理', PROCESSING: '待处理', DONE: '已处理', CLOSED: '已处理' }
-const CHECKIN_RESULT_MAP = { ON_TIME: '准时', LATE: '迟到', INVALID: '无效' }
-const canonical = (value, map) => map[value] || value || ''
-const reservationStatusValue = value => canonical(value, RES_STATUS_MAP)
-const auditStatusValue = value => canonical(value, AUDIT_STATUS_MAP)
-const accountStatusValue = value => canonical(value, ACCOUNT_STATUS_MAP)
-const adminStatusValue = value => canonical(value, ADMIN_STATUS_MAP)
-const adminRoleValue = value => canonical(value, ADMIN_ROLE_MAP)
-const roomStatusValue = value => canonical(value, ROOM_STATUS_MAP)
-const seatStatusValue = value => canonical(value, SEAT_STATUS_MAP)
-const feedbackStatusValue = value => canonical(value, FEEDBACK_STATUS_MAP)
-const checkinResultValue = value => canonical(value, CHECKIN_RESULT_MAP)
-const isPendingReservation = value => reservationStatusValue(value) === '待使用'
-const isUsingReservation = value => reservationStatusValue(value) === '使用中'
-const isViolatedReservation = value => reservationStatusValue(value) === '已违约'
-const isPendingAudit = value => auditStatusValue(value) === '待审核'
-const isApprovedAudit = value => auditStatusValue(value) === '已通过'
-const isDisabledAccount = value => accountStatusValue(value) === '禁用'
-const isAdminLeft = value => adminStatusValue(value) === '离职'
-const isSuperAdminRole = value => adminRoleValue(value) === '超级管理员'
-const isFeedbackPending = value => feedbackStatusValue(value) === '待处理'
-const reservationStatusClass = value => ({
-  待使用: 'PENDING',
-  使用中: 'USING',
-  已完成: 'COMPLETED',
-  已取消: 'CANCELLED',
-  已违约: 'VIOLATED'
-}[reservationStatusValue(value)] || '')
-const feedbackSeverityOptions = [
-  { value: '低', label: '低 — 一般建议' },
-  { value: '中', label: '中 — 影响使用' },
-  { value: '高', label: '高 — 较严重问题' },
+const ACCOUNT_STATUS_MAP = { NORMAL: '正常', PENDING: '待审核', DISABLED: '禁用', BLACKLIST: '黑名单', 已禁用: '禁用' } // 【行】声明并赋值变量 `ACCOUNT_STATUS_MAP`
+const ADMIN_STATUS_MAP = { NORMAL: '正常', DISABLED: '离职', 禁用: '离职', 已禁用: '离职', 已离职: '离职' } // 【行】声明并赋值变量 `ADMIN_STATUS_MAP`
+const ADMIN_ROLE_MAP = { ADMIN: '普通管理员', NORMAL_ADMIN: '普通管理员', SUPER_ADMIN: '超级管理员' } // 【行】声明并赋值变量 `ADMIN_ROLE_MAP`
+const ROOM_STATUS_MAP = { OPEN: '开放', CLOSED: '关闭', MAINTENANCE: '维护中', MAINTAINING: '维护中' } // 【行】声明并赋值变量 `ROOM_STATUS_MAP`
+const SEAT_STATUS_MAP = { NORMAL: '空闲', DAMAGED: '维修', MAINTAINING: '维修', DISABLED: '停用', 禁用: '停用' } // 【行】声明并赋值变量 `SEAT_STATUS_MAP`
+const FEEDBACK_STATUS_MAP = { PENDING: '待处理', PROCESSING: '待处理', DONE: '已处理', CLOSED: '已处理' } // 【行】声明并赋值变量 `FEEDBACK_STATUS_MAP`
+const CHECKIN_RESULT_MAP = { ON_TIME: '准时', LATE: '迟到', INVALID: '无效' } // 【行】声明并赋值变量 `CHECKIN_RESULT_MAP`
+const canonical = (value, map) => map[value] || value || '' // 【行】声明并赋值变量 `canonical`
+const reservationStatusValue = value => canonical(value, RES_STATUS_MAP) // 【行】声明并赋值变量 `reservationStatusValue`
+const auditStatusValue = value => canonical(value, AUDIT_STATUS_MAP) // 【行】声明并赋值变量 `auditStatusValue`
+const accountStatusValue = value => canonical(value, ACCOUNT_STATUS_MAP) // 【行】声明并赋值变量 `accountStatusValue`
+const adminStatusValue = value => canonical(value, ADMIN_STATUS_MAP) // 【行】声明并赋值变量 `adminStatusValue`
+const adminRoleValue = value => canonical(value, ADMIN_ROLE_MAP) // 【行】声明并赋值变量 `adminRoleValue`
+const roomStatusValue = value => canonical(value, ROOM_STATUS_MAP) // 【行】声明并赋值变量 `roomStatusValue`
+const seatStatusValue = value => canonical(value, SEAT_STATUS_MAP) // 【行】声明并赋值变量 `seatStatusValue`
+const feedbackStatusValue = value => canonical(value, FEEDBACK_STATUS_MAP) // 【行】声明并赋值变量 `feedbackStatusValue`
+const checkinResultValue = value => canonical(value, CHECKIN_RESULT_MAP) // 【行】声明并赋值变量 `checkinResultValue`
+const isPendingReservation = value => reservationStatusValue(value) === '待使用' // 【行】声明并赋值变量 `isPendingReservation`
+const isUsingReservation = value => reservationStatusValue(value) === '使用中' // 【行】声明并赋值变量 `isUsingReservation`
+const isViolatedReservation = value => reservationStatusValue(value) === '已违约' // 【行】声明并赋值变量 `isViolatedReservation`
+const isPendingAudit = value => auditStatusValue(value) === '待审核' // 【行】声明并赋值变量 `isPendingAudit`
+const isApprovedAudit = value => auditStatusValue(value) === '已通过' // 【行】声明并赋值变量 `isApprovedAudit`
+const isDisabledAccount = value => accountStatusValue(value) === '禁用' // 【行】声明并赋值变量 `isDisabledAccount`
+const isAdminLeft = value => adminStatusValue(value) === '离职' // 【行】声明并赋值变量 `isAdminLeft`
+const isSuperAdminRole = value => adminRoleValue(value) === '超级管理员' // 【行】声明并赋值变量 `isSuperAdminRole`
+const isFeedbackPending = value => feedbackStatusValue(value) === '待处理' // 【行】声明并赋值变量 `isFeedbackPending`
+const reservationStatusClass = value => ({ // 【行】声明并赋值变量 `reservationStatusClass`
+  待使用: 'PENDING', // 【行】执行本行语句，推进功能链中的当前步骤
+  使用中: 'USING', // 【行】执行本行语句，推进功能链中的当前步骤
+  已完成: 'COMPLETED', // 【行】执行本行语句，推进功能链中的当前步骤
+  已取消: 'CANCELLED', // 【行】执行本行语句，推进功能链中的当前步骤
+  已违约: 'VIOLATED' // 【行】执行本行语句，推进功能链中的当前步骤
+}[reservationStatusValue(value)] || '') // 【行】执行本行语句，推进功能链中的当前步骤
+const feedbackSeverityOptions = [ // 【行】声明并赋值变量 `feedbackSeverityOptions`
+  { value: '低', label: '低 — 一般建议' }, // 【行】执行本行语句，推进功能链中的当前步骤
+  { value: '中', label: '中 — 影响使用' }, // 【行】执行本行语句，推进功能链中的当前步骤
+  { value: '高', label: '高 — 较严重问题' }, // 【行】执行本行语句，推进功能链中的当前步骤
   { value: '紧急', label: '紧急 — 需立即处理' }
-]
-const confirmReservationOpen = ref(false)
-const checkoutModalOpen = ref(false)
-const checkoutSummary = ref({})
-const profileInfoOpen = ref(false)
-const feedbackModalOpen = ref(false)
-const feedbackForm = reactive({ type: '建议', severity: '中', content: '' })
-const roomFormOpen = ref(false)
-const seatEditOpen = ref(false)
-const seatEditForm = reactive({})
-const seatEditEnabled = computed({
-  get: () => seatStatusValue(seatEditForm.status) === '空闲',
+] // 【行】执行本行语句，推进功能链中的当前步骤
+const confirmReservationOpen = ref(false) // 【行】声明并赋值变量 `confirmReservationOpen`
+const checkoutModalOpen = ref(false) // 【行】声明并赋值变量 `checkoutModalOpen`
+const checkoutSummary = ref({}) // 【行】声明并赋值变量 `checkoutSummary`
+const profileInfoOpen = ref(false) // 【行】声明并赋值变量 `profileInfoOpen`
+const feedbackModalOpen = ref(false) // 【行】声明并赋值变量 `feedbackModalOpen`
+const feedbackForm = reactive({ type: '建议', severity: '中', content: '' }) // 【行】声明并赋值变量 `feedbackForm`
+const roomFormOpen = ref(false) // 【行】声明并赋值变量 `roomFormOpen`
+const seatEditOpen = ref(false) // 【行】声明并赋值变量 `seatEditOpen`
+const seatEditForm = reactive({}) // 【行】声明并赋值变量 `seatEditForm`
+const seatEditEnabled = computed({ // 【行】声明并赋值变量 `seatEditEnabled`
+  get: () => seatStatusValue(seatEditForm.status) === '空闲', // 【行】执行本行语句，推进功能链中的当前步骤
   set: val => { seatEditForm.status = val ? '空闲' : '停用' }
-})
-const adminStatsPeriod = ref('week')
-const adminStatsRangeMode = ref('current')
-const adminStatsRoomId = ref(null)
-const adminStatsDateRange = ref(null)
-const adminStatsRangeTouched = ref(false)
-const studyStatsRangeMode = ref('current')
-const studyStatsStartDate = ref(null)
-const studyStatsEndDate = ref(null)
-const studyStatsRangeTouched = ref(false)
-const statsRangeShortcuts = [
+}) // 【行】执行本行语句，推进功能链中的当前步骤
+const adminStatsPeriod = ref('week') // 【行】声明并赋值变量 `adminStatsPeriod`
+const adminStatsRangeMode = ref('current') // 【行】声明并赋值变量 `adminStatsRangeMode`
+const adminStatsRoomId = ref(null) // 【行】声明并赋值变量 `adminStatsRoomId`
+const adminStatsDateRange = ref(null) // 【行】声明并赋值变量 `adminStatsDateRange`
+const adminStatsRangeTouched = ref(false) // 【行】声明并赋值变量 `adminStatsRangeTouched`
+const studyStatsRangeMode = ref('current') // 【行】声明并赋值变量 `studyStatsRangeMode`
+const studyStatsStartDate = ref(null) // 【行】声明并赋值变量 `studyStatsStartDate`
+const studyStatsEndDate = ref(null) // 【行】声明并赋值变量 `studyStatsEndDate`
+const studyStatsRangeTouched = ref(false) // 【行】声明并赋值变量 `studyStatsRangeTouched`
+/** 学生端单日历 popper 固定 322px，避免随 200px 输入框收缩导致只显示 3 列 */
+const statsSingleDatePopperStyle = Object.freeze({ width: '322px', minWidth: '322px', padding: '0' }) // 【行】声明并赋值变量 `statsSingleDatePopperStyle`
+const statsSingleDatePopperOptions = Object.freeze({ strategy: 'fixed' }) // 【行】声明并赋值变量 `statsSingleDatePopperOptions`
+const statsRangeShortcuts = [ // 【行】声明并赋值变量 `statsRangeShortcuts`
   {
-    text: '近30天',
-    value: () => {
-      const end = new Date()
-      end.setDate(end.getDate() - 1)
-      const start = new Date(end)
-      start.setDate(start.getDate() - 29)
-      return [toDateValue(start), toDateValue(end)]
+    text: '近30天', // 【行】执行本行语句，推进功能链中的当前步骤
+    value: () => { // 【行】进入代码块
+      const end = new Date() // 【行】声明并赋值变量 `end`
+      end.setDate(end.getDate() - 1) // 【行】执行本行语句，推进功能链中的当前步骤
+      const start = new Date(end) // 【行】声明并赋值变量 `start`
+      start.setDate(start.getDate() - 29) // 【行】执行本行语句，推进功能链中的当前步骤
+      return [toDateValue(start), toDateValue(end)] // 【行】返回本函数计算结果给调用方
     }
   },
   {
-    text: '近12个月',
-    value: () => {
-      const end = new Date()
-      end.setDate(end.getDate() - 1)
-      const start = new Date(end)
-      start.setMonth(start.getMonth() - 11)
-      start.setDate(1)
-      return [toDateValue(start), toDateValue(end)]
+    text: '近12个月', // 【行】执行本行语句，推进功能链中的当前步骤
+    value: () => { // 【行】进入代码块
+      const end = new Date() // 【行】声明并赋值变量 `end`
+      end.setDate(end.getDate() - 1) // 【行】执行本行语句，推进功能链中的当前步骤
+      const start = new Date(end) // 【行】声明并赋值变量 `start`
+      start.setMonth(start.getMonth() - 11) // 【行】执行本行语句，推进功能链中的当前步骤
+      start.setDate(1) // 【行】执行本行语句，推进功能链中的当前步骤
+      return [toDateValue(start), toDateValue(end)] // 【行】返回本函数计算结果给调用方
     }
   },
   {
-    text: '今年以来',
-    value: () => {
-      const end = new Date()
-      end.setDate(end.getDate() - 1)
-      const start = new Date(end.getFullYear(), 0, 1)
-      return [toDateValue(start), toDateValue(end)]
+    text: '今年以来', // 【行】执行本行语句，推进功能链中的当前步骤
+    value: () => { // 【行】进入代码块
+      const end = new Date() // 【行】声明并赋值变量 `end`
+      end.setDate(end.getDate() - 1) // 【行】执行本行语句，推进功能链中的当前步骤
+      const start = new Date(end.getFullYear(), 0, 1) // 【行】声明并赋值变量 `start`
+      return [toDateValue(start), toDateValue(end)] // 【行】返回本函数计算结果给调用方
     }
   }
-]
+] // 【行】执行本行语句，推进功能链中的当前步骤
 const userPage = ref(1)
 const DEFAULT_ADMIN_PAGE_SIZE = 10
 const ADMIN_PAGE_SIZE_OPTIONS = [5, 10, 20, 50]
@@ -1667,17 +1672,17 @@ const studyBars = computed(() => { // 【行】声明并赋值变量 `studyBars`
   const days = statPeriod.value === 'month' ? 30 : 7 // 【行】声明并赋值变量 `days`
   return Array.from({ length: days }, (_, i) => ({ label: `${i + 1}`, value: 0 })) // 【行】返回本函数计算结果给调用方
 }) // 【行】执行本行语句，推进功能链中的当前步骤
-const maxStudyBarValue = computed(() => Math.max(1, ...studyBars.value.map(b => Number(b.value || 0))))
-const studyAdvice = computed(() => {
-  if (statPeriod.value === 'day') {
-    return Number(totalStudyHours.value) >= 3 ? '你今日的学习效率较高，建议保持。最佳学习时段为上午9-11点。' : '建议增加连续学习时长，并优先预约上午或下午的稳定时段。'
+const maxStudyBarValue = computed(() => Math.max(1, ...studyBars.value.map(b => Number(b.value || 0)))) // 【行】柱图纵轴上限：取 studyBars 最大值与 1 的较大者，避免全 0 时除零
+const studyAdvice = computed(() => { // 【行】根据日报/周期总时长生成中文学习建议文案
+  if (statPeriod.value === 'day') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return Number(totalStudyHours.value) >= 3 ? '你今日的学习效率较高，建议保持。最佳学习时段为上午9-11点。' : '建议增加连续学习时长，并优先预约上午或下午的稳定时段。' // 【行】返回本函数计算结果给调用方
   }
-  return Number(averageStudyHours.value) >= 2 ? '本周期学习节奏较稳定，建议继续保持固定预约习惯。' : '建议提高每次学习的连续时长，并保持每周稳定到馆。'
-})
+  return Number(averageStudyHours.value) >= 2 ? '本周期学习节奏较稳定，建议继续保持固定预约习惯。' : '建议提高每次学习的连续时长，并保持每周稳定到馆。' // 【行】返回本函数计算结果给调用方
+}) // 【行】执行本行语句，推进功能链中的当前步骤
 
-const statPeriods = [{ key: 'day', label: '日报' }, { key: 'week', label: '周报' }, { key: 'month', label: '月报' }, { key: 'year', label: '年报' }]
-const reservationTabs = [{ key: 'ALL', label: '全部' }, { key: '待使用', label: '待使用' }, { key: '使用中', label: '使用中' }, { key: '已完成', label: '已完成' }, { key: '已取消', label: '已取消' }]
-const studentNav = [{ page: 'home', label: '首页', icon: '🏠' }, { page: 'reservation', label: '预约', icon: '🪑' }, { page: 'checkin', label: '签到', icon: '✅' }, { page: 'profile', label: '我的', icon: '👤' }]
+const statPeriods = [{ key: 'day', label: '日报' }, { key: 'week', label: '周报' }, { key: 'month', label: '月报' }, { key: 'year', label: '年报' }] // 【行】声明并赋值变量 `statPeriods`
+const reservationTabs = [{ key: 'ALL', label: '全部' }, { key: '待使用', label: '待使用' }, { key: '使用中', label: '使用中' }, { key: '已完成', label: '已完成' }, { key: '已取消', label: '已取消' }] // 【行】声明并赋值变量 `reservationTabs`
+const studentNav = [{ page: 'home', label: '首页', icon: '🏠' }, { page: 'reservation', label: '预约', icon: '🪑' }, { page: 'checkin', label: '签到', icon: '✅' }, { page: 'profile', label: '我的', icon: '👤' }] // 【行】声明并赋值变量 `studentNav`
 /** 【F2-2·管理员登录】功能链实例：管理员切到「管理员登录」→ 输入 `admin` / `admin123` → 进入管理端签到页；`superadmin` 侧栏额外显示「设置」「管理员管理」。 本处职责：superadmin 登录后 isSuperAdmin 为 true，侧栏显示「设置」*/
 const isSuperAdmin = computed(() => role.value === 'SUPER_ADMIN') // 【行】声明并赋值变量 `isSuperAdmin`
 const adminRoleLabel = computed(() => { // 【行】声明并赋值变量 `adminRoleLabel`
@@ -1685,101 +1690,101 @@ const adminRoleLabel = computed(() => { // 【行】声明并赋值变量 `admin
   if (role.value === 'ADMIN') return '普通管理员' // 【行】条件不满足时提前结束，避免无效请求或错误状态
   return role.value || '管理员' // 【行】返回本函数计算结果给调用方
 }) // 【行】执行本行语句，推进功能链中的当前步骤
-const adminProfileInitial = computed(() => {
-  const name = String(me.value.name || me.value.account || '管').trim()
-  return name.slice(0, 1).toUpperCase()
-})
-const adminNav = computed(() => {
-  const items = [
-    { page: 'checkins', label: '签到', icon: '✅' },
+const adminProfileInitial = computed(() => { // 【行】管理员头像首字母：取姓名或账号首字符
+  const name = String(me.value.name || me.value.account || '管').trim() // 【行】声明并赋值变量 `name`
+  return name.slice(0, 1).toUpperCase() // 【行】返回本函数计算结果给调用方
+}) // 【行】执行本行语句，推进功能链中的当前步骤
+const adminNav = computed(() => { // 【行】侧栏菜单：超管额外含设置与管理员管理
+  const items = [ // 【行】声明并赋值变量 `items`
+    { page: 'checkins', label: '签到', icon: '✅' }, // 【行】执行本行语句，推进功能链中的当前步骤
     { page: 'users', label: '用户管理', icon: '👥' }
-  ]
-  if (isSuperAdmin.value) {
-    items.push({ page: 'admins', label: '管理员管理', icon: '🛡️' })
-    items.push({ page: 'settings', label: '设置', icon: '⚙️' })
+  ] // 【行】执行本行语句，推进功能链中的当前步骤
+  if (isSuperAdmin.value) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    items.push({ page: 'admins', label: '管理员管理', icon: '🛡️' }) // 【行】执行本行语句，推进功能链中的当前步骤
+    items.push({ page: 'settings', label: '设置', icon: '⚙️' }) // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  items.push(
-    { page: 'rooms', label: '自习室', icon: '🏫' },
-    { page: 'reservations', label: '预约', icon: '📅' },
-    { page: 'announcements', label: '公告', icon: '📣' },
-    { page: 'statistics', label: '统计', icon: '📈' },
+  items.push( // 【行】执行本行语句，推进功能链中的当前步骤
+    { page: 'rooms', label: '自习室', icon: '🏫' }, // 【行】执行本行语句，推进功能链中的当前步骤
+    { page: 'reservations', label: '预约', icon: '📅' }, // 【行】执行本行语句，推进功能链中的当前步骤
+    { page: 'announcements', label: '公告', icon: '📣' }, // 【行】执行本行语句，推进功能链中的当前步骤
+    { page: 'statistics', label: '统计', icon: '📈' }, // 【行】执行本行语句，推进功能链中的当前步骤
     { page: 'feedback', label: '反馈', icon: '💬' }
   )
-  return items
-})
-const adminAccountColumns = ['account', 'name', 'roleLabel', 'phone', 'managedRooms', 'statusLabel']
-const managerOptions = computed(() => adminAccounts.value.filter(a => adminRoleValue(a.role) === '普通管理员' && !isAdminLeft(a.status)))
-const decoratedAdminAccounts = computed(() => adminAccounts.value.map(row => ({
-  ...row,
-  roleLabel: adminRoleValue(row.role) || '普通管理员',
-  statusLabel: adminStatusValue(row.status) || '正常',
-  managedRooms: row.managedRooms || '—'
-})))
-function normalizePageSize(pageSize) {
-  const size = Number(pageSize)
-  return ADMIN_PAGE_SIZE_OPTIONS.includes(size) ? size : DEFAULT_ADMIN_PAGE_SIZE
+  return items // 【行】返回本函数计算结果给调用方
+}) // 【行】执行本行语句，推进功能链中的当前步骤
+const adminAccountColumns = ['account', 'name', 'roleLabel', 'phone', 'managedRooms', 'statusLabel'] // 【行】声明并赋值变量 `adminAccountColumns`
+const managerOptions = computed(() => adminAccounts.value.filter(a => adminRoleValue(a.role) === '普通管理员' && !isAdminLeft(a.status))) // 【行】筛选可分配自习室的普通管理员列表
+const decoratedAdminAccounts = computed(() => adminAccounts.value.map(row => ({ // 【行】管理员表格行：附加 roleLabel/statusLabel 展示字段
+  ...row, // 【行】执行本行语句，推进功能链中的当前步骤
+  roleLabel: adminRoleValue(row.role) || '普通管理员', // 【行】执行本行语句，推进功能链中的当前步骤
+  statusLabel: adminStatusValue(row.status) || '正常', // 【行】执行本行语句，推进功能链中的当前步骤
+  managedRooms: row.managedRooms || '—' // 【行】执行本行语句，推进功能链中的当前步骤
+}))) // 【行】执行本行语句，推进功能链中的当前步骤
+function normalizePageSize(pageSize) { // 【行】进入代码块
+  const size = Number(pageSize) // 【行】声明并赋值变量 `size`
+  return ADMIN_PAGE_SIZE_OPTIONS.includes(size) ? size : DEFAULT_ADMIN_PAGE_SIZE // 【行】返回本函数计算结果给调用方
 }
-function paginateRows(rows, page, pageSize = DEFAULT_ADMIN_PAGE_SIZE) {
-  const safePageSize = normalizePageSize(pageSize)
-  const total = pagerTotal(rows.length, safePageSize)
-  const safePage = Math.min(Math.max(1, page), total)
-  const start = (safePage - 1) * safePageSize
-  return rows.slice(start, start + safePageSize)
+function paginateRows(rows, page, pageSize = DEFAULT_ADMIN_PAGE_SIZE) { // 【行】进入代码块
+  const safePageSize = normalizePageSize(pageSize) // 【行】声明并赋值变量 `safePageSize`
+  const total = pagerTotal(rows.length, safePageSize) // 【行】声明并赋值变量 `total`
+  const safePage = Math.min(Math.max(1, page), total) // 【行】声明并赋值变量 `safePage`
+  const start = (safePage - 1) * safePageSize // 【行】声明并赋值变量 `start`
+  return rows.slice(start, start + safePageSize) // 【行】返回本函数计算结果给调用方
 }
-function pagerTotal(count, pageSize = DEFAULT_ADMIN_PAGE_SIZE) {
-  return Math.max(1, Math.ceil(Math.max(0, count) / normalizePageSize(pageSize)))
+function pagerTotal(count, pageSize = DEFAULT_ADMIN_PAGE_SIZE) { // 【行】进入代码块
+  return Math.max(1, Math.ceil(Math.max(0, count) / normalizePageSize(pageSize))) // 【行】返回本函数计算结果给调用方
 }
-function matchAdminKeyword(row, keyword, fields) {
-  const q = String(keyword || '').trim().toLowerCase()
-  if (!q) return true
-  return fields.some(f => String(row[f] ?? '').toLowerCase().includes(q))
+function matchAdminKeyword(row, keyword, fields) { // 【行】进入代码块
+  const q = String(keyword || '').trim().toLowerCase() // 【行】声明并赋值变量 `q`
+  if (!q) return true // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  return fields.some(f => String(row[f] ?? '').toLowerCase().includes(q)) // 【行】返回本函数计算结果给调用方
 }
-const filteredAdminAccounts = computed(() => {
-  let rows = decoratedAdminAccounts.value
-  if (adminStatusFilter.value) rows = rows.filter(r => adminStatusValue(r.status) === adminStatusFilter.value)
-  return rows.filter(r => matchAdminKeyword(r, adminKeyword.value, ['account', 'name', 'phone', 'managedRooms']))
-})
-const pagedAdminAccounts = computed(() => paginateRows(filteredAdminAccounts.value, adminAccountPage.value, adminAccountPageSize.value))
-const adminAccountTotalPages = computed(() => pagerTotal(filteredAdminAccounts.value.length, adminAccountPageSize.value))
-const filteredRooms = computed(() => {
-  let rows = rooms.value
-  if (roomStatusFilter.value) rows = rows.filter(r => roomStatusValue(r.status) === roomStatusFilter.value)
-  return rows.filter(r => matchAdminKeyword(r, roomKeyword.value, ['name', 'location', 'floor', 'room_code']))
-})
-const pagedRooms = computed(() => paginateRows(filteredRooms.value, roomPage.value, roomPageSize.value))
-const roomTotalPages = computed(() => pagerTotal(filteredRooms.value.length, roomPageSize.value))
-const filteredSeatGridCells = computed(() => {
-  let cells = seatGridCells.value
-  if (seatStatusFilter.value) cells = cells.filter(c => seatStatusValue(c.status || '空闲') === seatStatusFilter.value)
-  const q = String(seatKeyword.value || '').trim().toLowerCase()
-  if (!q) return cells
-  return cells.filter(c => {
-    const label = `R${c.row_no}-C${c.col_no} ${c.seat_no || ''}`.toLowerCase()
-    return label.includes(q)
-  })
-})
-const sortedAnnouncements = computed(() => [...announcements.value].sort((a, b) => Number(b.pinned || 0) - Number(a.pinned || 0)))
-const pagedUsers = computed(() => paginateRows(users.value, userPage.value, userPageSize.value))
-const userTotalPages = computed(() => pagerTotal(users.value.length, userPageSize.value))
-const decoratedLiveReservations = computed(() =>
-  (liveReservations.value || []).map(r => ({
-    ...r,
-    reserveDate: formatDate(r.reserveDate || r.reserve_date),
-    status: reservationStatusText(r.status)
-  }))
+const filteredAdminAccounts = computed(() => { // 【行】声明并赋值变量 `filteredAdminAccounts`
+  let rows = decoratedAdminAccounts.value // 【行】声明并赋值变量 `rows`
+  if (adminStatusFilter.value) rows = rows.filter(r => adminStatusValue(r.status) === adminStatusFilter.value) // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  return rows.filter(r => matchAdminKeyword(r, adminKeyword.value, ['account', 'name', 'phone', 'managedRooms'])) // 【行】返回本函数计算结果给调用方
+}) // 【行】执行本行语句，推进功能链中的当前步骤
+const pagedAdminAccounts = computed(() => paginateRows(filteredAdminAccounts.value, adminAccountPage.value, adminAccountPageSize.value)) // 【行】声明并赋值变量 `pagedAdminAccounts`
+const adminAccountTotalPages = computed(() => pagerTotal(filteredAdminAccounts.value.length, adminAccountPageSize.value)) // 【行】声明并赋值变量 `adminAccountTotalPages`
+const filteredRooms = computed(() => { // 【行】声明并赋值变量 `filteredRooms`
+  let rows = rooms.value // 【行】声明并赋值变量 `rows`
+  if (roomStatusFilter.value) rows = rows.filter(r => roomStatusValue(r.status) === roomStatusFilter.value) // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  return rows.filter(r => matchAdminKeyword(r, roomKeyword.value, ['name', 'location', 'floor', 'room_code'])) // 【行】返回本函数计算结果给调用方
+}) // 【行】执行本行语句，推进功能链中的当前步骤
+const pagedRooms = computed(() => paginateRows(filteredRooms.value, roomPage.value, roomPageSize.value)) // 【行】声明并赋值变量 `pagedRooms`
+const roomTotalPages = computed(() => pagerTotal(filteredRooms.value.length, roomPageSize.value)) // 【行】声明并赋值变量 `roomTotalPages`
+const filteredSeatGridCells = computed(() => { // 【行】声明并赋值变量 `filteredSeatGridCells`
+  let cells = seatGridCells.value // 【行】声明并赋值变量 `cells`
+  if (seatStatusFilter.value) cells = cells.filter(c => seatStatusValue(c.status || '空闲') === seatStatusFilter.value) // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  const q = String(seatKeyword.value || '').trim().toLowerCase() // 【行】声明并赋值变量 `q`
+  if (!q) return cells // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  return cells.filter(c => { // 【行】返回本函数计算结果给调用方
+    const label = `R${c.row_no}-C${c.col_no} ${c.seat_no || ''}`.toLowerCase() // 【行】声明并赋值变量 `label`
+    return label.includes(q) // 【行】返回本函数计算结果给调用方
+  }) // 【行】执行本行语句，推进功能链中的当前步骤
+}) // 【行】执行本行语句，推进功能链中的当前步骤
+const sortedAnnouncements = computed(() => [...announcements.value].sort((a, b) => Number(b.pinned || 0) - Number(a.pinned || 0))) // 【行】声明并赋值变量 `sortedAnnouncements`
+const pagedUsers = computed(() => paginateRows(users.value, userPage.value, userPageSize.value)) // 【行】声明并赋值变量 `pagedUsers`
+const userTotalPages = computed(() => pagerTotal(users.value.length, userPageSize.value)) // 【行】声明并赋值变量 `userTotalPages`
+const decoratedLiveReservations = computed(() => // 【行】声明并赋值变量 `decoratedLiveReservations`
+  (liveReservations.value || []).map(r => ({ // 【行】进入代码块
+    ...r, // 【行】执行本行语句，推进功能链中的当前步骤
+    reserveDate: formatDate(r.reserveDate || r.reserve_date), // 【行】执行本行语句，推进功能链中的当前步骤
+    status: reservationStatusText(r.status) // 【行】执行本行语句，推进功能链中的当前步骤
+  })) // 【行】执行本行语句，推进功能链中的当前步骤
 )
-const decoratedAdminReservations = computed(() => adminReservations.value.map(r => ({
-  ...decorateReservationRow(r),
-  _rawStatus: r.status,
-  _rawId: r.id,
-  cancel_reason: r.cancel_reason || '—'
-})))
-const filteredAdminReservations = computed(() => {
-  let rows = decoratedAdminReservations.value
-  if (reservationStatusFilter.value) rows = rows.filter(r => reservationStatusValue(r._rawStatus) === reservationStatusFilter.value)
-  if (reservationRoomFilter.value) rows = rows.filter(r => Number(r.room_id) === Number(reservationRoomFilter.value))
-  return rows.filter(r => matchAdminKeyword(r, reservationKeyword.value, [
-    'student_no', 'studentNo', 'studentName', 'roomName', 'seatNo', 'reservation_no'
+const decoratedAdminReservations = computed(() => adminReservations.value.map(r => ({ // 【行】声明并赋值变量 `decoratedAdminReservations`
+  ...decorateReservationRow(r), // 【行】执行本行语句，推进功能链中的当前步骤
+  _rawStatus: r.status, // 【行】执行本行语句，推进功能链中的当前步骤
+  _rawId: r.id, // 【行】执行本行语句，推进功能链中的当前步骤
+  cancel_reason: r.cancel_reason || '—' // 【行】执行本行语句，推进功能链中的当前步骤
+}))) // 【行】执行本行语句，推进功能链中的当前步骤
+const filteredAdminReservations = computed(() => { // 【行】声明并赋值变量 `filteredAdminReservations`
+  let rows = decoratedAdminReservations.value // 【行】声明并赋值变量 `rows`
+  if (reservationStatusFilter.value) rows = rows.filter(r => reservationStatusValue(r._rawStatus) === reservationStatusFilter.value) // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  if (reservationRoomFilter.value) rows = rows.filter(r => Number(r.room_id) === Number(reservationRoomFilter.value)) // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  return rows.filter(r => matchAdminKeyword(r, reservationKeyword.value, [ // 【行】返回本函数计算结果给调用方
+    'student_no', 'studentNo', 'studentName', 'roomName', 'seatNo', 'reservation_no' // 【行】执行本行语句，推进功能链中的当前步骤
   ]))
 })
 const pagedAdminReservations = computed(() => paginateRows(filteredAdminReservations.value, reservationPage.value, reservationPageSize.value))
@@ -2077,66 +2082,66 @@ async function saveSeatEdit() { // 【行】进入代码块
     await loadAdminSeats() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-async function saveProfileAndClose() {
-  await saveProfile()
-  profileInfoOpen.value = false
+async function saveProfileAndClose() { // 【行】进入代码块
+  await saveProfile() // 【行】执行本行语句，推进功能链中的当前步骤
+  profileInfoOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function submitFeedbackModal() {
-  if (!feedbackForm.content.trim()) {
-    notify('请输入反馈内容')
-    return
+async function submitFeedbackModal() { // 【行】进入代码块
+  if (!feedbackForm.content.trim()) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('请输入反馈内容') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  try {
-    await call('post', '/feedback', {
-      content: feedbackForm.content,
-      type: feedbackForm.type,
-      severity: feedbackForm.severity,
-      roomId: reservationForm.roomId,
-      seatId: selectedSeat.value?.id || activeReservation.value?.seatId
-    })
-    feedbackModalOpen.value = false
-    feedbackForm.content = ''
-    notify('反馈已提交')
+  try { // 【行】进入代码块
+    await call('post', '/feedback', { // 【行】带 JWT 调用后端 REST API
+      content: feedbackForm.content, // 【行】执行本行语句，推进功能链中的当前步骤
+      type: feedbackForm.type, // 【行】执行本行语句，推进功能链中的当前步骤
+      severity: feedbackForm.severity, // 【行】执行本行语句，推进功能链中的当前步骤
+      roomId: reservationForm.roomId, // 【行】执行本行语句，推进功能链中的当前步骤
+      seatId: selectedSeat.value?.id || activeReservation.value?.seatId // 【行】执行本行语句，推进功能链中的当前步骤
+    }) // 【行】执行本行语句，推进功能链中的当前步骤
+    feedbackModalOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+    feedbackForm.content = '' // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('反馈已提交') // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-function runGenericConfirm() {
-  if (typeof genericModal.onConfirm === 'function') genericModal.onConfirm()
-  genericModal.open = false
+function runGenericConfirm() { // 【行】进入代码块
+  if (typeof genericModal.onConfirm === 'function') genericModal.onConfirm() // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  genericModal.open = false // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function changeAdminStatsPeriod(period) {
-  adminStatsPeriod.value = period
-  await loadAdminStatistics()
+async function changeAdminStatsPeriod(period) { // 【行】进入代码块
+  adminStatsPeriod.value = period // 【行】执行本行语句，推进功能链中的当前步骤
+  await loadAdminStatistics() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function changeAdminStatsRangeMode(mode) {
-  adminStatsRangeMode.value = mode
-  if (mode !== 'past') {
-    adminStatsDateRange.value = null
-    adminStatsRangeTouched.value = false
+async function changeAdminStatsRangeMode(mode) { // 【行】进入代码块
+  adminStatsRangeMode.value = mode // 【行】执行本行语句，推进功能链中的当前步骤
+  if (mode !== 'past') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    adminStatsDateRange.value = null // 【行】执行本行语句，推进功能链中的当前步骤
+    adminStatsRangeTouched.value = false // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  await loadAdminStatistics()
+  await loadAdminStatistics() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function onAdminStatsDateRangeChange() {
-  adminStatsRangeTouched.value = true
-  loadAdminStatistics()
+function onAdminStatsDateRangeChange() { // 【行】进入代码块
+  adminStatsRangeTouched.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+  loadAdminStatistics() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function resetAdminStatsDateRange() {
-  adminStatsDateRange.value = null
-  adminStatsRangeTouched.value = false
-  loadAdminStatistics()
+function resetAdminStatsDateRange() { // 【行】进入代码块
+  adminStatsDateRange.value = null // 【行】执行本行语句，推进功能链中的当前步骤
+  adminStatsRangeTouched.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+  loadAdminStatistics() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function buildAdminStatsParams() {
-  const params = { period: adminStatsPeriod.value, rangeMode: adminStatsRangeMode.value }
-  if (adminStatsRoomId.value) params.roomId = adminStatsRoomId.value
-  if (adminStatsRangeMode.value === 'past' && adminStatsDateRange.value?.length === 2) {
-    params.startDate = adminStatsDateRange.value[0]
-    params.endDate = adminStatsDateRange.value[1]
+function buildAdminStatsParams() { // 【行】进入代码块
+  const params = { period: adminStatsPeriod.value, rangeMode: adminStatsRangeMode.value } // 【行】初始化 GET 查询参数字典，键名与后端约定一致
+  if (adminStatsRoomId.value) params.roomId = adminStatsRoomId.value // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  if (adminStatsRangeMode.value === 'past' && adminStatsDateRange.value?.length === 2) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    params.startDate = adminStatsDateRange.value[0] // 【行】往期模式下附加自定义开始日期 query
+    params.endDate = adminStatsDateRange.value[1] // 【行】往期模式下附加自定义结束日期 query
   }
-  return params
+  return params // 【行】返回参数字典，供 axios call() 拼接到 URL
 }
-function syncAdminStatsDateRangeFromSummary(summary = {}) {
-  if (adminStatsRangeMode.value !== 'past' || adminStatsRangeTouched.value) return
-  if (summary.startDate && summary.endDate) {
-    adminStatsDateRange.value = [summary.startDate, summary.endDate]
+function syncAdminStatsDateRangeFromSummary(summary = {}) { // 【行】进入代码块
+  if (adminStatsRangeMode.value !== 'past' || adminStatsRangeTouched.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (summary.startDate && summary.endDate) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    adminStatsDateRange.value = [summary.startDate, summary.endDate] // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 /** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：buildStudyStatsParams 将 period、rangeMode、起止日期 ref 组装为 GET 查询参数 */
@@ -2148,11 +2153,11 @@ function buildStudyStatsParams() { // 【行】进入代码块
   }
   return params // 【行】返回参数字典，供 axios call() 拼接到 URL
 }
-function syncStudyStatsDateRangeFromSummary(summary = {}) {
-  if (studyStatsRangeMode.value !== 'past' || studyStatsRangeTouched.value) return
-  if (summary.startDate && summary.endDate) {
-    studyStatsStartDate.value = summary.startDate
-    studyStatsEndDate.value = summary.endDate
+function syncStudyStatsDateRangeFromSummary(summary = {}) { // 【行】API 返回 summary 时回写起止日期（仅往期且用户未手动改过）
+  if (studyStatsRangeMode.value !== 'past' || studyStatsRangeTouched.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (summary.startDate && summary.endDate) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    studyStatsStartDate.value = summary.startDate // 【行】读写往期统计的开始日期 ref
+    studyStatsEndDate.value = summary.endDate // 【行】读写往期统计的结束日期 ref
   }
 }
 /** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：applyStudyStatsShortcut 与起止日期 change 写入 ref 并触发 loadStudyStats */
@@ -2164,22 +2169,22 @@ function normalizeStudyStatsDateRange() { // 【行】保证开始日期不晚�
     studyStatsEndDate.value = tmp // 【行】读写往期统计的结束日期 ref
   }
 }
-function onStudyStatsStartDateChange() {
-  normalizeStudyStatsDateRange()
-  studyStatsRangeTouched.value = true
-  loadStudyStats().then(drawStudentChart)
+function onStudyStatsStartDateChange() { // 【行】开始日期变更：纠正逆序后标记 touched 并重新拉数
+  normalizeStudyStatsDateRange() // 【行】保证开始日期不晚于结束日期
+  studyStatsRangeTouched.value = true // 【行】标记用户已手动改过日期，禁止被 API 回写覆盖
+  loadStudyStats().then(drawStudentChart) // 【行】拉数完成后刷新柱图展示
 }
-function onStudyStatsEndDateChange() {
-  normalizeStudyStatsDateRange()
-  studyStatsRangeTouched.value = true
-  loadStudyStats().then(drawStudentChart)
+function onStudyStatsEndDateChange() { // 【行】结束日期变更：纠正逆序后标记 touched 并重新拉数
+  normalizeStudyStatsDateRange() // 【行】保证开始日期不晚于结束日期
+  studyStatsRangeTouched.value = true // 【行】标记用户已手动改过日期，禁止被 API 回写覆盖
+  loadStudyStats().then(drawStudentChart) // 【行】拉数完成后刷新柱图展示
 }
-function applyStudyStatsShortcut(shortcut) {
-  const range = shortcut.value()
-  studyStatsStartDate.value = range[0]
-  studyStatsEndDate.value = range[1]
-  studyStatsRangeTouched.value = true
-  loadStudyStats().then(drawStudentChart)
+function applyStudyStatsShortcut(shortcut) { // 【行】快捷区间按钮：写入起止 ref 并 loadStudyStats
+  const range = shortcut.value() // 【行】从快捷按钮配置函数取出 [起,止] 日期数组
+  studyStatsStartDate.value = range[0] // 【行】读写往期统计的开始日期 ref
+  studyStatsEndDate.value = range[1] // 【行】读写往期统计的结束日期 ref
+  studyStatsRangeTouched.value = true // 【行】标记用户已手动改过日期，禁止被 API 回写覆盖
+  loadStudyStats().then(drawStudentChart) // 【行】拉数完成后刷新柱图展示
 }
 /** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：changeStudyStatsRangeMode 切换当期/往期 Tab 并重拉统计 */
 async function changeStudyStatsRangeMode(mode) { // 【行】进入代码块
@@ -2192,11 +2197,11 @@ async function changeStudyStatsRangeMode(mode) { // 【行】进入代码块
   await loadStudyStats() // 【行】异步拉取学习统计数据并写入 studyStats ref
   drawStudentChart() // 【行】根据最新 studyBars 重绘 ECharts 柱图
 }
-function resetStudyStatsDateRange() {
-  studyStatsStartDate.value = null
-  studyStatsEndDate.value = null
-  studyStatsRangeTouched.value = false
-  loadStudyStats().then(drawStudentChart)
+function resetStudyStatsDateRange() { // 【行】清空往期起止日期并恢复默认统计窗
+  studyStatsStartDate.value = null // 【行】读写往期统计的开始日期 ref
+  studyStatsEndDate.value = null // 【行】读写往期统计的结束日期 ref
+  studyStatsRangeTouched.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+  loadStudyStats().then(drawStudentChart) // 【行】拉数完成后刷新柱图展示
 }
 /** 【F6-6·运营看板】功能链实例：管理员打开签到页 → 底部实时列表显示「待签到 / 使用中」预约；学生签到页轮询同步状态。 本处职责：管理员签到页底部展示待签到/使用中实时列表*/
 async function loadLiveReservations() { // 【行】进入代码块
@@ -2207,24 +2212,24 @@ async function loadLiveReservations() { // 【行】进入代码块
     notify(e.message) // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
-function toDateValue(date) {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
+function toDateValue(date) { // 【行】进入代码块
+  const y = date.getFullYear() // 【行】声明并赋值变量 `y`
+  const m = String(date.getMonth() + 1).padStart(2, '0') // 【行】声明并赋值变量 `m`
+  const d = String(date.getDate()).padStart(2, '0') // 【行】声明并赋值变量 `d`
+  return `${y}-${m}-${d}` // 【行】返回本函数计算结果给调用方
 }
-function formatDate(value) {
-  if (!value) return ''
-  return String(value).slice(0, 10)
+function formatDate(value) { // 【行】进入代码块
+  if (!value) return '' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  return String(value).slice(0, 10) // 【行】返回本函数计算结果给调用方
 }
-function formatStudyLabel(value) {
-  const text = String(value || '')
-  if (statPeriod.value === 'day') return `${String(text).padStart(2, '0')}时`
-  if (statPeriod.value === 'year' || (statPeriod.value === 'month' && studyStatsRangeMode.value === 'past')) {
-    const match = text.match(/^(\d{4})-(\d{2})$/)
-    return match ? `${match[2]}月` : text
+function formatStudyLabel(value) { // 【行】进入代码块
+  const text = String(value || '') // 【行】声明并赋值变量 `text`
+  if (statPeriod.value === 'day') return `${String(text).padStart(2, '0')}时` // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (statPeriod.value === 'year' || (statPeriod.value === 'month' && studyStatsRangeMode.value === 'past')) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    const match = text.match(/^(\d{4})-(\d{2})$/) // 【行】声明并赋值变量 `match`
+    return match ? `${match[2]}月` : text // 【行】返回本函数计算结果给调用方
   }
-  return text.length >= 10 ? text.slice(5, 10).replace('-', '/') : text
+  return text.length >= 10 ? text.slice(5, 10).replace('-', '/') : text // 【行】返回本函数计算结果给调用方
 }
 /** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：buildYearStudyBars 按统计窗口补全无数据的月份为 0 */
 function buildYearStudyBars(rows) { // 【行】进入代码块
@@ -2260,74 +2265,74 @@ function buildYearStudyBars(rows) { // 【行】进入代码块
   }
   return bars // 【行】返回本函数计算结果给调用方
 }
-function barHeight(value) {
-  if (!Number(value)) return 4
-  return Math.max(8, Math.round((Number(value) / maxStudyBarValue.value) * 100))
+function barHeight(value) { // 【行】进入代码块
+  if (!Number(value)) return 4 // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  return Math.max(8, Math.round((Number(value) / maxStudyBarValue.value) * 100)) // 【行】返回本函数计算结果给调用方
 }
-function timeRangeText(item) {
-  return `${String(item.start_time || item.startTime || '').slice(0, 5)}-${String(item.end_time || item.endTime || '').slice(0, 5)}`
+function timeRangeText(item) { // 【行】进入代码块
+  return `${String(item.start_time || item.startTime || '').slice(0, 5)}-${String(item.end_time || item.endTime || '').slice(0, 5)}` // 【行】返回本函数计算结果给调用方
 }
-function timeToMinutes(value) {
-  const [h, m] = String(value || '00:00').split(':').map(Number)
-  return h * 60 + m
+function timeToMinutes(value) { // 【行】进入代码块
+  const [h, m] = String(value || '00:00').split(':').map(Number) // 【行】声明并赋值变量 ``
+  return h * 60 + m // 【行】返回本函数计算结果给调用方
 }
-function minutesToTime(minutes) {
-  const safe = Math.max(0, Math.min(23 * 60 + 59, minutes))
-  return `${String(Math.floor(safe / 60)).padStart(2, '0')}:${String(safe % 60).padStart(2, '0')}`
+function minutesToTime(minutes) { // 【行】进入代码块
+  const safe = Math.max(0, Math.min(23 * 60 + 59, minutes)) // 【行】声明并赋值变量 `safe`
+  return `${String(Math.floor(safe / 60)).padStart(2, '0')}:${String(safe % 60).padStart(2, '0')}` // 【行】返回本函数计算结果给调用方
 }
-function addMinutes(value, minutes) {
-  return minutesToTime(timeToMinutes(value) + minutes)
+function addMinutes(value, minutes) { // 【行】进入代码块
+  return minutesToTime(timeToMinutes(value) + minutes) // 【行】返回本函数计算结果给调用方
 }
-function ensureEndAfterStart() {
-  if (!reservationForm.startTime) return
-  if (!reservationForm.endTime || timeToMinutes(reservationForm.endTime) <= timeToMinutes(reservationForm.startTime)) {
-    reservationForm.endTime = endSelectStart.value
+function ensureEndAfterStart() { // 【行】进入代码块
+  if (!reservationForm.startTime) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (!reservationForm.endTime || timeToMinutes(reservationForm.endTime) <= timeToMinutes(reservationForm.startTime)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    reservationForm.endTime = endSelectStart.value // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (timeToMinutes(reservationForm.endTime) > timeToMinutes(currentRoomCloseTime.value)) {
-    reservationForm.endTime = currentRoomCloseTime.value
+  if (timeToMinutes(reservationForm.endTime) > timeToMinutes(currentRoomCloseTime.value)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    reservationForm.endTime = currentRoomCloseTime.value // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
-function formatStudyTime(sec) {
-  const h = String(Math.floor(sec / 3600)).padStart(2, '0')
-  const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0')
-  const s = String(sec % 60).padStart(2, '0')
-  return `${h}:${m}:${s}`
+function formatStudyTime(sec) { // 【行】进入代码块
+  const h = String(Math.floor(sec / 3600)).padStart(2, '0') // 【行】声明并赋值变量 `h`
+  const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0') // 【行】声明并赋值变量 `m`
+  const s = String(sec % 60).padStart(2, '0') // 【行】声明并赋值变量 `s`
+  return `${h}:${m}:${s}` // 【行】返回本函数计算结果给调用方
 }
-function updateStudyTimer() {
-  const r = activeReservation.value
-  if (!r || !isUsingReservation(r.status) || !r.sign_in_time) {
-    studySeconds.value = 0
-    return
+function updateStudyTimer() { // 【行】进入代码块
+  const r = activeReservation.value // 【行】声明并赋值变量 `r`
+  if (!r || !isUsingReservation(r.status) || !r.sign_in_time) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    studySeconds.value = 0 // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  const start = new Date(String(r.sign_in_time).replace(' ', 'T'))
-  studySeconds.value = Math.max(0, Math.floor((Date.now() - start.getTime()) / 1000))
+  const start = new Date(String(r.sign_in_time).replace(' ', 'T')) // 【行】声明并赋值变量 `start`
+  studySeconds.value = Math.max(0, Math.floor((Date.now() - start.getTime()) / 1000)) // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 学生端分区：仅保留热门/静音/开放座位，静音单独成区，不再使用精品区、标准区或复合标签 */
-function resolveSeatSection(seat) {
-  if (!seat.is_seat) return '非座位区'
-  if (seat.quiet_zone) return '静音区'
-  if (seat.hot_seat) return '热门区'
-  return '开放座位'
+function resolveSeatSection(seat) { // 【行】进入代码块
+  if (!seat.is_seat) return '非座位区' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (seat.quiet_zone) return '静音区' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (seat.hot_seat) return '热门区' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  return '开放座位' // 【行】返回本函数计算结果给调用方
 }
-function buildReservationTimeOptions(rangeStart, rangeEnd, stepMin = 10) {
-  const options = []
-  let cur = timeToMinutes(rangeStart)
-  const max = timeToMinutes(rangeEnd)
-  while (cur <= max) {
-    options.push(minutesToTime(cur))
-    cur += stepMin
+function buildReservationTimeOptions(rangeStart, rangeEnd, stepMin = 10) { // 【行】进入代码块
+  const options = [] // 【行】声明并赋值变量 `options`
+  let cur = timeToMinutes(rangeStart) // 【行】声明并赋值变量 `cur`
+  const max = timeToMinutes(rangeEnd) // 【行】声明并赋值变量 `max`
+  while (cur <= max) { // 【行】进入代码块
+    options.push(minutesToTime(cur)) // 【行】执行本行语句，推进功能链中的当前步骤
+    cur += stepMin // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  return options
+  return options // 【行】返回本函数计算结果给调用方
 }
-function normalizeReservationTimes() {
-  const starts = startTimeOptions.value
-  if (starts.length && !starts.includes(reservationForm.startTime)) {
-    reservationForm.startTime = starts[0]
+function normalizeReservationTimes() { // 【行】进入代码块
+  const starts = startTimeOptions.value // 【行】声明并赋值变量 `starts`
+  if (starts.length && !starts.includes(reservationForm.startTime)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    reservationForm.startTime = starts[0] // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (!reservationForm.endTime || timeToMinutes(reservationForm.endTime) <= timeToMinutes(reservationForm.startTime)) {
-    reservationForm.endTime = endSelectStart.value
+  if (!reservationForm.endTime || timeToMinutes(reservationForm.endTime) <= timeToMinutes(reservationForm.startTime)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    reservationForm.endTime = endSelectStart.value // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  const ends = endTimeOptions.value
+  const ends = endTimeOptions.value // 【行】声明并赋值变量 `ends`
   if (ends.length && !ends.includes(reservationForm.endTime)) {
     reservationForm.endTime = ends.includes(endSelectStart.value) ? endSelectStart.value : ends[0]
   }
@@ -2396,40 +2401,40 @@ function confirmCheckout() {
   openModalConfirm('确认签退', '签退后将结束本次学习并释放座位，确定签退吗？', doCheckout) // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F4-2·签退与信用】功能链实例：小明使用中点「签退」→ 确认 → 预约「已完成」→ 信用页看到签到 +5 流水与当前分数。 本处职责：POST /reservations/{id}/checkout，展示学习分钟数*/
-async function doCheckout() {
-  try {
-    const data = await call('post', `/reservations/${activeReservation.value.id}/checkout`)
-    checkoutSummary.value = {
-      roomName: activeReservation.value.roomName,
-      seatNo: activeReservation.value.seatNo,
-      minutes: data.actualMinutes || studySeconds.value / 60,
-      creditChange: '+5'
+async function doCheckout() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    const data = await call('post', `/reservations/${activeReservation.value.id}/checkout`) // 【行】带 JWT 调用后端 REST API
+    checkoutSummary.value = { // 【行】进入代码块
+      roomName: activeReservation.value.roomName, // 【行】执行本行语句，推进功能链中的当前步骤
+      seatNo: activeReservation.value.seatNo, // 【行】执行本行语句，推进功能链中的当前步骤
+      minutes: data.actualMinutes || studySeconds.value / 60, // 【行】执行本行语句，推进功能链中的当前步骤
+      creditChange: '+5' // 【行】执行本行语句，推进功能链中的当前步骤
     }
-    checkoutModalOpen.value = true
-    await loadReservations()
-    await loadCredit()
+    checkoutModalOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadReservations() // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadCredit() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-function openModalConfirm(title, message, onOk) {
-  genericModal.title = title
-  genericModal.message = message
-  genericModal.onConfirm = onOk
-  genericModal.open = true
+function openModalConfirm(title, message, onOk) { // 【行】进入代码块
+  genericModal.title = title // 【行】执行本行语句，推进功能链中的当前步骤
+  genericModal.message = message // 【行】执行本行语句，推进功能链中的当前步骤
+  genericModal.onConfirm = onOk // 【行】执行本行语句，推进功能链中的当前步骤
+  genericModal.open = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function clearSession(message) {
-  token.value = ''
-  role.value = ''
+function clearSession(message) { // 【行】进入代码块
+  token.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  role.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
   me.value = {}
-  studentPage.value = 'home'
-  adminPage.value = 'checkins'
-  loginRole.value = 'student'
-  localStorage.removeItem('token')
-  localStorage.removeItem('role')
-  if (message) notify(message)
+  studentPage.value = 'home' // 【行】执行本行语句，推进功能链中的当前步骤
+  adminPage.value = 'checkins' // 【行】执行本行语句，推进功能链中的当前步骤
+  loginRole.value = 'student' // 【行】执行本行语句，推进功能链中的当前步骤
+  localStorage.removeItem('token') // 【行】执行本行语句，推进功能链中的当前步骤
+  localStorage.removeItem('role') // 【行】执行本行语句，推进功能链中的当前步骤
+  if (message) notify(message) // 【行】分支判断：根据当前 UI 状态决定后续逻辑
 }
-function openRegister() {
-  registerPassword2.value = ''
-  registerOpen.value = true
+function openRegister() { // 【行】进入代码块
+  registerPassword2.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  registerOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：小李注册前上传身份材料到 uploads/material*/
 async function onRegisterFile(event) { // 【行】进入代码块
@@ -2552,12 +2557,12 @@ async function register() { // 【行】进入代码块
     authLoading.value = false // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
-function logout() {
-  clearSession('已退出登录')
+function logout() { // 【行】进入代码块
+  clearSession('已退出登录') // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function switchAdminAccount() {
-  clearSession('')
-  loginRole.value = 'admin'
+function switchAdminAccount() { // 【行】进入代码块
+  clearSession('') // 【行】执行本行语句，推进功能链中的当前步骤
+  loginRole.value = 'admin' // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** @param silent 页面刷新时用旧 token 恢复会话：失败则静默清 token，避免登录页弹 SQL 报错 */
 /** 【F2-1·学生登录】功能链实例：小明在登录页输入 `202225220101` / `123456` → 点「登录」→ 首页显示「你好，小明」→ 再进「我的预约」无需重输密码（`localStorage` 已有 token）。 本处职责：刷新页面后 bootstrap 用 localStorage token 调 GET /auth/me 恢复小明会话*/
@@ -2579,10 +2584,10 @@ async function bootstrap(silent = true) { // 【行】进入代码块
     }
   }
 }
-async function loadRooms() {
-  rooms.value = await call('get', role.value === 'STUDENT' ? '/rooms' : '/admin/rooms')
-  if (!reservationForm.roomId && rooms.value[0]) reservationForm.roomId = rooms.value[0].id
-  await loadAvailableSeats()
+async function loadRooms() { // 【行】进入代码块
+  rooms.value = await call('get', role.value === 'STUDENT' ? '/rooms' : '/admin/rooms') // 【行】带 JWT 调用后端 REST API
+  if (!reservationForm.roomId && rooms.value[0]) reservationForm.roomId = rooms.value[0].id // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  await loadAvailableSeats() // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：GET /seats/available，刷新绿色可选座位*/
 async function loadAvailableSeats() { // 【行】进入代码块
@@ -2592,49 +2597,49 @@ async function loadAvailableSeats() { // 【行】进入代码块
   seats.value = await call('get', '/seats/available', null, { params: { roomId: reservationForm.roomId, date: reservationForm.date, startTime: reservationForm.startTime, endTime: reservationForm.endTime } }) // 【行】带 JWT 调用后端 REST API
   selectedSeat.value = null // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function handleRoomChange() {
-  normalizeReservationTimes()
-  clampReservationStartForToday()
-  await loadAvailableSeats()
+async function handleRoomChange() { // 【行】进入代码块
+  normalizeReservationTimes() // 【行】执行本行语句，推进功能链中的当前步骤
+  clampReservationStartForToday() // 【行】执行本行语句，推进功能链中的当前步骤
+  await loadAvailableSeats() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function setReservationDate(date) {
-  reservationForm.date = date
-  clampReservationStartForToday()
-  await loadAvailableSeats()
+async function setReservationDate(date) { // 【行】进入代码块
+  reservationForm.date = date // 【行】执行本行语句，推进功能链中的当前步骤
+  clampReservationStartForToday() // 【行】执行本行语句，推进功能链中的当前步骤
+  await loadAvailableSeats() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function selectRoom(id) {
-  reservationForm.roomId = id
-  studentPage.value = 'reservation'
-  handleRoomChange()
+function selectRoom(id) { // 【行】进入代码块
+  reservationForm.roomId = id // 【行】执行本行语句，推进功能链中的当前步骤
+  studentPage.value = 'reservation' // 【行】执行本行语句，推进功能链中的当前步骤
+  handleRoomChange() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function handleStartTimeChange() {
-  normalizeReservationTimes()
-  ensureEndAfterStart()
-  clampReservationStartForToday()
-  await loadAvailableSeats()
+async function handleStartTimeChange() { // 【行】进入代码块
+  normalizeReservationTimes() // 【行】执行本行语句，推进功能链中的当前步骤
+  ensureEndAfterStart() // 【行】执行本行语句，推进功能链中的当前步骤
+  clampReservationStartForToday() // 【行】执行本行语句，推进功能链中的当前步骤
+  await loadAvailableSeats() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function handleEndTimeChange() {
-  normalizeReservationTimes()
-  if (timeToMinutes(reservationForm.endTime) <= timeToMinutes(reservationForm.startTime)) {
-    reservationForm.endTime = endSelectStart.value
-    notify('结束时间必须晚于开始时间')
+async function handleEndTimeChange() { // 【行】进入代码块
+  normalizeReservationTimes() // 【行】执行本行语句，推进功能链中的当前步骤
+  if (timeToMinutes(reservationForm.endTime) <= timeToMinutes(reservationForm.startTime)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    reservationForm.endTime = endSelectStart.value // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('结束时间必须晚于开始时间') // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  await loadAvailableSeats()
+  await loadAvailableSeats() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function openSeatDetail(seat) {
-  pendingSeat.value = seat
-  seatDialogOpen.value = true
+function openSeatDetail(seat) { // 【行】进入代码块
+  pendingSeat.value = seat // 【行】执行本行语句，推进功能链中的当前步骤
+  seatDialogOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function confirmSeatSelection() {
-  if (!pendingSeat.value?.available) return
-  selectedSeat.value = pendingSeat.value
-  seatDialogOpen.value = false
-  confirmReservationOpen.value = true
+function confirmSeatSelection() { // 【行】进入代码块
+  if (!pendingSeat.value?.available) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  selectedSeat.value = pendingSeat.value // 【行】执行本行语句，推进功能链中的当前步骤
+  seatDialogOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
+  confirmReservationOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function seatUnavailableText(seat) {
-  if (!seat?.is_seat || seat?.reserveState === 'disabled' || seatStatusValue(seat?.status) !== '空闲') return '不可预约'
-  if (seat?.reserveState === 'reserved') return '当前时段已被预约'
-  return '不可预约'
+function seatUnavailableText(seat) { // 【行】进入代码块
+  if (!seat?.is_seat || seat?.reserveState === 'disabled' || seatStatusValue(seat?.status) !== '空闲') return '不可预约' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (seat?.reserveState === 'reserved') return '当前时段已被预约' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  return '不可预约' // 【行】返回本函数计算结果给调用方
 }
 /** 【F3-1·查座预约】功能链实例：小明登录 → 预约 Tab → 选明天 **14:00–16:00** → 座位图点绿色 **A-12** → 确认 → 提示成功，状态「待使用」；库中 `reservation` 一行 + 多条 `reservation_slot`… 本处职责：小明确认 A-12，POST /reservations 后跳转签到页*/
 async function createReservation() { // 【行】进入代码块
@@ -2658,8 +2663,8 @@ async function cancelReservation(r) { // 【行】进入代码块
           notify('已取消预约，扣除 50 信用分') // 【行】执行本行语句，推进功能链中的当前步骤
   await Promise.all([loadReservations(), loadCredit()]) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function checkout() {
-  confirmCheckout()
+async function checkout() { // 【行】进入代码块
+  confirmCheckout() // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F2-4·账号资料与安全】功能链实例：小明在「我的 → 设置」改密码 → 成功后强制退出 → 用新密码再登录；或在个人资料里改学院/专业。 本处职责：小明在设置里改学院/专业，PUT /student/profile*/
 async function saveProfile() { // 【行】进入代码块
@@ -2668,31 +2673,31 @@ async function saveProfile() { // 【行】进入代码块
     notify('资料已保存') // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-async function uploadLayoutImage(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  if (!token.value) {
-    notify('请先登录管理端后再上传图片')
-    return
+async function uploadLayoutImage(e) { // 【行】进入代码块
+  const file = e.target.files?.[0] // 【行】声明并赋值变量 `file`
+  if (!file) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (!token.value) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    notify('请先登录管理端后再上传图片') // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  try {
-    const form = new FormData()
-    form.append('file', file)
-    form.append('category', 'layout')
-    const res = await api.post('/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } })
-    roomForm.layoutImageUrl = res.data.data.url
-    notify('图片上传成功')
+  try { // 【行】进入代码块
+    const form = new FormData() // 【行】声明并赋值变量 `form`
+    form.append('file', file) // 【行】执行本行语句，推进功能链中的当前步骤
+    form.append('category', 'layout') // 【行】执行本行语句，推进功能链中的当前步骤
+    const res = await api.post('/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } }) // 【行】声明并赋值变量 `res`
+    roomForm.layoutImageUrl = res.data.data.url // 【行】执行本行语句，推进功能链中的当前步骤
+    notify('图片上传成功') // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (err) { notify(err.message || '上传失败') }
 }
-function syncProfileForm() {
-  Object.assign(profileForm, {
-    name: me.value.name || '',
-    phone: me.value.phone || '',
-    email: me.value.email || '',
-    college: me.value.college || '',
-    major: me.value.major || '',
-    grade: me.value.grade || ''
-  })
+function syncProfileForm() { // 【行】进入代码块
+  Object.assign(profileForm, { // 【行】进入代码块
+    name: me.value.name || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    phone: me.value.phone || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    email: me.value.email || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    college: me.value.college || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    major: me.value.major || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    grade: me.value.grade || '' // 【行】执行本行语句，推进功能链中的当前步骤
+  }) // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F4-2·签退与信用】功能链实例：小明使用中点「签退」→ 确认 → 预约「已完成」→ 信用页看到签到 +5 流水与当前分数。 本处职责：小明签退后 loadCredit 拉取 credit_log 与当前积分*/
 async function loadCredit() { // 【行】进入代码块
@@ -2707,19 +2712,19 @@ async function loadStudyStats() { // 【行】进入代码块
 async function loadAnnouncements() { // 【行】进入代码块
   announcements.value = await call('get', '/announcements') // 【行】带 JWT 调用后端 REST API
 }
-async function readAnnouncement(a) {
-  await call('post', `/announcements/${a.id}/read`)
-  activeAnnouncement.value = a
-  announcementDetailOpen.value = true
-  await loadAnnouncements()
+async function readAnnouncement(a) { // 【行】进入代码块
+  await call('post', `/announcements/${a.id}/read`) // 【行】带 JWT 调用后端 REST API
+  activeAnnouncement.value = a // 【行】执行本行语句，推进功能链中的当前步骤
+  announcementDetailOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+  await loadAnnouncements() // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：小明首页铃铛 loadNotifications 展示预约成功等站内通知*/
 async function loadNotifications() { // 【行】进入代码块
   notifications.value = await call('get', '/notifications') // 【行】带 JWT 调用后端 REST API
 }
-function openNotifications() {
-  studentPage.value = 'notifications'
-  loadNotifications()
+function openNotifications() { // 【行】进入代码块
+  studentPage.value = 'notifications' // 【行】执行本行语句，推进功能链中的当前步骤
+  loadNotifications() // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：小明点一条通知 POST /notifications/{id}/read*/
 async function readNotification(n) { // 【行】进入代码块
@@ -2746,21 +2751,21 @@ async function openStudyStats() { // 【行】进入代码块
   await loadStudyStats() // 【行】异步拉取学习统计数据并写入 studyStats ref
   drawStudentChart() // 【行】根据最新 studyBars 重绘 ECharts 柱图
 }
-async function changeStatPeriod(period) {
-  statPeriod.value = period
-  await loadStudyStats()
-  drawStudentChart()
+async function changeStatPeriod(period) { // 【行】进入代码块
+  statPeriod.value = period // 【行】切换日报/周报/月报/年报周期 Tab
+  await loadStudyStats() // 【行】异步拉取学习统计数据并写入 studyStats ref
+  drawStudentChart() // 【行】根据最新 studyBars 重绘 ECharts 柱图
 }
-function statusText(status) {
-  return reservationStatusValue(status) || '-'
+function statusText(status) { // 【行】进入代码块
+  return reservationStatusValue(status) || '-' // 【行】返回本函数计算结果给调用方
 }
-async function openAdmin(page) {
-  adminPage.value = page
-  if (page === 'users') await loadUsers()
-  if (page === 'admins') await loadAdminAccounts()
-  if (page === 'rooms') {
-    await loadRooms()
-    if (isSuperAdmin.value) await loadAdminAccounts()
+async function openAdmin(page) { // 【行】进入代码块
+  adminPage.value = page // 【行】执行本行语句，推进功能链中的当前步骤
+  if (page === 'users') await loadUsers() // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  if (page === 'admins') await loadAdminAccounts() // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  if (page === 'rooms') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    await loadRooms() // 【行】执行本行语句，推进功能链中的当前步骤
+    if (isSuperAdmin.value) await loadAdminAccounts() // 【行】分支判断：根据当前 UI 状态决定后续逻辑
   }
   /** 【F6-5·预约监管】功能链实例：小明被标「已违约」→ 管理员在预约管理点「撤销违约」→ 信用分恢复。 本处职责：管理员预约监管页 GET /admin/reservations 拉全站预约*/
   if (page === 'reservations') adminReservations.value = await call('get', '/admin/reservations') // 【行】分支判断：根据当前 UI 状态决定后续逻辑
@@ -2770,33 +2775,33 @@ async function openAdmin(page) {
     scanHint.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
     await loadLiveReservations() // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (page === 'announcements') await loadAnnouncements()
-  if (page === 'statistics') {
-    await loadRooms()
-    await loadAdminStatistics()
+  if (page === 'announcements') await loadAnnouncements() // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  if (page === 'statistics') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    await loadRooms() // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadAdminStatistics() // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  if (page === 'feedback') adminFeedback.value = await call('get', '/admin/feedback')
-  if (page === 'settings') {
-    operationLogs.value = await call('get', '/admin/operation-logs')
-    await loadSystemConfig()
-    if (isSuperAdmin.value) await loadAdminAccounts()
+  if (page === 'feedback') adminFeedback.value = await call('get', '/admin/feedback') // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+  if (page === 'settings') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    operationLogs.value = await call('get', '/admin/operation-logs') // 【行】带 JWT 调用后端 REST API
+    await loadSystemConfig() // 【行】执行本行语句，推进功能链中的当前步骤
+    if (isSuperAdmin.value) await loadAdminAccounts() // 【行】分支判断：根据当前 UI 状态决定后续逻辑
   }
 }
-async function loadSystemConfig() {
-  try {
-    const config = await call('get', '/admin/settings/config')
-    if (config) {
-      sysConfigForm.reservation_advance_days = Number(config.reservation_advance_days ?? 7)
-      sysConfigForm.reservation_limit_duration = Number(config.reservation_limit_duration ?? 4)
-      sysConfigForm.reservation_limit_daily = Number(config.reservation_limit_daily ?? 3)
-      sysConfigForm.credit_checkin_reward = Number(config.credit_checkin_reward ?? 5)
-      sysConfigForm.credit_cancel_penalty = Number(config.credit_cancel_penalty ?? -50)
-      sysConfigForm.credit_violation_penalty = Number(config.credit_violation_penalty ?? -50)
-      sysConfigForm.credit_blocked_threshold = Number(config.credit_blocked_threshold ?? 0)
-      sysConfigForm.blacklist_days = Number(config.blacklist_days ?? 7)
+async function loadSystemConfig() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    const config = await call('get', '/admin/settings/config') // 【行】带 JWT 调用后端 REST API
+    if (config) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      sysConfigForm.reservation_advance_days = Number(config.reservation_advance_days ?? 7) // 【行】执行本行语句，推进功能链中的当前步骤
+      sysConfigForm.reservation_limit_duration = Number(config.reservation_limit_duration ?? 4) // 【行】执行本行语句，推进功能链中的当前步骤
+      sysConfigForm.reservation_limit_daily = Number(config.reservation_limit_daily ?? 3) // 【行】执行本行语句，推进功能链中的当前步骤
+      sysConfigForm.credit_checkin_reward = Number(config.credit_checkin_reward ?? 5) // 【行】执行本行语句，推进功能链中的当前步骤
+      sysConfigForm.credit_cancel_penalty = Number(config.credit_cancel_penalty ?? -50) // 【行】执行本行语句，推进功能链中的当前步骤
+      sysConfigForm.credit_violation_penalty = Number(config.credit_violation_penalty ?? -50) // 【行】执行本行语句，推进功能链中的当前步骤
+      sysConfigForm.credit_blocked_threshold = Number(config.credit_blocked_threshold ?? 0) // 【行】执行本行语句，推进功能链中的当前步骤
+      sysConfigForm.blacklist_days = Number(config.blacklist_days ?? 7) // 【行】执行本行语句，推进功能链中的当前步骤
     }
-  } catch (e) {
-    notify('加载系统配置失败: ' + e.message)
+  } catch (e) { // 【行】进入代码块
+    notify('加载系统配置失败: ' + e.message) // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 
@@ -2820,25 +2825,25 @@ async function saveSystemConfig() { // 【行】进入代码块
   }
 }
 
-async function loadAdminAccounts() {
-  try {
-    adminAccounts.value = await call('get', '/admin/admins')
-  } catch (e) {
-    adminAccounts.value = []
-    if (isSuperAdmin.value) notify(e.message)
+async function loadAdminAccounts() { // 【行】进入代码块
+  try { // 【行】进入代码块
+    adminAccounts.value = await call('get', '/admin/admins') // 【行】带 JWT 调用后端 REST API
+  } catch (e) { // 【行】进入代码块
+    adminAccounts.value = [] // 【行】执行本行语句，推进功能链中的当前步骤
+    if (isSuperAdmin.value) notify(e.message) // 【行】分支判断：根据当前 UI 状态决定后续逻辑
   }
 }
-function openAdminForm(row = null) {
-  if (!isSuperAdmin.value) return notify('仅超级管理员可管理管理员账号')
-  Object.assign(adminForm, {
-    id: row?.id || null,
-    account: row?.account || '',
-    name: row?.name || '',
-    phone: row?.phone || '',
-    password: '',
-    isSuperAdmin: isSuperAdminRole(row?.role)
-  })
-  adminFormOpen.value = true
+function openAdminForm(row = null) { // 【行】进入代码块
+  if (!isSuperAdmin.value) return notify('仅超级管理员可管理管理员账号') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  Object.assign(adminForm, { // 【行】进入代码块
+    id: row?.id || null, // 【行】执行本行语句，推进功能链中的当前步骤
+    account: row?.account || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    name: row?.name || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    phone: row?.phone || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    password: '', // 【行】执行本行语句，推进功能链中的当前步骤
+    isSuperAdmin: isSuperAdminRole(row?.role) // 【行】执行本行语句，推进功能链中的当前步骤
+  }) // 【行】执行本行语句，推进功能链中的当前步骤
+  adminFormOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F6-7·管理员与日志】功能链实例：superadmin 在「设置 → 操作日志」查看审核/改密等记录；在「管理员管理」新增普管账号。 本处职责：superadmin POST/PUT /admin/admins 新增或改普管账号*/
 async function saveAdminAccount() { // 【行】进入代码块
@@ -2864,38 +2869,38 @@ async function saveAdminAccount() { // 【行】进入代码块
     await loadAdminAccounts() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-async function disableAdminAccount(row) {
-  try {
-    await call('post', `/admin/admins/${row.id}/disable`)
-    notify('已禁用')
-    await loadAdminAccounts()
+async function disableAdminAccount(row) { // 【行】进入代码块
+  try { // 【行】进入代码块
+    await call('post', `/admin/admins/${row.id}/disable`) // 【行】带 JWT 调用后端 REST API
+    notify('已禁用') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadAdminAccounts() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-async function enableAdminAccount(row) {
-  try {
-    await call('post', `/admin/admins/${row.id}/enable`)
-    notify('已启用')
-    await loadAdminAccounts()
+async function enableAdminAccount(row) { // 【行】进入代码块
+  try { // 【行】进入代码块
+    await call('post', `/admin/admins/${row.id}/enable`) // 【行】带 JWT 调用后端 REST API
+    notify('已启用') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadAdminAccounts() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-function resolveUserId(rowOrId) {
-  if (rowOrId && typeof rowOrId === 'object') {
-    return rowOrId.userId ?? rowOrId.user_id ?? rowOrId.id
+function resolveUserId(rowOrId) { // 【行】进入代码块
+  if (rowOrId && typeof rowOrId === 'object') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    return rowOrId.userId ?? rowOrId.user_id ?? rowOrId.id // 【行】返回本函数计算结果给调用方
   }
-  return rowOrId
+  return rowOrId // 【行】返回本函数计算结果给调用方
 }
-function auditStatusLabel(status) {
-  return auditStatusValue(status) || '-'
+function auditStatusLabel(status) { // 【行】进入代码块
+  return auditStatusValue(status) || '-' // 【行】返回本函数计算结果给调用方
 }
-function accountStatusLabel(status) {
-  return accountStatusValue(status) || '-'
+function accountStatusLabel(status) { // 【行】进入代码块
+  return accountStatusValue(status) || '-' // 【行】返回本函数计算结果给调用方
 }
-function decorateUserRow(row) {
-  return {
-    ...row,
-    accountStatus: row.accountStatus || row.status,
-    auditLabel: auditStatusLabel(row.audit_status),
-    statusLabel: accountStatusLabel(row.accountStatus || row.status)
+function decorateUserRow(row) { // 【行】进入代码块
+  return { // 【行】返回本函数计算结果给调用方
+    ...row, // 【行】执行本行语句，推进功能链中的当前步骤
+    accountStatus: row.accountStatus || row.status, // 【行】执行本行语句，推进功能链中的当前步骤
+    auditLabel: auditStatusLabel(row.audit_status), // 【行】执行本行语句，推进功能链中的当前步骤
+    statusLabel: accountStatusLabel(row.accountStatus || row.status) // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 /** 【F6-3·用户管理】功能链实例：管理员在用户管理拒绝小李注册，或禁用违规学生；可导出 CSV。 本处职责：管理员打开用户管理 GET /admin/users 带 keyword/auditStatus 筛选*/
@@ -2923,16 +2928,16 @@ function exportUsersCsv() { // 【行】进入代码块
     notify('用户 CSV 已导出') // 【行】执行本行语句，推进功能链中的当前步骤
   }).catch(e => notify(e.message || '导出失败')) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function openUserDetail(row) {
+function openUserDetail(row) { // 【行】进入代码块
   userDetail.value = { ...row }
-  userDetailOpen.value = true
+  userDetailOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function approveFromDetail() {
-  approve(userDetail.value).then(() => { userDetailOpen.value = false })
+function approveFromDetail() { // 【行】进入代码块
+  approve(userDetail.value).then(() => { userDetailOpen.value = false }) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function rejectFromDetail() {
-  reject(userDetail.value)
-  userDetailOpen.value = false
+function rejectFromDetail() { // 【行】进入代码块
+  reject(userDetail.value) // 【行】执行本行语句，推进功能链中的当前步骤
+  userDetailOpen.value = false // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F2-3·注册审核】功能链实例：小李注册并上传 PDF 材料 → 尝试登录得「注册资料待审核」→ 管理员在用户管理点「通过」→ 小李再登录进入首页。 本处职责：管理员点「通过」，POST /admin/users/{id}/approve*/
 async function approve(row) { // 【行】进入代码块
@@ -2944,18 +2949,18 @@ async function approve(row) { // 【行】进入代码块
     await loadUsers() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-function reject(row) {
-  const id = resolveUserId(row)
-  if (!id) return notify('无法识别用户 ID')
-  rejectUserId.value = id
-  rejectRemark.value = ''
-  rejectOpen.value = true
+function reject(row) { // 【行】进入代码块
+  const id = resolveUserId(row) // 【行】声明并赋值变量 `id`
+  if (!id) return notify('无法识别用户 ID') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  rejectUserId.value = id // 【行】执行本行语句，推进功能链中的当前步骤
+  rejectRemark.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  rejectOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function openChangePassword() {
-  changePasswordForm.oldPassword = ''
-  changePasswordForm.newPassword = ''
-  changePasswordForm.confirmPassword = ''
-  changePasswordOpen.value = true
+function openChangePassword() { // 【行】进入代码块
+  changePasswordForm.oldPassword = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  changePasswordForm.newPassword = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  changePasswordForm.confirmPassword = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  changePasswordOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F2-4·账号资料与安全】功能链实例：小明在「我的 → 设置」改密码 → 成功后强制退出 → 用新密码再登录；或在个人资料里改学院/专业。 本处职责：小明改密码 POST /auth/change-password，成功后强制重新登录*/
 async function submitChangePassword() { // 【行】进入代码块
@@ -3011,29 +3016,29 @@ async function enable(row) { // 【行】进入代码块
     await loadUsers() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
-function editRoom(r = {}) {
-  Object.assign(roomForm, {
-    id: r.id || null,
-    roomCode: r.room_code || '',
-    name: r.name || '',
-    location: r.location || '',
-    floor: r.floor || '1楼',
-    openTime: String(r.open_time || '07:00:00'),
-    closeTime: String(r.close_time || '22:30:00'),
-    layoutImageUrl: r.layout_image_url || '',
-    rowCount: r.row_count || 4,
-    colCount: r.col_count || 6,
-    status: roomStatusValue(r.status) || '开放',
-    facilities: r.facilities || '空调,WiFi',
-    managerId: r.manager_id || r.managerId || null
-  })
-  seatKeyword.value = ''
-  seatStatusFilter.value = ''
-  roomFormOpen.value = true
-  if (r.id) {
-    nextTick(() => loadAdminSeats())
-  } else {
-    adminSeats.value = []
+function editRoom(r = {}) { // 【行】进入代码块
+  Object.assign(roomForm, { // 【行】进入代码块
+    id: r.id || null, // 【行】执行本行语句，推进功能链中的当前步骤
+    roomCode: r.room_code || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    name: r.name || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    location: r.location || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    floor: r.floor || '1楼', // 【行】执行本行语句，推进功能链中的当前步骤
+    openTime: String(r.open_time || '07:00:00'), // 【行】执行本行语句，推进功能链中的当前步骤
+    closeTime: String(r.close_time || '22:30:00'), // 【行】执行本行语句，推进功能链中的当前步骤
+    layoutImageUrl: r.layout_image_url || '', // 【行】执行本行语句，推进功能链中的当前步骤
+    rowCount: r.row_count || 4, // 【行】执行本行语句，推进功能链中的当前步骤
+    colCount: r.col_count || 6, // 【行】执行本行语句，推进功能链中的当前步骤
+    status: roomStatusValue(r.status) || '开放', // 【行】执行本行语句，推进功能链中的当前步骤
+    facilities: r.facilities || '空调,WiFi', // 【行】执行本行语句，推进功能链中的当前步骤
+    managerId: r.manager_id || r.managerId || null // 【行】执行本行语句，推进功能链中的当前步骤
+  }) // 【行】执行本行语句，推进功能链中的当前步骤
+  seatKeyword.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  seatStatusFilter.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  roomFormOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
+  if (r.id) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    nextTick(() => loadAdminSeats()) // 【行】执行本行语句，推进功能链中的当前步骤
+  } else { // 【行】进入代码块
+    adminSeats.value = [] // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 /** 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：superadmin 保存自习室 POST/PUT /admin/rooms，同步座位网格*/
@@ -3085,10 +3090,10 @@ async function loadAdminSeats() { // 【行】进入代码块
   }
   adminSeats.value = await call('get', `/admin/rooms/${roomForm.id}/seats`) // 【行】带 JWT 调用后端 REST API
 }
-async function toggleSeat(s) {
-  const nextStatus = seatStatusValue(s.status) === '空闲' ? '停用' : '空闲'
-  await call('put', `/admin/seats/${s.id}`, { ...s, isSeat: s.is_seat, cellCategory: s.cell_category, seatType: s.seat_type, hasPower: s.has_power, nearWindow: s.near_window, quietZone: s.quiet_zone, hotSeat: s.hot_seat, status: nextStatus })
-  await loadAdminSeats()
+async function toggleSeat(s) { // 【行】进入代码块
+  const nextStatus = seatStatusValue(s.status) === '空闲' ? '停用' : '空闲' // 【行】声明并赋值变量 `nextStatus`
+  await call('put', `/admin/seats/${s.id}`, { ...s, isSeat: s.is_seat, cellCategory: s.cell_category, seatType: s.seat_type, hasPower: s.has_power, nearWindow: s.near_window, quietZone: s.quiet_zone, hotSeat: s.hot_seat, status: nextStatus }) // 【行】带 JWT 调用后端 REST API
+  await loadAdminSeats() // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：admin 输入小明学号 POST /admin/checkin/scan*/
 async function scanCheckin() { // 【行】进入代码块
@@ -3119,92 +3124,92 @@ async function scanCheckin() { // 【行】进入代码块
   }
 }
 /** 从拍照/二维码文本解析学号（支持纯学号或旧版 token 二维码） */
-function normalizeStudentNoFromScan(raw) {
-  const text = String(raw || '').trim()
-  if (/^\d{10,20}$/.test(text)) return text
-  try {
-    let b64 = text.replace(/-/g, '+').replace(/_/g, '/')
-    while (b64.length % 4) b64 += '='
-    const decoded = atob(b64)
-    const parts = decoded.split(':')
-    if (parts.length >= 4 && /^\d{10,20}$/.test(parts[3])) return parts[3]
+function normalizeStudentNoFromScan(raw) { // 【行】进入代码块
+  const text = String(raw || '').trim() // 【行】声明并赋值变量 `text`
+  if (/^\d{10,20}$/.test(text)) return text // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    let b64 = text.replace(/-/g, '+').replace(/_/g, '/') // 【行】声明并赋值变量 `b64`
+    while (b64.length % 4) b64 += '=' // 【行】执行本行语句，推进功能链中的当前步骤
+    const decoded = atob(b64) // 【行】声明并赋值变量 `decoded`
+    const parts = decoded.split(':') // 【行】声明并赋值变量 `parts`
+    if (parts.length >= 4 && /^\d{10,20}$/.test(parts[3])) return parts[3] // 【行】条件不满足时提前结束，避免无效请求或错误状态
   } catch { /* 非 token */ }
-  return ''
+  return '' // 【行】返回本函数计算结果给调用方
 }
 /** 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：admin 拍照/选图，jsQR 解析学号后提交签到（非视频流）*/
 function triggerPhotoScan() { // 【行】进入代码块
   if (scanBusy.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
   scanPhotoInput.value?.click() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function loadImageFromUrl(url) {
-  return new Promise((resolve, reject) => {
-    const el = new Image()
-    el.onload = () => resolve(el)
-    el.onerror = () => reject(new Error('无法读取照片'))
-    el.src = url
-  })
+function loadImageFromUrl(url) { // 【行】进入代码块
+  return new Promise((resolve, reject) => { // 【行】返回本函数计算结果给调用方
+    const el = new Image() // 【行】声明并赋值变量 `el`
+    el.onload = () => resolve(el) // 【行】执行本行语句，推进功能链中的当前步骤
+    el.onerror = () => reject(new Error('无法读取照片')) // 【行】执行本行语句，推进功能链中的当前步骤
+    el.src = url // 【行】执行本行语句，推进功能链中的当前步骤
+  }) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function buildScanCanvas(img, maxSide) {
-  let w = img.naturalWidth || img.width
-  let h = img.naturalHeight || img.height
-  if (!w || !h) return null
-  if (Math.max(w, h) > maxSide) {
-    const ratio = maxSide / Math.max(w, h)
-    w = Math.max(1, Math.round(w * ratio))
-    h = Math.max(1, Math.round(h * ratio))
+function buildScanCanvas(img, maxSide) { // 【行】进入代码块
+  let w = img.naturalWidth || img.width // 【行】声明并赋值变量 `w`
+  let h = img.naturalHeight || img.height // 【行】声明并赋值变量 `h`
+  if (!w || !h) return null // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (Math.max(w, h) > maxSide) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    const ratio = maxSide / Math.max(w, h) // 【行】声明并赋值变量 `ratio`
+    w = Math.max(1, Math.round(w * ratio)) // 【行】执行本行语句，推进功能链中的当前步骤
+    h = Math.max(1, Math.round(h * ratio)) // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  const canvas = document.createElement('canvas')
-  canvas.width = w
-  canvas.height = h
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })
-  if (!ctx) return null
-  ctx.drawImage(img, 0, 0, w, h)
-  return canvas
+  const canvas = document.createElement('canvas') // 【行】声明并赋值变量 `canvas`
+  canvas.width = w // 【行】执行本行语句，推进功能链中的当前步骤
+  canvas.height = h // 【行】执行本行语句，推进功能链中的当前步骤
+  const ctx = canvas.getContext('2d', { willReadFrequently: true }) // 【行】声明并赋值变量 `ctx`
+  if (!ctx) return null // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  ctx.drawImage(img, 0, 0, w, h) // 【行】执行本行语句，推进功能链中的当前步骤
+  return canvas // 【行】返回本函数计算结果给调用方
 }
-function decodeJsQrFromCanvas(canvas) {
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })
-  if (!ctx) return ''
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-  const result = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' })
-  return result?.data?.trim() || ''
+function decodeJsQrFromCanvas(canvas) { // 【行】进入代码块
+  const ctx = canvas.getContext('2d', { willReadFrequently: true }) // 【行】声明并赋值变量 `ctx`
+  if (!ctx) return '' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height) // 【行】声明并赋值变量 `imageData`
+  const result = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' }) // 【行】声明并赋值变量 `result`
+  return result?.data?.trim() || '' // 【行】返回本函数计算结果给调用方
 }
-async function tryBarcodeDetectorOnCanvas(canvas) {
-  if (!('BarcodeDetector' in window)) return ''
-  try {
-    const detector = new window.BarcodeDetector({ formats: ['qr_code'] })
-    const codes = await Promise.race([
-      detector.detect(canvas),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1200))
-    ])
-    return codes[0]?.rawValue?.trim() || ''
-  } catch {
-    return ''
+async function tryBarcodeDetectorOnCanvas(canvas) { // 【行】进入代码块
+  if (!('BarcodeDetector' in window)) return '' // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    const detector = new window.BarcodeDetector({ formats: ['qr_code'] }) // 【行】声明并赋值变量 `detector`
+    const codes = await Promise.race([ // 【行】声明并赋值变量 `codes`
+      detector.detect(canvas), // 【行】执行本行语句，推进功能链中的当前步骤
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1200)) // 【行】执行本行语句，推进功能链中的当前步骤
+    ]) // 【行】执行本行语句，推进功能链中的当前步骤
+    return codes[0]?.rawValue?.trim() || '' // 【行】返回本函数计算结果给调用方
+  } catch { // 【行】进入代码块
+    return '' // 【行】返回本函数计算结果给调用方
   }
 }
-async function decodeQrFromImageFile(file) {
-  const name = file.name || ''
-  const type = file.type || ''
-  if (/heic|heif/i.test(type) || /\.heic$|\.heif$/i.test(name)) {
-    throw new Error('HEIC 照片浏览器无法解析，请点「拍照」现拍 JPG，或直接输入学号')
+async function decodeQrFromImageFile(file) { // 【行】进入代码块
+  const name = file.name || '' // 【行】声明并赋值变量 `name`
+  const type = file.type || '' // 【行】声明并赋值变量 `type`
+  if (/heic|heif/i.test(type) || /\.heic$|\.heif$/i.test(name)) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    throw new Error('HEIC 照片浏览器无法解析，请点「拍照」现拍 JPG，或直接输入学号') // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  const url = URL.createObjectURL(file)
-  try {
-    const img = await loadImageFromUrl(url)
-    const sizes = [960, 1280, 640]
-    for (const size of sizes) {
-      const canvas = buildScanCanvas(img, size)
-      if (!canvas) continue
-      const fromJs = decodeJsQrFromCanvas(canvas)
-      if (fromJs) return fromJs
+  const url = URL.createObjectURL(file) // 【行】声明并赋值变量 `url`
+  try { // 【行】进入代码块
+    const img = await loadImageFromUrl(url) // 【行】声明并赋值变量 `img`
+    const sizes = [960, 1280, 640] // 【行】声明并赋值变量 `sizes`
+    for (const size of sizes) { // 【行】进入代码块
+      const canvas = buildScanCanvas(img, size) // 【行】声明并赋值变量 `canvas`
+      if (!canvas) continue // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      const fromJs = decodeJsQrFromCanvas(canvas) // 【行】声明并赋值变量 `fromJs`
+      if (fromJs) return fromJs // 【行】条件不满足时提前结束，避免无效请求或错误状态
     }
-    const fallbackCanvas = buildScanCanvas(img, 960)
-    if (fallbackCanvas) {
-      const fromNative = await tryBarcodeDetectorOnCanvas(fallbackCanvas)
-      if (fromNative) return fromNative
+    const fallbackCanvas = buildScanCanvas(img, 960) // 【行】声明并赋值变量 `fallbackCanvas`
+    if (fallbackCanvas) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      const fromNative = await tryBarcodeDetectorOnCanvas(fallbackCanvas) // 【行】声明并赋值变量 `fromNative`
+      if (fromNative) return fromNative // 【行】条件不满足时提前结束，避免无效请求或错误状态
     }
-    return ''
-  } finally {
-    URL.revokeObjectURL(url)
+    return '' // 【行】返回本函数计算结果给调用方
+  } finally { // 【行】进入代码块
+    URL.revokeObjectURL(url) // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
 /** 【F4-1·签到】功能链实例：小明签到 Tab 显示学号 **202225220101** 与 QR → 管理员输入学号（或拍照 jsQR 识别）→ 预约变「使用中」→ 信用 **+5**。 本处职责：照片解码出学号后自动 POST scan，完成小明签到*/
@@ -3258,9 +3263,9 @@ async function refreshCheckinQr() { // 【行】进入代码块
     checkinQrSvg.value = '' // 【行】执行本行语句，推进功能链中的当前步骤
   }
 }
-function editAnnouncement(a = {}) {
-  Object.assign(announcementForm, { id: a.id, title: a.title || '', content: a.content || '', type: a.type || '系统通知', pinned: !!a.pinned })
-  announcementDialog.value = true
+function editAnnouncement(a = {}) { // 【行】进入代码块
+  Object.assign(announcementForm, { id: a.id, title: a.title || '', content: a.content || '', type: a.type || '系统通知', pinned: !!a.pinned }) // 【行】执行本行语句，推进功能链中的当前步骤
+  announcementDialog.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F5-2·公告与通知】功能链实例：管理员发布公告 → 小明首页公告卡片可见；预约成功收到站内通知。 本处职责：管理员发布公告 POST/PUT /admin/announcements*/
 async function saveAnnouncement() { // 【行】进入代码块
@@ -3270,13 +3275,13 @@ async function saveAnnouncement() { // 【行】进入代码块
   notify('公告已保存') // 【行】执行本行语句，推进功能链中的当前步骤
   await loadAnnouncements() // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function openFeedbackHandle(row) {
-  feedbackHandleForm.id = row.id
-  feedbackHandleForm.studentName = row.studentName
-  feedbackHandleForm.type = row.type
-  feedbackHandleForm.content = row.content
-  feedbackHandleForm.handleResult = ''
-  feedbackHandleOpen.value = true
+function openFeedbackHandle(row) { // 【行】进入代码块
+  feedbackHandleForm.id = row.id // 【行】执行本行语句，推进功能链中的当前步骤
+  feedbackHandleForm.studentName = row.studentName // 【行】执行本行语句，推进功能链中的当前步骤
+  feedbackHandleForm.type = row.type // 【行】执行本行语句，推进功能链中的当前步骤
+  feedbackHandleForm.content = row.content // 【行】执行本行语句，推进功能链中的当前步骤
+  feedbackHandleForm.handleResult = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  feedbackHandleOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F5-3·问题反馈】功能链实例：小明提交「A-12 椅子损坏」→ 管理员标记已处理。 本处职责：管理员 PUT /admin/feedback/{id} 标记已处理并通知学生*/
 async function submitFeedbackHandle() { // 【行】进入代码块
@@ -3291,15 +3296,15 @@ async function submitFeedbackHandle() { // 【行】进入代码块
     adminFeedback.value = await call('get', '/admin/feedback') // 【行】带 JWT 调用后端 REST API
   } catch (e) { notify(e.message) }
 }
-function openRevokeViolation(row) {
-  revokeViolationForm.id = row._rawId || row.id
-  revokeViolationForm.studentName = row.studentName || '—'
-  revokeViolationForm.reservationNo = row.reservation_no || '—'
-  revokeViolationForm.roomName = row.roomName || '—'
-  revokeViolationForm.seatNo = row.seatNo || '—'
-  revokeViolationForm.reserveDate = formatDate(row.reserve_date || row.reserveDate)
-  revokeViolationForm.remark = ''
-  revokeViolationOpen.value = true
+function openRevokeViolation(row) { // 【行】进入代码块
+  revokeViolationForm.id = row._rawId || row.id // 【行】执行本行语句，推进功能链中的当前步骤
+  revokeViolationForm.studentName = row.studentName || '—' // 【行】执行本行语句，推进功能链中的当前步骤
+  revokeViolationForm.reservationNo = row.reservation_no || '—' // 【行】执行本行语句，推进功能链中的当前步骤
+  revokeViolationForm.roomName = row.roomName || '—' // 【行】执行本行语句，推进功能链中的当前步骤
+  revokeViolationForm.seatNo = row.seatNo || '—' // 【行】执行本行语句，推进功能链中的当前步骤
+  revokeViolationForm.reserveDate = formatDate(row.reserve_date || row.reserveDate) // 【行】执行本行语句，推进功能链中的当前步骤
+  revokeViolationForm.remark = '' // 【行】执行本行语句，推进功能链中的当前步骤
+  revokeViolationOpen.value = true // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F6-5·预约监管】功能链实例：小明被标「已违约」→ 管理员在预约管理点「撤销违约」→ 信用分恢复。 本处职责：管理员撤销小明违约，POST revoke-violation 恢复信用分*/
 async function submitRevokeViolation() { // 【行】进入代码块
@@ -3313,13 +3318,13 @@ async function submitRevokeViolation() { // 【行】进入代码块
     adminReservations.value = await call('get', '/admin/reservations') // 【行】带 JWT 调用后端 REST API
   } catch (e) { notify(e.message) }
 }
-async function addAdminSeat() {
-  if (!roomForm.id) return notify('请先保存自习室')
-  try {
-    await call('post', `/admin/rooms/${roomForm.id}/seats`, {})
-    notify('座位已补全')
-    await loadAdminSeats()
-    await loadRooms()
+async function addAdminSeat() { // 【行】进入代码块
+  if (!roomForm.id) return notify('请先保存自习室') // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  try { // 【行】进入代码块
+    await call('post', `/admin/rooms/${roomForm.id}/seats`, {}) // 【行】带 JWT 调用后端 REST API
+    notify('座位已补全') // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadAdminSeats() // 【行】执行本行语句，推进功能链中的当前步骤
+    await loadRooms() // 【行】执行本行语句，推进功能链中的当前步骤
   } catch (e) { notify(e.message) }
 }
 /** 【F6-4·自习室与座位】功能链实例：superadmin 新增 B 自习室并保存 → 同步 4×6 座位网格 → 在布局图里改 A-12 为「靠窗」。 本处职责：超管 DELETE /admin/seats/{id} 删除单个座位格*/
@@ -3369,19 +3374,19 @@ function downloadReport(reportType = 'usage') { // 【行】进入代码块
     URL.revokeObjectURL(url) // 【行】执行本行语句，推进功能链中的当前步骤
   }) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function handleExportCommand(command) {
-  let type = command
-  if (command === 'current') {
-    if (statAdminView.value === 'peak') {
-      type = 'peak'
-    } else if (statAdminView.value === 'share') {
-      type = 'usage'
-    } else { // statAdminView === 'usage'
-      const trend = adminStatsReport.value?.trend || []
-      type = trend.length ? 'reservation' : 'usage'
+function handleExportCommand(command) { // 【行】进入代码块
+  let type = command // 【行】声明并赋值变量 `type`
+  if (command === 'current') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    if (statAdminView.value === 'peak') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+      type = 'peak' // 【行】执行本行语句，推进功能链中的当前步骤
+    } else if (statAdminView.value === 'share') { // 【行】进入代码块
+      type = 'usage' // 【行】执行本行语句，推进功能链中的当前步骤
+    } else { // statAdminView === 'usage' // 【行】执行本行语句，推进功能链中的当前步骤
+      const trend = adminStatsReport.value?.trend || [] // 【行】声明并赋值变量 `trend`
+      type = trend.length ? 'reservation' : 'usage' // 【行】执行本行语句，推进功能链中的当前步骤
     }
   }
-  downloadReport(type)
+  downloadReport(type) // 【行】执行本行语句，推进功能链中的当前步骤
 }
 /** 【F5-1·学习统计】功能链实例：小明打开学习统计，切换当期/往期与日报~年报，查看累计学习时长柱图 本处职责：drawStudentChart 用 ECharts 渲染学习时长柱状图 */
 function drawStudentChart() { // 【行】根据最新 studyBars 重绘 ECharts 柱图
@@ -3397,94 +3402,94 @@ function drawStudentChart() { // 【行】根据最新 studyBars 重绘 ECharts 
     }) // 【行】执行本行语句，推进功能链中的当前步骤
   }) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-function drawUsageChart() {
-  if (!usageChart.value) return
-  const chart = echarts.init(usageChart.value)
-  const periodLabel = adminStatsReport.value.summary?.periodLabel || '今日'
-  if (statAdminView.value === 'peak') {
-    const data = adminStatsReport.value.peak || []
-    chart.setOption({
-      tooltip: countTooltip(),
-      title: { text: `${periodLabel}高峰时段`, left: 'center', textStyle: { fontSize: 14 } },
-      xAxis: { type: 'category', name: '时段', data: data.map(x => peakAxisLabel(x)) },
-      yAxis: countYAxis('预约次数（次）'),
-      series: [{ name: '预约数', type: 'bar', data: data.map(x => statCount(x)), itemStyle: { color: '#4f6ef7' } }]
-    }, true)
-    return
+function drawUsageChart() { // 【行】进入代码块
+  if (!usageChart.value) return // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  const chart = echarts.init(usageChart.value) // 【行】声明并赋值变量 `chart`
+  const periodLabel = adminStatsReport.value.summary?.periodLabel || '今日' // 【行】声明并赋值变量 `periodLabel`
+  if (statAdminView.value === 'peak') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    const data = adminStatsReport.value.peak || [] // 【行】声明并赋值变量 `data`
+    chart.setOption({ // 【行】进入代码块
+      tooltip: countTooltip(), // 【行】执行本行语句，推进功能链中的当前步骤
+      title: { text: `${periodLabel}高峰时段`, left: 'center', textStyle: { fontSize: 14 } }, // 【行】执行本行语句，推进功能链中的当前步骤
+      xAxis: { type: 'category', name: '时段', data: data.map(x => peakAxisLabel(x)) }, // 【行】执行本行语句，推进功能链中的当前步骤
+      yAxis: countYAxis('预约次数（次）'), // 【行】执行本行语句，推进功能链中的当前步骤
+      series: [{ name: '预约数', type: 'bar', data: data.map(x => statCount(x)), itemStyle: { color: '#4f6ef7' } }] // 【行】执行本行语句，推进功能链中的当前步骤
+    }, true) // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  const data = adminStatsReport.value.usage || []
-  if (statAdminView.value === 'share') {
-    chart.setOption({
-      tooltip: { trigger: 'item', formatter: '{b}<br/>预约 {c} 次（{d}%）' },
-      title: { text: `${periodLabel}自习室预约占比`, left: 'center', textStyle: { fontSize: 14 } },
-      series: [{ name: '预约占比', type: 'pie', radius: '70%', data: data.map(x => ({ name: x.roomName, value: x.reservationCount || x.usageRate })) }]
-    }, true)
-    return
+  const data = adminStatsReport.value.usage || [] // 【行】声明并赋值变量 `data`
+  if (statAdminView.value === 'share') { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    chart.setOption({ // 【行】进入代码块
+      tooltip: { trigger: 'item', formatter: '{b}<br/>预约 {c} 次（{d}%）' }, // 【行】执行本行语句，推进功能链中的当前步骤
+      title: { text: `${periodLabel}自习室预约占比`, left: 'center', textStyle: { fontSize: 14 } }, // 【行】执行本行语句，推进功能链中的当前步骤
+      series: [{ name: '预约占比', type: 'pie', radius: '70%', data: data.map(x => ({ name: x.roomName, value: x.reservationCount || x.usageRate })) }] // 【行】执行本行语句，推进功能链中的当前步骤
+    }, true) // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  const trend = adminStatsReport.value.trend || []
-  if (trend.length) {
-    chart.setOption({
-      tooltip: countTooltip(),
-      title: { text: `${periodLabel}预约趋势`, left: 'center', textStyle: { fontSize: 14 } },
-      xAxis: { type: 'category', name: trendXAxisName(), data: trend.map(x => trendAxisLabel(x)) },
-      yAxis: countYAxis(),
-      series: [{ name: '预约数', type: 'line', smooth: true, data: trend.map(x => statCount(x)), itemStyle: { color: '#6c5ce7' } }]
-    }, true)
-    return
+  const trend = adminStatsReport.value.trend || [] // 【行】声明并赋值变量 `trend`
+  if (trend.length) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    chart.setOption({ // 【行】进入代码块
+      tooltip: countTooltip(), // 【行】执行本行语句，推进功能链中的当前步骤
+      title: { text: `${periodLabel}预约趋势`, left: 'center', textStyle: { fontSize: 14 } }, // 【行】执行本行语句，推进功能链中的当前步骤
+      xAxis: { type: 'category', name: trendXAxisName(), data: trend.map(x => trendAxisLabel(x)) }, // 【行】执行本行语句，推进功能链中的当前步骤
+      yAxis: countYAxis(), // 【行】执行本行语句，推进功能链中的当前步骤
+      series: [{ name: '预约数', type: 'line', smooth: true, data: trend.map(x => statCount(x)), itemStyle: { color: '#6c5ce7' } }] // 【行】执行本行语句，推进功能链中的当前步骤
+    }, true) // 【行】执行本行语句，推进功能链中的当前步骤
+    return // 【行】执行本行语句，推进功能链中的当前步骤
   }
-  chart.setOption({
-    tooltip: { trigger: 'axis', valueFormatter: (v) => `${v}%` },
-    title: { text: `${periodLabel}各自习室使用率`, left: 'center', textStyle: { fontSize: 14 } },
-    xAxis: { type: 'category', name: '自习室', data: data.map(x => x.roomName) },
-    yAxis: percentYAxis(),
-    series: [{ name: '使用率', type: 'bar', data: data.map(x => x.usageRate), itemStyle: { color: '#6c5ce7' } }]
-  }, true)
+  chart.setOption({ // 【行】进入代码块
+    tooltip: { trigger: 'axis', valueFormatter: (v) => `${v}%` }, // 【行】执行本行语句，推进功能链中的当前步骤
+    title: { text: `${periodLabel}各自习室使用率`, left: 'center', textStyle: { fontSize: 14 } }, // 【行】执行本行语句，推进功能链中的当前步骤
+    xAxis: { type: 'category', name: '自习室', data: data.map(x => x.roomName) }, // 【行】执行本行语句，推进功能链中的当前步骤
+    yAxis: percentYAxis(), // 【行】执行本行语句，推进功能链中的当前步骤
+    series: [{ name: '使用率', type: 'bar', data: data.map(x => x.usageRate), itemStyle: { color: '#6c5ce7' } }] // 【行】执行本行语句，推进功能链中的当前步骤
+  }, true) // 【行】执行本行语句，推进功能链中的当前步骤
 }
-async function switchStatAdminView(view) {
-  statAdminView.value = view
-  await nextTick()
-  drawUsageChart()
+async function switchStatAdminView(view) { // 【行】进入代码块
+  statAdminView.value = view // 【行】执行本行语句，推进功能链中的当前步骤
+  await nextTick() // 【行】执行本行语句，推进功能链中的当前步骤
+  drawUsageChart() // 【行】执行本行语句，推进功能链中的当前步骤
 }
 
-const ReservationCard = defineComponent({
-  props: { item: Object, statusText: Function },
-  emits: ['cancel'],
-  setup(props, { emit }) {
-    return () => h('article', { class: 'card reservation-card' }, [
-      h('div', [
-        h('strong', props.item.roomName || props.item.room),
-        h('p', `${props.item.reserve_date || props.item.date} · ${String(props.item.start_time || '').slice(0, 5)}-${String(props.item.end_time || '').slice(0, 5)}`),
-        h('span', { class: `reservation-status ${reservationStatusClass(props.item.status)}` }, props.statusText ? props.statusText(props.item.status) : props.item.status)
-      ]),
-      h('span', { class: 'seat-left' }, props.item.seatNo || props.item.seat),
-      isPendingReservation(props.item.status) ? h('button', { class: 'mini-btn', onClick: () => emit('cancel') }, '取消') : null
-    ])
+const ReservationCard = defineComponent({ // 【行】声明并赋值变量 `ReservationCard`
+  props: { item: Object, statusText: Function }, // 【行】执行本行语句，推进功能链中的当前步骤
+  emits: ['cancel'], // 【行】执行本行语句，推进功能链中的当前步骤
+  setup(props, { emit }) { // 【行】进入代码块
+    return () => h('article', { class: 'card reservation-card' }, [ // 【行】返回本函数计算结果给调用方
+      h('div', [ // 【行】执行本行语句，推进功能链中的当前步骤
+        h('strong', props.item.roomName || props.item.room), // 【行】执行本行语句，推进功能链中的当前步骤
+        h('p', `${props.item.reserve_date || props.item.date} · ${String(props.item.start_time || '').slice(0, 5)}-${String(props.item.end_time || '').slice(0, 5)}`), // 【行】执行本行语句，推进功能链中的当前步骤
+        h('span', { class: `reservation-status ${reservationStatusClass(props.item.status)}` }, props.statusText ? props.statusText(props.item.status) : props.item.status) // 【行】执行本行语句，推进功能链中的当前步骤
+      ]), // 【行】执行本行语句，推进功能链中的当前步骤
+      h('span', { class: 'seat-left' }, props.item.seatNo || props.item.seat), // 【行】执行本行语句，推进功能链中的当前步骤
+      isPendingReservation(props.item.status) ? h('button', { class: 'mini-btn', onClick: () => emit('cancel') }, '取消') : null // 【行】执行本行语句，推进功能链中的当前步骤
+    ]) // 【行】执行本行语句，推进功能链中的当前步骤
   }
-})
-const FeedbackBox = defineComponent({
-  emits: ['submit'],
-  setup(_, { emit }) {
-    const content = ref('')
-    const severity = ref('中')
-    const severityOptions = [
-      { value: '低', label: '低' },
-      { value: '中', label: '中' },
-      { value: '高', label: '高' },
+}) // 【行】执行本行语句，推进功能链中的当前步骤
+const FeedbackBox = defineComponent({ // 【行】声明并赋值变量 `FeedbackBox`
+  emits: ['submit'], // 【行】执行本行语句，推进功能链中的当前步骤
+  setup(_, { emit }) { // 【行】进入代码块
+    const content = ref('') // 【行】声明并赋值变量 `content`
+    const severity = ref('中') // 【行】声明并赋值变量 `severity`
+    const severityOptions = [ // 【行】声明并赋值变量 `severityOptions`
+      { value: '低', label: '低' }, // 【行】执行本行语句，推进功能链中的当前步骤
+      { value: '中', label: '中' }, // 【行】执行本行语句，推进功能链中的当前步骤
+      { value: '高', label: '高' }, // 【行】执行本行语句，推进功能链中的当前步骤
       { value: '紧急', label: '紧急' }
-    ]
-    return () => h('div', { class: 'card feedback-box' }, [
-      h('strong', '问题反馈'),
-      h('label', { class: 'feedback-severity-label' }, '严重程度'),
-      h('select', {
-        class: 'input',
-        value: severity.value,
+    ] // 【行】执行本行语句，推进功能链中的当前步骤
+    return () => h('div', { class: 'card feedback-box' }, [ // 【行】返回本函数计算结果给调用方
+      h('strong', '问题反馈'), // 【行】执行本行语句，推进功能链中的当前步骤
+      h('label', { class: 'feedback-severity-label' }, '严重程度'), // 【行】执行本行语句，推进功能链中的当前步骤
+      h('select', { // 【行】进入代码块
+        class: 'input', // 【行】执行本行语句，推进功能链中的当前步骤
+        value: severity.value, // 【行】执行本行语句，推进功能链中的当前步骤
         onChange: e => { severity.value = e.target.value }
-      }, severityOptions.map(opt => h('option', { value: opt.value }, `${opt.label} — ${opt.value === '低' ? '一般建议' : opt.value === '中' ? '影响使用' : opt.value === '高' ? '较严重' : '需立即处理'}`))),
-      h('textarea', { placeholder: '描述遇到的问题或建议', value: content.value, onInput: e => { content.value = e.target.value } }),
-      h('button', {
-        class: 'primary-action small',
-        onClick: () => {
-          if (content.value.trim()) {
+      }, severityOptions.map(opt => h('option', { value: opt.value }, `${opt.label} — ${opt.value === '低' ? '一般建议' : opt.value === '中' ? '影响使用' : opt.value === '高' ? '较严重' : '需立即处理'}`))), // 【行】执行本行语句，推进功能链中的当前步骤
+      h('textarea', { placeholder: '描述遇到的问题或建议', value: content.value, onInput: e => { content.value = e.target.value } }), // 【行】执行本行语句，推进功能链中的当前步骤
+      h('button', { // 【行】进入代码块
+        class: 'primary-action small', // 【行】执行本行语句，推进功能链中的当前步骤
+        onClick: () => { // 【行】进入代码块
+          if (content.value.trim()) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
             emit('submit', { content: content.value, severity: severity.value })
             content.value = ''
             severity.value = '中'

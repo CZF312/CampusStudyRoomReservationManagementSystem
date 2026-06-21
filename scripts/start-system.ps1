@@ -1,84 +1,84 @@
 # 【F1-1·环境启动】功能链实例：组长双击 `start.bat` → PowerShell 导入 `database-full.sql` 建库 `study_room_reservation` → Spring Boot 监听 8080 → 浏览器打开登录页 → `… 本处职责：start.bat 调用本脚本，检测 Java/MySQL 并导入 database-full.sql
-# Campus Study Room Reservation Management System - one-click launcher
-# Environment check -> MySQL password -> DROP database -> import database-full.sql
-# -> verify schema -> write local config -> start backend -> open browser
+# Campus Study Room Reservation Management System - one-click launcher # 【行】执行本行语句，推进功能链中的当前步骤
+# Environment check -> MySQL password -> DROP database -> import database-full.sql # 【行】执行本行语句，推进功能链中的当前步骤
+# -> verify schema -> write local config -> start backend -> open browser # 【行】执行本行语句，推进功能链中的当前步骤
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop" # 【行】执行本行语句，推进功能链中的当前步骤
 $scriptRoot = if ($PSScriptRoot) { $PSScriptRoot } elseif ($env:CSRRM_SCRIPT_ROOT) { $env:CSRRM_SCRIPT_ROOT } else { Join-Path (Get-Location) "scripts" }
-$root = Split-Path -Parent $scriptRoot
-Set-Location $root
+$root = Split-Path -Parent $scriptRoot # 【行】执行本行语句，推进功能链中的当前步骤
+Set-Location $root # 【行】执行本行语句，推进功能链中的当前步骤
 
-$AppTitle = "Campus Study Room Reservation System"
+$AppTitle = "Campus Study Room Reservation System" # 【行】执行本行语句，推进功能链中的当前步骤
 
-function Write-Title {
-    Write-Host ""
-    Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host " $AppTitle" -ForegroundColor Cyan
-    Write-Host " One-Click Setup and Launch" -ForegroundColor Cyan
-    Write-Host "========================================" -ForegroundColor Cyan
+function Write-Title { # 【行】进入代码块
+    Write-Host "" # 【行】执行本行语句，推进功能链中的当前步骤
+    Write-Host "========================================" -ForegroundColor Cyan # 【行】执行本行语句，推进功能链中的当前步骤
+    Write-Host " $AppTitle" -ForegroundColor Cyan # 【行】执行本行语句，推进功能链中的当前步骤
+    Write-Host " One-Click Setup and Launch" -ForegroundColor Cyan # 【行】执行本行语句，推进功能链中的当前步骤
+    Write-Host "========================================" -ForegroundColor Cyan # 【行】执行本行语句，推进功能链中的当前步骤
 }
 
-function Write-Step([string]$message) {
-    Write-Host ""
-    Write-Host $message -ForegroundColor Yellow
+function Write-Step([string]$message) { # 【行】进入代码块
+    Write-Host "" # 【行】执行本行语句，推进功能链中的当前步骤
+    Write-Host $message -ForegroundColor Yellow # 【行】执行本行语句，推进功能链中的当前步骤
 }
 
-function Require-Command([string]$name, [string]$hint) {
-    if (-not (Get-Command $name -ErrorAction SilentlyContinue)) {
-        Write-Host "[ERROR] Command not found: $name" -ForegroundColor Red
-        Write-Host "        $hint" -ForegroundColor Red
-        exit 1
+function Require-Command([string]$name, [string]$hint) { # 【行】进入代码块
+    if (-not (Get-Command $name -ErrorAction SilentlyContinue)) { # 【行】分支判断：根据当前 UI 状态决定后续逻辑
+        Write-Host "[ERROR] Command not found: $name" -ForegroundColor Red # 【行】执行本行语句，推进功能链中的当前步骤
+        Write-Host "        $hint" -ForegroundColor Red # 【行】执行本行语句，推进功能链中的当前步骤
+        exit 1 # 【行】执行本行语句，推进功能链中的当前步骤
     }
 }
 
-function ConvertFrom-SecureStringPlain([securestring]$secure) {
-    $ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+function ConvertFrom-SecureStringPlain([securestring]$secure) { # 【行】进入代码块
+    $ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure) # 【行】执行本行语句，推进功能链中的当前步骤
     try { [Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr) }
     finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr) }
 }
 
-function Get-LocalIPv4Addresses {
-    try {
-        @(Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop |
-            Where-Object {
-                $_.IPAddress -notlike "127.*" -and $_.IPAddress -notlike "169.254.*" -and
-                $_.IPAddress -notlike "198.18.*" -and
-                $_.InterfaceAlias -notmatch "VMware|VirtualBox|Loopback|vEthernet"
-            } | Select-Object -ExpandProperty IPAddress -Unique)
-    } catch {
-        @(ipconfig | Select-String "IPv4" | ForEach-Object { ($_ -split ":\s*", 2)[1].Trim() } |
-            Where-Object { $_ -and $_ -notlike "127.*" -and $_ -notlike "169.254.*" } | Select-Object -Unique)
+function Get-LocalIPv4Addresses { # 【行】进入代码块
+    try { # 【行】进入代码块
+        @(Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop | # 【行】执行本行语句，推进功能链中的当前步骤
+            Where-Object { # 【行】进入代码块
+                $_.IPAddress -notlike "127.*" -and $_.IPAddress -notlike "169.254.*" -and # 【行】执行本行语句，推进功能链中的当前步骤
+                $_.IPAddress -notlike "198.18.*" -and # 【行】执行本行语句，推进功能链中的当前步骤
+                $_.InterfaceAlias -notmatch "VMware|VirtualBox|Loopback|vEthernet" # 【行】执行本行语句，推进功能链中的当前步骤
+            } | Select-Object -ExpandProperty IPAddress -Unique) # 【行】执行本行语句，推进功能链中的当前步骤
+    } catch { # 【行】进入代码块
+        @(ipconfig | Select-String "IPv4" | ForEach-Object { ($_ -split ":\s*", 2)[1].Trim() } | # 【行】执行本行语句，推进功能链中的当前步骤
+            Where-Object { $_ -and $_ -notlike "127.*" -and $_ -notlike "169.254.*" } | Select-Object -Unique) # 【行】执行本行语句，推进功能链中的当前步骤
     }
 }
 
-function Test-MysqlLogin([string]$password) {
-    $oldPwd = $env:MYSQL_PWD
-    try {
-        if ($password) { $env:MYSQL_PWD = $password } else { Remove-Item Env:MYSQL_PWD -ErrorAction SilentlyContinue }
-        & mysql -uroot -h 127.0.0.1 -P 3306 -e "SELECT 1;" > $null 2> $null
-        return ($LASTEXITCODE -eq 0)
-    } finally {
-        if ($null -ne $oldPwd) { $env:MYSQL_PWD = $oldPwd } else { Remove-Item Env:MYSQL_PWD -ErrorAction SilentlyContinue }
+function Test-MysqlLogin([string]$password) { # 【行】进入代码块
+    $oldPwd = $env:MYSQL_PWD # 【行】执行本行语句，推进功能链中的当前步骤
+    try { # 【行】进入代码块
+        if ($password) { $env:MYSQL_PWD = $password } else { Remove-Item Env:MYSQL_PWD -ErrorAction SilentlyContinue } # 【行】分支判断：根据当前 UI 状态决定后续逻辑
+        & mysql -uroot -h 127.0.0.1 -P 3306 -e "SELECT 1;" > $null 2> $null # 【行】执行本行语句，推进功能链中的当前步骤
+        return ($LASTEXITCODE -eq 0) # 【行】返回本函数计算结果给调用方
+    } finally { # 【行】进入代码块
+        if ($null -ne $oldPwd) { $env:MYSQL_PWD = $oldPwd } else { Remove-Item Env:MYSQL_PWD -ErrorAction SilentlyContinue } # 【行】分支判断：根据当前 UI 状态决定后续逻辑
     }
 }
 
-function Get-ConfiguredMysqlPassword {
-    $localProps = Join-Path $root "src\main\resources\application-local.properties"
-    if (-not (Test-Path $localProps)) { return "" }
-    $line = Get-Content -LiteralPath $localProps -Encoding UTF8 |
-        Where-Object { $_ -match '^\s*spring\.datasource\.password\s*=' } | Select-Object -First 1
-    if ($line -match '=\s*(.*)$') { return $Matches[1].Trim() }
-    ""
+function Get-ConfiguredMysqlPassword { # 【行】进入代码块
+    $localProps = Join-Path $root "src\main\resources\application-local.properties" # 【行】执行本行语句，推进功能链中的当前步骤
+    if (-not (Test-Path $localProps)) { return "" } # 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    $line = Get-Content -LiteralPath $localProps -Encoding UTF8 | # 【行】执行本行语句，推进功能链中的当前步骤
+        Where-Object { $_ -match '^\s*spring\.datasource\.password\s*=' } | Select-Object -First 1 # 【行】执行本行语句，推进功能链中的当前步骤
+    if ($line -match '=\s*(.*)$') { return $Matches[1].Trim() } # 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    "" # 【行】执行本行语句，推进功能链中的当前步骤
 }
 
-Write-Title
+Write-Title # 【行】执行本行语句，推进功能链中的当前步骤
 
-# 编辑 Java 时若存成 UTF-8 BOM，javac 会报非法字符 \ufeff；启动前自动清理
-$stripBom = Join-Path $scriptRoot "strip-java-bom.ps1"
-if (Test-Path $stripBom) { & $stripBom | Out-Null }
+# 编辑 Java 时若存成 UTF-8 BOM，javac 会报非法字符 \ufeff；启动前自动清理 # 【行】执行本行语句，推进功能链中的当前步骤
+$stripBom = Join-Path $scriptRoot "strip-java-bom.ps1" # 【行】执行本行语句，推进功能链中的当前步骤
+if (Test-Path $stripBom) { & $stripBom | Out-Null } # 【行】分支判断：根据当前 UI 状态决定后续逻辑
 
-if (-not (Test-Path (Join-Path $root "pom.xml"))) {
-    Write-Host "[ERROR] pom.xml not found. Run start.bat from the project root." -ForegroundColor Red
+if (-not (Test-Path (Join-Path $root "pom.xml"))) { # 【行】分支判断：根据当前 UI 状态决定后续逻辑
+    Write-Host "[ERROR] pom.xml not found. Run start.bat from the project root." -ForegroundColor Red # 【行】执行本行语句，推进功能链中的当前步骤
     exit 1
 }
 
