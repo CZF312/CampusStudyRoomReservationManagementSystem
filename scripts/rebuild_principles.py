@@ -1076,7 +1076,7 @@ def build_row_concepts(
         for seg in re.split(r"[；、]", fallback):
             add(seg)
 
-    return "；".join(parts[:8])
+    return "<br>".join(parts[:8])
 
 
 def minimal_concept(symbol: str, layer: str) -> str:

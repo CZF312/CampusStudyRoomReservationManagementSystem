@@ -48,8 +48,10 @@ TH_STYLE = (
     'border:1px solid #d0d7de;background:#f6f8fa;font-weight:700;"'
 )
 
-TD_BASE = "vertical-align:top;word-break:break-word;padding:8px 10px;border:1px solid #d0d7de;"
-TD_PRINCIPLE = TD_BASE + "line-height:1.55;"
+TD_BASE = "vertical-align:top;word-break:break-word;padding:10px 12px;border:1px solid #d0d7de;line-height:1.65;"
+TD_PRINCIPLE = TD_BASE.replace("line-height:1.65;", "line-height:1.72;")
+
+BR2 = "<br><br>"
 
 # 语义色（浅底 + 深字，GitHub 亮色系可读）
 S = {
@@ -98,6 +100,23 @@ def ensure_structure_breaks(text: str) -> str:
     )
     t = re.sub(r"(?<=[。；])\s+(\d+（L\d+)", r"<br>\1", t)
     t = re.sub(r"(\S)\s+(\d+（L\d+)", r"\1<br>\2", t)
+    return t
+
+
+def relax_cell_spacing(text: str, col_idx: int, n_cols: int) -> str:
+    """表内增加换行与段间距，减轻拥挤感。"""
+    t = text
+    if col_idx == 0:
+        t = re.sub(r"；(?=`)", "<br>", t)
+        t = re.sub(r"；(?=[^`<])", "<br>", t)
+    if col_idx == 1:
+        t = re.sub(r"(输出：[^<]+)<br>(?=\d+\.)", rf"\1{BR2}", t)
+        t = re.sub(r"(输出：[^<]+)<br>(?=总输入：)", rf"\1{BR2}", t)
+    if col_idx == n_cols - 1:
+        t = re.sub(r"(③ 底层实现：)\s*(\d+（L|\d+：)", r"\1<br>\2", t)
+        t = re.sub(r"(?<!<br>)(?<!<br><br>)问：", f"{BR2}问：", t)
+        t = re.sub(r"。<br>若不这样做：", f"。{BR2}若不这样做：", t)
+    t = re.sub(r"(<br\s*/?>){3,}", BR2, t, flags=re.I)
     return t
 
 
@@ -241,6 +260,7 @@ def rich_cell(text: str, col_idx: int, n_cols: int) -> str:
     if col_idx == 1:
         t = dedupe_locate_cell(t)
     t = ensure_structure_breaks(t)
+    t = relax_cell_spacing(t, col_idx, n_cols)
     parts = re.split(r"(<br\s*/?>)", t, flags=re.I)
     out: list[str] = []
     for p in parts:

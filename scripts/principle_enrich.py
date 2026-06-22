@@ -10,6 +10,7 @@ import re
 from pathlib import Path
 
 INTRA_SEP = "<br>"
+STEP_GAP = "<br><br>"
 ROOT = Path(__file__).resolve().parent.parent
 
 # 模板化 【行】 注释，不作为概况输出
@@ -450,18 +451,28 @@ def resolve_chain_steps(
 
 def format_chain_steps_column(steps: list[dict[str, str]], total_io: dict[str, str]) -> str:
     sub = "\u00a0" * 3
-    lines: list[str] = ["链中位置："]
+    blocks: list[str] = []
     for i, st in enumerate(steps, 1):
-        lines.append(f"{i}. {st['work']}")
-        lines.append(f"{sub}输入：{st.get('input', '—')}")
-        lines.append(f"{sub}输出：{st.get('output', '—')}")
+        block = INTRA_SEP.join(
+            [
+                f"{i}. {st['work']}",
+                f"{sub}输入：{st.get('input', '—')}",
+                f"{sub}输出：{st.get('output', '—')}",
+            ]
+        )
+        blocks.append(block)
+    totals: list[str] = []
     if total_io.get("input"):
-        lines.append(f"总输入：{total_io['input']}")
+        totals.append(f"总输入：{total_io['input']}")
     if total_io.get("output"):
-        lines.append(f"总输出：{total_io['output']}")
+        totals.append(f"总输出：{total_io['output']}")
     if total_io.get("fail"):
-        lines.append(f"失败时：{total_io['fail']}")
-    return INTRA_SEP.join(lines)
+        totals.append(f"失败时：{total_io['fail']}")
+    body = STEP_GAP.join(blocks)
+    out = f"链中位置：{STEP_GAP}{body}"
+    if totals:
+        out += STEP_GAP + INTRA_SEP.join(totals)
+    return out
 
 
 def _condense_brief(text: str, max_len: int = 96) -> str:
@@ -637,7 +648,7 @@ def format_impl_by_steps(
         label = f"{i + 1}（{lines}）：" if lines else f"{i + 1}："
         parts.append(f"{label}{detail}")
 
-    return INTRA_SEP.join(parts)
+    return STEP_GAP.join(parts)
 
 
 def build_locate_column(
@@ -652,7 +663,7 @@ def build_locate_column(
     parts: list[str] = [locate.strip()]
     steps, total_io = resolve_chain_steps(symbol, chain, layer, f_code, route_hint)
     if steps:
-        parts.append(format_chain_steps_column(steps, total_io))
+        parts.append(STEP_GAP + format_chain_steps_column(steps, total_io))
     elif chain.strip():
         chain_one = re.sub(r"\s+", " ", chain.strip())
         parts.append(f"链中位置：{chain_one}")
@@ -733,8 +744,8 @@ def enrich_detail(
             f_code=f_code,
             route_hint=route_hint,
         ),
-        "design": INTRA_SEP.join(d for d in design_parts if d),
-        "qa": INTRA_SEP.join(q for q in qa_parts if q),
+        "design": STEP_GAP.join(d for d in design_parts if d),
+        "qa": STEP_GAP.join(q for q in qa_parts if q),
     }
 
 
