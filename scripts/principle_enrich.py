@@ -7,8 +7,52 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 INTRA_SEP = "<br>"
+ROOT = Path(__file__).resolve().parent.parent
+
+# 模板化 【行】 注释，不作为概况输出
+_GENERIC_ROW = {
+    "进入代码块",
+    "执行本行语句，推进功能链中的当前步骤",
+    "分支判断：根据当前 UI 状态决定后续逻辑",
+    "返回本函数计算结果给调用方",
+    "条件不满足时提前结束，避免无效请求或错误状态",
+    "模板标记：绑定数据或事件到 Vue 实例",
+}
+
+_KNOWN_SOURCE = {
+    "App.vue": "frontend/src/App.vue",
+    "AppService.java": (
+        "src/main/java/com/scau/campusstudyroomreservationmanagementsystem/service/AppService.java"
+    ),
+    "AppController.java": (
+        "src/main/java/com/scau/campusstudyroomreservationmanagementsystem/controller/AppController.java"
+    ),
+    "UploadController.java": (
+        "src/main/java/com/scau/campusstudyroomreservationmanagementsystem/controller/UploadController.java"
+    ),
+    "JwtAuthFilter.java": (
+        "src/main/java/com/scau/campusstudyroomreservationmanagementsystem/config/JwtAuthFilter.java"
+    ),
+    "DatabaseInitializer.java": (
+        "src/main/java/com/scau/campusstudyroomreservationmanagementsystem/service/DatabaseInitializer.java"
+    ),
+    "ScheduledTaskService.java": (
+        "src/main/java/com/scau/campusstudyroomreservationmanagementsystem/service/ScheduledTaskService.java"
+    ),
+    "ApiResponse.java": (
+        "src/main/java/com/scau/campusstudyroomreservationmanagementsystem/dto/ApiResponse.java"
+    ),
+    "JwtService.java": (
+        "src/main/java/com/scau/campusstudyroomreservationmanagementsystem/service/JwtService.java"
+    ),
+    "start.bat": "start.bat",
+    "start-system.ps1": "scripts/start-system.ps1",
+    "verify-v3-dictionary.ps1": "scripts/verify-v3-dictionary.ps1",
+    "schema.sql": "docs/06-部署配置/schema.sql",
+}
 
 LAYER_BEGINNER: dict[str, str] = {
     "表现": "【零基础·你能看到的层】浏览器里的页面、按钮、输入框；只负责「展示 + 收集点击」，不算信用、不写数据库。",
@@ -420,6 +464,134 @@ def format_chain_steps_column(steps: list[dict[str, str]], total_io: dict[str, s
     return INTRA_SEP.join(lines)
 
 
+def _condense_brief(text: str, max_len: int = 96) -> str:
+    s = re.sub(r"\s+", " ", text).strip(" ；;，,")
+    if len(s) > max_len:
+        return s[: max_len - 1] + "…"
+    return s
+
+
+def _resolve_source_file(path_hint: str) -> Path | None:
+    if not path_hint:
+        return None
+    hint = path_hint.replace("\\", "/").strip("`")
+    if hint in _KNOWN_SOURCE:
+        p = ROOT / _KNOWN_SOURCE[hint]
+        return p if p.is_file() else None
+    p = ROOT / hint
+    if p.is_file():
+        return p
+    name = Path(hint).name
+    if name in _KNOWN_SOURCE:
+        p = ROOT / _KNOWN_SOURCE[name]
+        return p if p.is_file() else None
+    for cand in ROOT.rglob(name):
+        if "node_modules" in cand.parts or "target" in cand.parts:
+            continue
+        return cand
+    return None
+
+
+def _parse_lines_range(lines_tag: str) -> tuple[int, int] | None:
+    m = re.search(r"L(\d+)[–\-—]L(\d+)", lines_tag or "")
+    if not m:
+        return None
+    return int(m.group(1)), int(m.group(2))
+
+
+def _extract_line_brief(line: str) -> str | None:
+    m = re.search(r"【行】([^/\n*]+)", line)
+    if m:
+        t = m.group(1).strip().rstrip(" */")
+        if t in _GENERIC_ROW or t.startswith("声明并赋值变量"):
+            return None
+        return t
+    s = line.strip()
+    if not s or s.startswith("//") and "【" not in s:
+        pass
+    m = re.search(r"@(?:Post|Get|Put|Delete)Mapping\(\"([^\"]+)\"\)", s)
+    if m:
+        verb = "POST" if "Post" in s else "GET" if "Get" in s else "PUT" if "Put" in s else "DELETE"
+        return f"{verb} `{m.group(1)}` 路由"
+    if "return ApiResponse.ok" in s:
+        return "包装 Service 结果为 ApiResponse JSON"
+    if re.search(r"async function \w+", s):
+        m2 = re.search(r"async function (\w+)", s)
+        return f"定义 async `{m2.group(1)}()`" if m2 else None
+    if "v-model=" in s:
+        m2 = re.search(r'v-model="([^"]+)"', s)
+        return f"v-model 绑定 `{m2.group(1)}`" if m2 else "v-model 双向绑定"
+    if "@click=" in s:
+        m2 = re.search(r'@click="([^"]+)"', s)
+        return f"@click 触发 `{m2.group(1)}`" if m2 else "绑定点击事件"
+    if "await call(" in s or "call('post'" in s or 'call("post"' in s:
+        m2 = re.search(r"call\([^,]+,\s*['\"]([^'\"]+)['\"]", s)
+        return f"call 请求 `{m2.group(1)}`" if m2 else "call 发 HTTP"
+    if "jdbcTemplate" in s.lower() or "JdbcTemplate" in s:
+        return "JdbcTemplate 执行 SQL"
+    if "throw new BusinessException" in s:
+        m2 = re.search(r'BusinessException\("([^"]+)"\)', s)
+        return f"抛 BusinessException：{m2.group(1)}" if m2 else "抛业务异常"
+    if s.endswith("{") or s.endswith("}") or s.startswith("}"):
+        return None
+    if len(s) > 120:
+        return None
+    if any(k in s for k in ("function ", "const ", "let ", "if (", "try {", "public ", "private ")):
+        return _condense_brief(re.sub(r"//.*$", "", s).strip(), 72)
+    return None
+
+
+def _block_duty(lines: list[str], lo: int) -> str | None:
+    for i in range(lo - 2, max(-1, lo - 8), -1):
+        if i < 0:
+            break
+        m = re.search(r"本处职责：(.+?)(?:\*/|$)", lines[i])
+        if m:
+            return _condense_brief(m.group(1).strip())
+    return None
+
+
+def _summarize_source_range(
+    path_hint: str, lo: int, hi: int, *, include_duty: bool = True
+) -> str:
+    fp = _resolve_source_file(path_hint)
+    if not fp or lo < 1:
+        return ""
+    try:
+        src = fp.read_text(encoding="utf-8", errors="ignore").splitlines()
+    except OSError:
+        return ""
+    duty = _block_duty(src, lo) if include_duty else None
+    briefs: list[str] = []
+    seen: set[str] = set()
+    scan_lo = max(1, lo)
+    scan_hi = min(hi, len(src))
+    for i in range(scan_lo - 1, scan_hi):
+        b = _extract_line_brief(src[i])
+        if b and b not in seen:
+            seen.add(b)
+            briefs.append(b)
+    if duty and duty not in seen:
+        briefs.insert(0, duty)
+    if briefs:
+        return _condense_brief("；".join(briefs[:4]))
+    return ""
+
+
+def _split_impl_chunks(fallback_impl: str) -> list[str]:
+    if not fallback_impl:
+        return []
+    parts = re.split(r"[；;]+|(?=L\d+[-–—]L?\d*)", fallback_impl)
+    return [p.strip() for p in parts if p.strip()]
+
+
+def _summarize_step_work(work: str) -> str:
+    w = re.sub(r"\s+", " ", (work or "").strip()).strip("。")
+    if not w:
+        return "完成本步链路职责。"
+    return _condense_brief(w if w.endswith("。") else w + "。")
+
+
 def format_impl_by_steps(
     path: str,
     symbol: str,
@@ -435,18 +607,33 @@ def format_impl_by_steps(
 
     n = len(steps)
     if n == 0:
-        return fallback_impl or "见源码 【Fx-y】与 【行】 注释。"
+        fb = (fallback_impl or "").strip()
+        if fb:
+            return fb
+        if lo is not None and hi is not None:
+            s = _summarize_source_range(pf, lo, hi)
+            if s:
+                return f"1（L{lo}–L{hi}）：{s}"
+        return _summarize_step_work(symbol)
 
+    fb_chunks = _split_impl_chunks(fallback_impl)
     parts: list[str] = []
     for i, st in enumerate(steps):
         lines = st.get("lines", "")
         if not lines and lo is not None and hi is not None:
             lines = _split_line_range(lo, hi, n, i)
-        detail = st.get("detail") or ""
-        if not detail and i == 0 and fallback_impl and n == 1:
-            detail = fallback_impl
-        elif not detail:
-            detail = f"见 `{pf}` {lines or '对应段'} 内 【行】 注释逐步跟读。"
+        detail = (st.get("detail") or "").strip()
+        rng = _parse_lines_range(lines)
+        if not detail and rng:
+            detail = _summarize_source_range(
+                pf, rng[0], rng[1], include_duty=(i == 0)
+            )
+        if not detail and i < len(fb_chunks):
+            detail = _condense_brief(fb_chunks[i])
+        if not detail and n == 1 and fallback_impl:
+            detail = _condense_brief(fallback_impl)
+        if not detail:
+            detail = _summarize_step_work(st.get("work", ""))
         label = f"{i + 1}（{lines}）：" if lines else f"{i + 1}："
         parts.append(f"{label}{detail}")
 
@@ -501,20 +688,16 @@ def expand_impl(
     impl = (impl or "").strip()
     m = re.search(r"\[L(\d+)-L(\d+)\]", locate)
     if m:
-        lo, hi = m.group(1), m.group(2)
-        header = f"1（L{lo}–L{hi}）："
+        lo, hi = int(m.group(1)), int(m.group(2))
         if impl:
-            return f"{header}{impl}"
-        return (
-            f"{header}L{lo} 起首行 【Fx-y】 总体讲解；"
-            f"L{lo}–L{hi} 内 【行】 为逐行中文注释。"
-        )
+            return f"1（L{lo}–L{hi}）：{_condense_brief(impl)}"
+        s = _summarize_source_range(pf, lo, hi)
+        if s:
+            return f"1（L{lo}–L{hi}）：{s}"
+        return f"1（L{lo}–L{hi}）：{_summarize_step_work(symbol)}"
     if impl:
         return impl
-    return (
-        f"打开 `{pf}`：首行 【Fx-y】 为总体讲解，块内 【行】 为逐行说明；"
-        f"符号 `{symbol}` 的具体 API/SQL/表字段见该行号范围内注释。"
-    )
+    return _summarize_step_work(symbol)
 
 
 def enrich_detail(
