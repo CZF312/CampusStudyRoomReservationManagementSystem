@@ -841,17 +841,28 @@ public class AppService { // 【行】进入方法体或分支块
     }
 
     public void updateSeat(CurrentUser admin, Long id, Map<String, Object> req) {
-        Map<String, Object> seat = one("select room_id from seat where id=?", id);
+        Map<String, Object> seat = one("select room_id, status from seat where id=?", id);
         if (seat == null) {
             throw new BusinessException(404, "座位不存在");
         }
         assertRoomManager(admin, num(seat.get("room_id")));
+        int isSeat = intText(req, "isSeat", 1);
+        String newStatus = dbSeatStatus(text(req, "status", SEAT_NORMAL));
+        if (isSeat == 0 || !SEAT_NORMAL.equals(newStatus)) {
+            Integer activeCount = jdbc.queryForObject("""
+                    select count(*) from reservation
+                    where seat_id=? and status in ('待使用','使用中','PENDING','USING')
+                    """, Integer.class, id);
+            if (activeCount != null && activeCount > 0) {
+                throw new BusinessException(409, "该座位当前有正在使用或等待使用的预约，无法禁用、删除或修改为非座位状态");
+            }
+        }
         jdbc.update("""
                 update seat set is_seat=?,cell_category=?,seat_type=?,has_power=?,near_window=?,quiet_zone=?,hot_seat=?,status=?,updated_at=?
                 where id=?
-                """, intText(req, "isSeat", 1), dbCellCategory(text(req, "cellCategory", "座位")), dbSeatType(text(req, "seatType", "普通")),
+                """, isSeat, dbCellCategory(text(req, "cellCategory", "座位")), dbSeatType(text(req, "seatType", "普通")),
                 intText(req, "hasPower", 0), intText(req, "nearWindow", 0), intText(req, "quietZone", 0),
-                intText(req, "hotSeat", 0), dbSeatStatus(text(req, "status", SEAT_NORMAL)), LocalDateTime.now(), id);
+                intText(req, "hotSeat", 0), newStatus, LocalDateTime.now(), id);
     }
 
     @Transactional
@@ -896,6 +907,13 @@ public class AppService { // 【行】进入方法体或分支块
         if (!admin.isSuperAdmin() && !Objects.equals(num(seat.get("manager_id")), admin.id())) {
             throw new BusinessException(403, "无权限删除该座位");
         }
+        Integer activeCount = jdbc.queryForObject("""
+                select count(*) from reservation
+                where seat_id=? and status in ('待使用','使用中','PENDING','USING')
+                """, Integer.class, seatId);
+        if (activeCount != null && activeCount > 0) {
+            throw new BusinessException(409, "该座位当前有正在使用或等待使用的预约，无法删除");
+        }
         Integer active = jdbc.queryForObject("""
                 select count(*) from reservation r
                 where r.seat_id=?
@@ -917,9 +935,19 @@ public class AppService { // 【行】进入方法体或分支块
 
     public void batchSeats(CurrentUser admin, Long roomId, Map<String, Object> req) {
         assertRoomManager(admin, roomId);
+        String newStatus = dbSeatStatus(text(req, "status", SEAT_NORMAL));
+        if (!SEAT_NORMAL.equals(newStatus)) {
+            Integer activeCount = jdbc.queryForObject("""
+                    select count(*) from reservation
+                    where room_id=? and status in ('待使用','使用中','PENDING','USING')
+                    """, Integer.class, roomId);
+            if (activeCount != null && activeCount > 0) {
+                throw new BusinessException(409, "该自习室当前有正在使用或等待使用的预约，无法批量禁用或设为维修状态");
+            }
+        }
         jdbc.update("update seat set seat_type=?,has_power=?,near_window=?,quiet_zone=?,hot_seat=?,status=?,updated_at=? where room_id=?",
                 dbSeatType(text(req, "seatType", "普通")), intText(req, "hasPower", 0), intText(req, "nearWindow", 0),
-                intText(req, "quietZone", 0), intText(req, "hotSeat", 0), dbSeatStatus(text(req, "status", SEAT_NORMAL)), LocalDateTime.now(), roomId);
+                intText(req, "quietZone", 0), intText(req, "hotSeat", 0), newStatus, LocalDateTime.now(), roomId);
     }
 
     public List<Map<String, Object>> adminReservations(CurrentUser admin) {
@@ -2124,18 +2152,33 @@ public class AppService { // 【行】进入方法体或分支块
     }
 
     private void changeCredit(Long userId, int delta, String type, String reason, Long reservationId) {
-        Map<String, Object> profile = one("select credit_score from student_profile where user_id=?", userId);
-        int before = intValue(profile.get("credit_score"));
-        int after = Math.max(0, Math.min(CREDIT_SCORE_MAX, before + delta));
-        jdbc.update("update student_profile set credit_score=?,updated_at=? where user_id=?", after, LocalDateTime.now(), userId);
-        jdbc.update("insert into credit_log(user_id,before_score,change_value,after_score,change_type,reason,reservation_id,created_at) values(?,?,?,?,?,?,?,?)",
-                userId, before, delta, after, dbCreditType(type), reason, reservationId, LocalDateTime.now());
-        int threshold = getConfigInt("credit_blocked_threshold", 0);
-        if (after <= threshold) {
+        boolean useStoredProcedure = true;
+        try (java.sql.Connection conn = java.util.Objects.requireNonNull(jdbc.getDataSource()).getConnection()) {
+            if ("H2".equalsIgnoreCase(conn.getMetaData().getDatabaseProductName())) {
+                useStoredProcedure = false;
+            }
+        } catch (Exception ignored) {
+        }
+
+        if (useStoredProcedure) {
+            int threshold = getConfigInt("credit_blocked_threshold", 0);
             int freezeDays = getConfigInt("blacklist_days", 7);
-            jdbc.update("insert into blacklist_record(user_id,start_time,end_time,reason,status) values(?,?,?,?,?)",
-                    userId, LocalDateTime.now(), LocalDateTime.now().plusDays(freezeDays), "信用积分低于等于" + threshold + "分", BLACKLIST_ACTIVE);
-            jdbc.update("update user_account set status=?,updated_at=? where id=?", ACCOUNT_BLACKLIST, LocalDateTime.now(), userId);
+            jdbc.update("CALL sp_change_student_credit(?, ?, ?, ?, ?, ?, ?)",
+                    userId, delta, dbCreditType(type), reason, reservationId, threshold, freezeDays);
+        } else {
+            Map<String, Object> profile = one("select credit_score from student_profile where user_id=?", userId);
+            int before = intValue(profile.get("credit_score"));
+            int after = Math.max(0, Math.min(CREDIT_SCORE_MAX, before + delta));
+            jdbc.update("update student_profile set credit_score=?,updated_at=? where user_id=?", after, LocalDateTime.now(), userId);
+            jdbc.update("insert into credit_log(user_id,before_score,change_value,after_score,change_type,reason,reservation_id,created_at) values(?,?,?,?,?,?,?,?)",
+                    userId, before, delta, after, dbCreditType(type), reason, reservationId, LocalDateTime.now());
+            int threshold = getConfigInt("credit_blocked_threshold", 0);
+            if (after <= threshold) {
+                int freezeDays = getConfigInt("blacklist_days", 7);
+                jdbc.update("insert into blacklist_record(user_id,start_time,end_time,reason,status) values(?,?,?,?,?)",
+                        userId, LocalDateTime.now(), LocalDateTime.now().plusDays(freezeDays), "信用积分低于等于" + threshold + "分", BLACKLIST_ACTIVE);
+                jdbc.update("update user_account set status=?,updated_at=? where id=?", ACCOUNT_BLACKLIST, LocalDateTime.now(), userId);
+            }
         }
     }
 

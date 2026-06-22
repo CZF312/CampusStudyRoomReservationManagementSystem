@@ -322,7 +322,78 @@ CREATE TABLE `operation_log` (
   PRIMARY KEY (`id`),
   KEY `idx_op_log_operator` (`operator_id`,`created_at`),
   KEY `idx_op_log_module` (`module`,`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Stored Procedures and Functions
+--
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS `sp_change_student_credit` //
+CREATE PROCEDURE `sp_change_student_credit`(
+  IN p_user_id BIGINT,
+  IN p_delta INT,
+  IN p_type VARCHAR(20),
+  IN p_reason VARCHAR(255),
+  IN p_reservation_id BIGINT,
+  IN p_threshold INT,
+  IN p_freeze_days INT
+)
+BEGIN
+  DECLARE v_before INT;
+  DECLARE v_after INT;
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stored procedure sp_change_student_credit failed';
+  END;
+
+  START TRANSACTION;
+
+  SELECT `credit_score` INTO v_before FROM `student_profile` WHERE `user_id` = p_user_id FOR UPDATE;
+
+  IF v_before IS NOT NULL THEN
+    SET v_after = v_before + p_delta;
+    IF v_after < 0 THEN
+      SET v_after = 0;
+    ELSEIF v_after > 500 THEN
+      SET v_after = 500;
+    END IF;
+
+    UPDATE `student_profile` SET `credit_score` = v_after, `updated_at` = NOW() WHERE `user_id` = p_user_id;
+
+    INSERT INTO `credit_log`(`user_id`, `before_score`, `change_value`, `after_score`, `change_type`, `reason`, `reservation_id`, `created_at`)
+    VALUES (p_user_id, v_before, p_delta, v_after, p_type, p_reason, p_reservation_id, NOW());
+
+    IF v_after <= p_threshold THEN
+      INSERT INTO `blacklist_record`(`user_id`, `start_time`, `end_time`, `reason`, `status`)
+      VALUES (p_user_id, NOW(), DATE_ADD(NOW(), INTERVAL p_freeze_days DAY), CONCAT('信用积分低于等于', p_threshold, '分'), '生效');
+
+      UPDATE `user_account` SET `status` = '拉黑', `updated_at` = NOW() WHERE `id` = p_user_id;
+    END IF;
+  END IF;
+
+  COMMIT;
+END //
+
+DROP FUNCTION IF EXISTS `fn_is_seat_reserved` //
+CREATE FUNCTION `fn_is_seat_reserved`(
+  p_seat_id BIGINT,
+  p_time DATETIME
+)
+RETURNS BOOLEAN
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+  DECLARE v_count INT;
+  SELECT COUNT(*) INTO v_count
+  FROM `reservation_slot` rs
+  WHERE rs.`seat_id` = p_seat_id
+    AND rs.`status` IN ('占用', 'ACTIVE')
+    AND p_time BETWEEN rs.`slot_start` AND rs.`slot_end`;
+  RETURN (v_count > 0);
+END //
+
+DELIMITER ;
 
 CREATE OR REPLACE VIEW `v_room_daily_usage` AS
 select `sr`.`id` AS `room_id`,
