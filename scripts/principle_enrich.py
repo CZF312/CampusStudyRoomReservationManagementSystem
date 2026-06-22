@@ -39,29 +39,29 @@ def layer_short_name(layer: str) -> str:
 # 按符号定制输入/输出（避免同层每行重复同一套话）
 SYMBOL_IO: dict[str, str] = {
     "start.bat": INTRA_SEP.join([
-        "**输入**：双击 bat 或 cmd 调用。",
-        "**输出**：调用 start-system.ps1，exit code 原样返回。",
-        "**失败时**：无 pom.xml 或 ps1 非 0 → ERROR + pause。",
+        "输入：双击 bat 或 cmd 调用。",
+        "输出：调用 start-system.ps1，exit code 原样返回。",
+        "失败时：无 pom.xml 或 ps1 非 0 → ERROR + pause。",
     ]),
     "start-system.ps1": INTRA_SEP.join([
-        "**输入**：bat 调用；可选环境变量 CSRRM_MYSQL_PASSWORD。",
-        "**输出**：导库 PASS=17、新窗口 mvnw、8080 可访问。",
-        "**失败时**：Java/MySQL/static 缺失或 verify 失败 → exit 1。",
+        "输入：bat 调用；可选环境变量 CSRRM_MYSQL_PASSWORD。",
+        "输出：导库 PASS=17、新窗口 mvnw、8080 可访问。",
+        "失败时：Java/MySQL/static 缺失或 verify 失败 → exit 1。",
     ]),
     "verify-v3-dictionary.ps1": INTRA_SEP.join([
-        "**输入**：MySQL 已导入 database-full.sql；root 密码。",
-        "**输出**：控制台 PASS=17 / FAIL=n；exit 0 或 1。",
-        "**失败时**：表数/外键/字典不符 → 红色 FAIL，需重跑 setup。",
+        "输入：MySQL 已导入 database-full.sql；root 密码。",
+        "输出：控制台 PASS=17 / FAIL=n；exit 0 或 1。",
+        "失败时：表数/外键/字典不符 → 红色 FAIL，需重跑 setup。",
     ]),
     "DatabaseInitializer.run": INTRA_SEP.join([
-        "**输入**：Spring 容器启动完成（无 HTTP）。",
-        "**输出**：缺表时执行 classpath 补丁 SQL。",
-        "**失败时**：SQL 异常 → Boot 启动失败，8080 不起。",
+        "输入：Spring 容器启动完成（无 HTTP）。",
+        "输出：缺表时执行 classpath 补丁 SQL。",
+        "失败时：SQL 异常 → Boot 启动失败，8080 不起。",
     ]),
     "runMaintenanceTasks": INTRA_SEP.join([
-        "**输入**：@Scheduled 定时触发，无 HTTP 参数。",
-        "**输出**：依次调用 markNoShow/autoCheckout 等维护方法。",
-        "**失败时**：单任务异常记日志，下次调度继续。",
+        "输入：@Scheduled 定时触发，无 HTTP 参数。",
+        "输出：依次调用 markNoShow/autoCheckout 等维护方法。",
+        "失败时：单任务异常记日志，下次调度继续。",
     ]),
 }
 
@@ -77,49 +77,49 @@ def io_beginner_hint(layer: str, symbol: str, f_code: str, route_hint: dict[str,
             return val
     if sym.startswith("scheduledprocess"):
         return INTRA_SEP.join([
-            "**输入**：@Scheduled 触发，无 HTTP。",
-            "**输出**：JdbcTemplate UPDATE 预约/信用/黑名单表。",
-            "**失败时**：记录日志，不弹前端（无 UI）。",
+            "输入：@Scheduled 触发，无 HTTP。",
+            "输出：JdbcTemplate UPDATE 预约/信用/黑名单表。",
+            "失败时：记录日志，不弹前端（无 UI）。",
         ])
     if "表现" in layer or "Presentation" in layer:
         return INTRA_SEP.join([
-            "**输入**：用户在页面的点击/表单（ref 里的值）。",
-            "**输出**：更新 Vue 的 ref/computed 让页面变样，或发 HTTP 等 JSON 回来。",
-            "**失败时**：notify()/ElMessage 弹中文错误，不崩溃整页。",
+            "输入：用户在页面的点击/表单（ref 里的值）。",
+            "输出：更新 Vue 的 ref/computed 让页面变样，或发 HTTP 等 JSON 回来。",
+            "失败时：notify()/ElMessage 弹中文错误，不崩溃整页。",
         ])
     if "Controller" in layer or "接口" in layer:
         route = route_hint.get(symbol, route_hint.get(sym, f"/api/...（见 `{sym}`）"))
         return INTRA_SEP.join([
-            f"**输入**：HTTP 请求（路径 `{route}`、JSON body、Header 里 Bearer JWT）。",
-            "**输出**：ApiResponse JSON，前端 call() 读 data 字段。",
-            "**失败时**：Service 抛 BusinessException → 全局处理器转 {code,message}，或 Filter 直接 401。",
+            f"输入：HTTP 请求（路径 `{route}`、JSON body、Header 里 Bearer JWT）。",
+            "输出：ApiResponse JSON，前端 call() 读 data 字段。",
+            "失败时：Service 抛 BusinessException → 全局处理器转 {code,message}，或 Filter 直接 401。",
         ])
     if "Service" in layer or "业务" in layer:
         return INTRA_SEP.join([
-            "**输入**：Controller 传入的 DTO/基本类型（userId、seatId、时间段等）。",
-            "**输出**：Map/DTO 或 void；副作用为 UPDATE/INSERT MySQL 表。",
-            "**失败时**：throw new BusinessException(\"中文原因\")，事务回滚，前端看到 message。",
+            "输入：Controller 传入的 DTO/基本类型（userId、seatId、时间段等）。",
+            "输出：Map/DTO 或 void；副作用为 UPDATE/INSERT MySQL 表。",
+            "失败时：throw new BusinessException(\"中文原因\")，事务回滚，前端看到 message。",
         ])
     if "配置" in layer or "Config" in layer:
         return INTRA_SEP.join([
-            "**输入**：每个 /api/** 请求的 Header 与路径。",
-            "**输出**：放行并注入 SecurityContext（userId/role），或 401 JSON 拦截。",
-            "**失败时**：token 过期/伪造 → 401，前端 bootstrap 清 localStorage。",
+            "输入：每个 /api/** 请求的 Header 与路径。",
+            "输出：放行并注入 SecurityContext（userId/role），或 401 JSON 拦截。",
+            "失败时：token 过期/伪造 → 401，前端 bootstrap 清 localStorage。",
         ])
     if "运维" in layer or "Ops" in layer:
         return INTRA_SEP.join([
-            "**输入**：双击 bat 或命令行参数、环境变量（如 CSRRM_MYSQL_PASSWORD）。",
-            "**输出**：MySQL 库就绪、8080 进程、控制台 PASS=17 或错误码。",
-            "**失败时**：exit 非 0，窗口保留报错，不启动半残后端。",
+            "输入：双击 bat 或命令行参数、环境变量（如 CSRRM_MYSQL_PASSWORD）。",
+            "输出：MySQL 库就绪、8080 进程、控制台 PASS=17 或错误码。",
+            "失败时：exit 非 0，窗口保留报错，不启动半残后端。",
         ])
     if "样式" in layer:
         return INTRA_SEP.join([
-            "**输入**：Element Plus 渲染出的 DOM 类名（如 popper-class）。",
-            "**输出**：CSS 规则改变宽度/z-index/背景，弹层与柱图对齐。",
-            "**失败时**：仅 UI 错位，不影响 API 数据正确性。",
+            "输入：Element Plus 渲染出的 DOM 类名（如 popper-class）。",
+            "输出：CSS 规则改变宽度/z-index/背景，弹层与柱图对齐。",
+            "失败时：仅 UI 错位，不影响 API 数据正确性。",
         ])
     return (
-        f"**输入/输出**：见 `{symbol}` 在 {f_code.upper()} 功能链中的前后表行；"
+        f"输入/输出：见 `{symbol}` 在 {f_code.upper()} 功能链中的前后表行；"
         "改码后对照 GitHub 行号 【Fx-y】+【行】 注释逐步跟读。"
     )
 
@@ -186,7 +186,7 @@ def build_locate_column(
     parts: list[str] = [locate.strip()]
     chain_clean = re.sub(r"\s+", " ", (chain or "").strip())
     if chain_clean:
-        parts.append(f"**链中位置**：{chain_clean}")
+        parts.append(f"链中位置：{chain_clean}")
     io = io_beginner_hint(layer, symbol, f_code, route_hint)
     if io:
         parts.append(io)
@@ -200,7 +200,7 @@ def expand_impl(locate: str, path: str, symbol: str, impl: str) -> str:
     m = re.search(r"\[L(\d+)-L(\d+)\]", locate)
     if m:
         lo, hi = m.group(1), m.group(2)
-        header = f"**分段说明**（`{pf}` L{lo}–L{hi}）："
+        header = f"分段说明（`{pf}` L{lo}–L{hi}）："
         if impl:
             return f"{header}{INTRA_SEP}{impl}"
         return (
@@ -229,9 +229,9 @@ def enrich_detail(
 ) -> dict[str, str]:
     chain_core = detail.get("chain", "")
     design_parts = [
-        f"**为何放在{layer_short_name(layer)}**：{design_layer_why(layer)}",
+        f"为何放在{layer_short_name(layer)}：{design_layer_why(layer)}",
         detail.get("design", ""),
-        f"**若不这样做**：{design_alternative(layer, symbol)}",
+        f"若不这样做：{design_alternative(layer, symbol)}",
     ]
     qa_parts = [detail.get("qa", "")]
     extra = extra_qa_hints(f_code, symbol, layer)

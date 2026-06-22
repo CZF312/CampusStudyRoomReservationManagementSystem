@@ -501,27 +501,8 @@ CONCEPT_CARDS: dict[str, str] = {
 
 
 def normalize_concepts(text: str) -> str:
-    """① 段：去掉装饰性 **，代码/文件名用反引号；保留段标题 **① …**。"""
-    protected: dict[str, str] = {}
-
-    def protect(m: re.Match[str]) -> str:
-        key = f"@@P{len(protected)}@@"
-        protected[key] = m.group(0)
-        return key
-
-    s = re.sub(r"\*\*[①③④⑤][^*]*\*\*：", protect, text.strip())
-
-    def repl(m: re.Match[str]) -> str:
-        inner = m.group(1).strip()
-        if not inner:
-            return inner
-        if re.fullmatch(r"[\w@./:-]+", inner):
-            return f"`{inner}`"
-        return inner
-
-    s = re.sub(r"\*\*([^*]+)\*\*", repl, s)
-    for key, val in protected.items():
-        s = s.replace(key, val)
+    """相关概念列：去掉所有 ** 加粗，保留反引号代码。"""
+    s = re.sub(r"\*\*([^*]+)\*\*", r"\1", text.strip())
     if "<br" not in s.lower():
         s = re.sub(r"\s+", " ", s).strip(" ；;")
     return s
@@ -964,8 +945,141 @@ def _norm_sym(symbol: str) -> str:
     return re.sub(r"[^a-z0-9]", "", symbol.lower())
 
 
+def _strip_bold(text: str) -> str:
+    return re.sub(r"\*\*([^*]+)\*\*", r"\1", text or "")
+
+
+# 每行所属层「相关概念」：从链路+实现中提取并零基础引入（优先于 pick_glossary）
+ROW_CONCEPTS: dict[str, str] = {
+    "start.bat": (
+        "`@echo off`=关闭命令回显；`%~dp0`=bat 所在目录即项目根；"
+        "`pom.xml`=Maven 项目标志，防在错误目录启动；"
+        "`PowerShell`=执行 .ps1 的 Windows 脚本引擎；"
+        "`ERRORLEVEL`=透传 ps1 退出码给 pause；`pause`=答辩时保留窗口看 PASS/FAIL"
+    ),
+    "start-system.ps1": (
+        "`Java/JDK`=运行 Spring Boot 后端的程序；"
+        "`MySQL`=关系型数据库，存预约与用户；"
+        "`index.html`=static 下预构建的前端登录页（HTML）；"
+        "`Spring Boot`=`mvnw spring-boot:run` 启动的内嵌 Tomcat Web 框架；"
+        "`application-local.properties`=本地 MySQL 密码配置文件；"
+        "`setup-after-clone.ps1`=DROP 库并导入 database-full.sql 的子脚本；"
+        "`database-full.sql`=整库演示数据快照；"
+        "`PASS=17`=第三版字典 17 项验收；"
+        "`8080`=浏览器访问端口；`mvnw`=Maven Wrapper"
+    ),
+    "verify-v3-dictionary.ps1": (
+        "`information_schema`=MySQL 系统库，查表数/外键；"
+        "`Test-Check`=脚本内 PASS/FAIL 计数；"
+        "`PASS=17`=第三版验收标准；`mysql.exe`=命令行连库执行 SQL"
+    ),
+    "DatabaseInitializer.run": (
+        "`@PostConstruct`=Spring Boot 启动后自动执行；"
+        "`JdbcTemplate`=Java 里执行 SQL 的工具；"
+        "`classpath` SQL=jar 内补丁脚本；与 database-full.sql 全量导入互补"
+    ),
+    "loginStudent": (
+        "`BCrypt`=密码单向哈希，库中不存明文；"
+        "`JWT`=登录成功后的 token；"
+        "`localStorage`=浏览器存 token；"
+        "`user_account`=学生账号表；`auditStatus`=待审核/已通过"
+    ),
+    "createReservation": (
+        "`reservation`=预约主表；`reservation_slot`=10 分钟占位表；"
+        "`uk_seat_slot`=唯一索引防两人同座同时段；"
+        "`reservation_no`=16 位预约号"
+    ),
+    "myStudyDuration": (
+        "`statsDateWhereCondition`=统计时间窗 SQL 条件；"
+        "`TIMESTAMPDIFF`=MySQL 算学习分钟；"
+        "`rangeMode`=当期 current / 往期 past"
+    ),
+    "statisticsReport": (
+        "`JDBC 动态 SQL`=Java 字符串拼 SELECT，非查视图；"
+        "`statisticsUsage`=各室使用率；`exportCsv`=与报表同 SQL 导出"
+    ),
+}
+
+# 在链路/实现文本中扫描到的关键词 → 零基础一句（长模式优先）
+CONCEPT_SCAN: list[tuple[str, str]] = [
+    ("application-local.properties", "`application-local.properties`=本地数据源密码配置"),
+    ("database-full.sql", "`database-full.sql`=整库演示数据快照"),
+    ("setup-after-clone", "`setup-after-clone.ps1`=导库子脚本"),
+    ("spring-boot:run", "`Spring Boot`=内嵌 Tomcat 的 Java Web 框架"),
+    ("index.html", "`index.html`=浏览器入口 HTML 页"),
+    ("static/index", "`static/`=Spring Boot 托管的前端资源目录"),
+    ("information_schema", "`information_schema`=MySQL 元数据，验表/外键"),
+    ("reservation_slot", "`reservation_slot`=10 分钟座位占位"),
+    ("uk_seat_slot", "`uk_seat_slot`=唯一索引，防抢座双占"),
+    ("@postconstruct", "`@PostConstruct`=容器启动后自动执行"),
+    ("@transactional", "`@Transactional`=事务，失败整组回滚"),
+    ("@scheduled", "`@Scheduled`=Java 定时任务"),
+    ("jdbctemplate", "`JdbcTemplate`=Spring 执行 SQL"),
+    ("bcrypt", "`BCrypt`=密码哈希"),
+    ("localstorage", "`localStorage`=浏览器存 token"),
+    ("pass=17", "`PASS=17`=第三版 17 项验收"),
+    ("mvnw", "`mvnw`=Maven Wrapper"),
+    ("8080", "`8080`=浏览器访问端口"),
+    ("pom.xml", "`pom.xml`=Maven 项目标志"),
+    ("@echo off", "`@echo off`=bat 关闭回显"),
+    ("errorlevel", "`ERRORLEVEL`=命令退出码"),
+    ("powershell", "`PowerShell`=Windows 脚本引擎"),
+    ("mysql", "`MySQL`=关系型数据库"),
+    ("spring boot", "`Spring Boot`=Java Web 后端框架"),
+    ("vue", "`Vue`=前端单页框架"),
+    ("rest", "`REST`=URL+HTTP 动词"),
+    ("json", "`JSON`={键:值} 文本格式"),
+    ("jwt", "`JWT`=登录通行证 token"),
+    ("apiresponse", "`ApiResponse`={code,data,message} 统一响应"),
+    ("echarts", "`ECharts`=图表库"),
+    ("element plus", "`Element Plus`=Vue UI 组件库"),
+    ("java", "`Java`=后端运行时"),
+]
+
+
+def build_row_concepts(
+    symbol: str,
+    chain: str,
+    locate: str,
+    impl: str,
+    layer: str,
+    f_code: str,
+) -> str:
+    """所属层相关概念：链路与实现中出现的关键名词，零基础引入。"""
+    parts: list[str] = []
+    seen: set[str] = set()
+
+    def add(chunk: str) -> None:
+        c = chunk.strip().strip("；")
+        if not c:
+            return
+        key = c.split("=", 1)[0].strip() if "=" in c else c
+        if key in seen:
+            return
+        seen.add(key)
+        parts.append(c)
+
+    sym_norm = _norm_sym(symbol)
+    for key, val in ROW_CONCEPTS.items():
+        if key.lower() == symbol.lower() or _norm_sym(key) == sym_norm:
+            for seg in val.split("；"):
+                add(seg)
+            break
+
+    blob = " ".join([chain or "", locate or "", impl or ""]).lower()
+    for pat, intro in CONCEPT_SCAN:
+        if pat in blob:
+            add(intro)
+
+    if len(parts) < 3:
+        fallback = pick_glossary(f_code, symbol, layer, locate)
+        for seg in re.split(r"[；、]", fallback):
+            add(seg)
+
+    return "；".join(parts[:10])
+
+
 def minimal_concept(symbol: str, layer: str) -> str:
-    """禁止整节 BEGINNER 重复：每行最多一行短概念。"""
     hints = {
         "表现": "前端 UI/事件",
         "Presentation": "前端 UI/事件",
@@ -977,12 +1091,12 @@ def minimal_concept(symbol: str, layer: str) -> str:
         "配置": "JWT/安全配置",
         "运维": "启动/导库脚本",
         "Ops": "启动/导库脚本",
-        "样式": "CSS 布局与 z-index",
+        "样式": "CSS 布局",
     }
     for k, v in hints.items():
         if k in layer:
-            return f"**`{symbol}`**：{v}（见链中位置与 GitHub 【行】）"
-    return f"**`{symbol}`**：见本节功能链实例该步"
+            return f"`{symbol}`={v}"
+    return f"`{symbol}`=见链中位置与 GitHub 【行】"
 
 
 def pick_glossary(f_code: str, symbol: str, layer: str, locate: str = "") -> str:
@@ -1106,7 +1220,7 @@ def build_layer_column(layer: str, concepts: str) -> str:
     c = concepts.strip()
     if not c:
         return base
-    return f"{base}{INTRA_SEP}**相关概念**：{c}"
+    return f"{base}{INTRA_SEP}相关概念：{c}"
 
 
 def split_principle_sections(text: str) -> dict[str, str]:
@@ -1152,7 +1266,6 @@ def build_principle(
     path = extract_path(code_locate)
 
     detail = lookup_detail(symbol, layer_base, code_locate)
-    concepts = normalize_concepts(pick_glossary(f_code, symbol, layer_base, code_locate))
 
     if not detail:
         detail = infer_detail(f_code, story, layer_base, symbol, code_locate)
@@ -1160,23 +1273,36 @@ def build_principle(
     detail = enrich_detail_sections(
         f_code, story, layer_base, symbol, code_locate, path, detail, line_ref, ROUTE_HINT
     )
-    concepts = normalize_concepts(enrich_concepts(concepts, symbol, layer_base))
+    concepts = normalize_concepts(
+        build_row_concepts(
+            symbol,
+            detail.get("chain", ""),
+            code_locate,
+            _strip_bold(detail.get("impl", "")),
+            layer_base,
+            f_code,
+        )
+    )
 
     layer_col = build_layer_column(layer_base, concepts)
     locate_col = build_locate_column(
         code_locate, layer_base, symbol, detail["chain"], f_code, ROUTE_HINT
     )
-    principle = format_principle(detail["impl"], detail["design"], detail["qa"])
+    principle = format_principle(
+        _strip_bold(detail["impl"]),
+        _strip_bold(detail["design"]),
+        _strip_bold(detail["qa"]),
+    )
     return layer_col, locate_col, principle
 
 
 def format_principle(impl: str, design: str, qa: str) -> str:
-    """三段原理（概念已并入所属层），段间 <br><br>；子节点保留 **加粗**。"""
+    """实现讲解三列：无 ** 加粗，概念已并入所属层。"""
     s = PRINCIPLE_SEP
     return clean_principle_text(
-        f"**③ 底层实现**：{impl}{s}"
-        f"**④ 设计取舍**：{design}{s}"
-        f"**⑤ 答辩要点**：{qa}"
+        f"③ 底层实现：{impl}{s}"
+        f"④ 设计取舍：{design}{s}"
+        f"⑤ 答辩要点：{qa}"
     )
 
 
@@ -1221,35 +1347,22 @@ def extract_concept_card_concepts(name: str) -> str:
 
 
 def clean_principle_text(text: str) -> str:
+    text = _strip_bold(text)
     text = re.sub(rf"({re.escape(PRINCIPLE_SEP)})+", PRINCIPLE_SEP, text)
     text = re.sub(r"(<br>){3,}", "<br><br>", text, flags=re.I)
     return text.strip()
-    """F1.2 八卡：去掉 ② 段与套话，并规范化加粗。"""
-    s = text
-    s = re.sub(
-        r"(<br><br>|\*\*)?\*\*② 链路与职责\*\*：.*?(?=(<br><br>)?\*\*③)",
-        PRINCIPLE_SEP,
-        s,
-        flags=re.S,
-    )
-    s = re.sub(r"\*\*本行符号[^*]*\*\*[^<]*(<br>)?", "", s)
-    s = re.sub(r"\*\*怎么读代码[^*]*\*\*：[^<]*(<br>)?", "", s)
-    s = re.sub(r"\*\*技术细节\*\*：", "", s)
-    s = normalize_concepts(s)
-    s = re.sub(rf"{re.escape(PRINCIPLE_SEP)}+", PRINCIPLE_SEP, s)
-    return s.strip()
 
 
 def build_concept_locate(concept: str, instance: str, path_cell: str = "") -> str:
     name = extract_layer_cell(concept)
     code = CONCEPT_LOCATE.get(name) or extract_code_locate(path_cell) or path_cell.strip()
-    return f"{code}{INTRA_SEP}**链中位置**：F1.2 八卡串起「小明点确认预约」全链路，本卡实例「{instance.strip()}」为其中一环。"
+    return f"{code}{INTRA_SEP}链中位置：F1.2 八卡串起「小明点确认预约」全链路，本卡实例「{instance.strip()}」为其中一环。"
 
 
 def build_concept_layer(concept: str, instance: str) -> str:
     name = extract_layer_cell(concept)
     if name in CONCEPT_CARDS:
-        return f"{name}{INTRA_SEP}**相关概念**：{extract_concept_card_concepts(name)}"
+        return f"{name}{INTRA_SEP}相关概念：{extract_concept_card_concepts(name)}"
     return f"{name}{INTRA_SEP}{normalize_concepts(name)}——{instance.strip()}"
 
 
