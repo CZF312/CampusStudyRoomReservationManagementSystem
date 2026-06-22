@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="device" :class="{ desktop: isDesktop, mobile: !isDesktop }">
     <div class="app-container">
     <div v-if="toast" class="toast">{{ toast }}</div>
@@ -1641,7 +1641,7 @@ const studyChartTitle = computed(() => {
   const past = studyStatsRangeMode.value === 'past'
   const titles = {
     day: past ? '往期每日学习时长（小时）' : '今日各时段学习时长（小时）',
-    week: past ? '往期每日学习时长（小时）' : '本周每日学习时长（小时）',
+    week: past ? '往期每周学习时长（小时）' : '本周每日学习时长（小时）',
     month: past ? '往期每月学习时长（小时）' : '本月每周学习时长（小时）',
     year: past ? '往年年报每月学习时长（小时）' : '本年年报每月学习时长（小时）'
   }
@@ -2224,10 +2224,14 @@ function formatDate(value) { // 【行】进入代码块
 }
 function formatStudyLabel(value) { // 【行】进入代码块
   const text = String(value || '') // 【行】声明并赋值变量 `text`
-  if (statPeriod.value === 'day') return `${String(text).padStart(2, '0')}时` // 【行】条件不满足时提前结束，避免无效请求或错误状态
+  if (statPeriod.value === 'day' && studyStatsRangeMode.value !== 'past') return `${String(text).padStart(2, '0')}时` // 【行】条件不满足时提前结束，避免无效请求或错误状态
   if (statPeriod.value === 'year' || (statPeriod.value === 'month' && studyStatsRangeMode.value === 'past')) { // 【行】分支判断：根据当前 UI 状态决定后续逻辑
     const match = text.match(/^(\d{4})-(\d{2})$/) // 【行】声明并赋值变量 `match`
     return match ? `${match[2]}月` : text // 【行】返回本函数计算结果给调用方
+  }
+  if (statPeriod.value === 'week' && studyStatsRangeMode.value === 'past') { // 【行】分支判断：针对往期周报格式化为 xx周
+    const match = text.match(/^(\d{4})-(\d{2})$/) // 【行】声明并赋值变量 `match`
+    return match ? `${match[2]}周` : text // 【行】返回本函数计算结果给调用方
   }
   return text.length >= 10 ? text.slice(5, 10).replace('-', '/') : text // 【行】返回本函数计算结果给调用方
 }

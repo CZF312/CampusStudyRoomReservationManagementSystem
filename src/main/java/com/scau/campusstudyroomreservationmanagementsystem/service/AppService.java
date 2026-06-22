@@ -528,6 +528,14 @@ public class AppService { // 【行】进入方法体或分支块
                     group by date_format(reserve_date,'%%Y-%%m')
                     order by date_format(reserve_date,'%%Y-%%m')
                     """.formatted(minutesExpr, used, dateWhere), user.id());
+        } else if ("week".equals(normalized) && isPastRange(mode)) {
+            rows = jdbc.queryForList("""
+                    select date_format(reserve_date,'%%x-%%v') label, sum(%s) minutes
+                    from reservation
+                    where user_id=? and %s and %s
+                    group by date_format(reserve_date,'%%x-%%v')
+                    order by date_format(reserve_date,'%%x-%%v')
+                    """.formatted(minutesExpr, used, dateWhere), user.id());
         } else if ("day".equals(normalized) && !isPastRange(mode)) {
             rows = jdbc.queryForList("""
                     select hour(sign_in_time) label, sum(%s) minutes
