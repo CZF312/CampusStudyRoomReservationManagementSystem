@@ -323,6 +323,8 @@ def _infer_step_io(
             return ("Controller 传入 DTO/基本类型", "业务校验通过，可读写 MySQL")
         return ("功能链起点：用户操作或上游表行输出", "进入本步处理")
     if idx == total:
+        if "@click" in work or "调 `" in work or "调用" in work:
+            return ("上一步 ref/表单已就绪", "调用本层 JS 函数，进入同链下一表行")
         if "表现" in layer:
             return ("前面 API 返回的 JSON", "页面 ref/computed 更新，用户可见结果")
         if "Controller" in layer:
@@ -403,7 +405,7 @@ def resolve_chain_steps(
 
 
 def format_chain_steps_column(steps: list[dict[str, str]], total_io: dict[str, str]) -> str:
-    sub = "&nbsp;&nbsp;&nbsp;"
+    sub = "\u00a0" * 3
     lines: list[str] = ["链中位置："]
     for i, st in enumerate(steps, 1):
         lines.append(f"{i}. {st['work']}")
