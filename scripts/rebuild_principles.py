@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-重建 01 实现定位表「原理 Principle」列：
-  ① 相关概念（名词讲解）
-  ② 链路与职责（合并原链中位置/输入输出/上下游，去重）
-  ③ 底层实现（API·表·字段·SQL·状态机，尽量到底层）
-  ④ 设计取舍
-  ⑤ 答辩要点
+重建 01 实现定位表：
+  - 第一列「所属层」：架构层 + 相关概念
+  - 第二列「链路中位置与代码地址」：GitHub 行号 + 链中位置 + 输入/输出
+  - 第三列「实现讲解」：③ 底层实现 · ④ 设计取舍 · ⑤ 答辩要点
 
 用法：python scripts/rebuild_principles.py
 """
@@ -20,7 +18,12 @@ ROOT = Path(__file__).resolve().parent.parent
 _SCRIPTS = ROOT / "scripts"
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
-from principle_enrich import enrich_detail as enrich_detail_sections, enrich_concepts  # noqa: E402
+from principle_enrich import (  # noqa: E402
+    INTRA_SEP,
+    build_locate_column,
+    enrich_detail as enrich_detail_sections,
+    enrich_concepts,
+)
 DOC = ROOT / "docs" / "09-理解与讲解" / "01-项目理解指南.md"
 
 OLD_LABELS = re.compile(
@@ -121,7 +124,12 @@ SYMBOL_GLOSSARY: dict[str, str] = {
 SYMBOL_DETAIL: dict[str, dict[str, str]] = {
     "start.bat": {
         "chain": "用户双击后，bat 只做三件事：`cd` 到项目根、设置 `CSRRM_SCRIPT_ROOT`、以 `-ExecutionPolicy Bypass` 调用 `scripts\\start-system.ps1`，最后把 PowerShell 退出码原样返回。",
-        "impl": "L2–L3 为 `【F1-1】` 总体讲解；L12–16 校验 `pom.xml`；L21 启动 ps1。不含业务逻辑，避免 Windows 同学手动敲 5 条命令。",
+        "impl": (
+            "L1–L3：@echo off、`cd /d %~dp0` 固定工作目录为 bat 所在项目根；首行 REM 含 `【F1-1】` 总体讲解。"
+            "L12–L16：若找不到 `pom.xml` 则 echo 错误并 exit /b 1，防止在错误目录启动。"
+            "L21–L25：`powershell -ExecutionPolicy Bypass -File scripts\\start-system.ps1`，把 ps1 退出码 `%ERRORLEVEL%` 原样返回。"
+            "L27–L31：pause 保留窗口供答辩查看 PASS/FAIL 输出。"
+        ),
         "design": "bat 兼容双击与答辩机无 IDE；重活交给 PowerShell（MySQL 检测、导入 SQL、mvnw）。",
         "qa": "问：为什么不用纯 PowerShell？答：双击 `.bat` 是 Windows 用户零学习成本入口；`.ps1` 默认策略可能拦截。",
     },
@@ -477,13 +485,40 @@ CONCEPT_CARDS: dict[str, str] = {
 }
 
 
+def normalize_concepts(text: str) -> str:
+    """① 段：去掉装饰性 **，代码/文件名用反引号；保留段标题 **① …**。"""
+    protected: dict[str, str] = {}
+
+    def protect(m: re.Match[str]) -> str:
+        key = f"@@P{len(protected)}@@"
+        protected[key] = m.group(0)
+        return key
+
+    s = re.sub(r"\*\*[①③④⑤][^*]*\*\*：", protect, text.strip())
+
+    def repl(m: re.Match[str]) -> str:
+        inner = m.group(1).strip()
+        if not inner:
+            return inner
+        if re.fullmatch(r"[\w@./:-]+", inner):
+            return f"`{inner}`"
+        return inner
+
+    s = re.sub(r"\*\*([^*]+)\*\*", repl, s)
+    for key, val in protected.items():
+        s = s.replace(key, val)
+    if "<br" not in s.lower():
+        s = re.sub(r"\s+", " ", s).strip(" ；;")
+    return s
+
+
 def strip_old_principle(text: str) -> str:
-    # 已是五段格式时，只提取 ② 的正文用于精炼（避免越叠越长）
     m = re.search(r"\*\*② 链路与职责\*\*：(.+?)(?:\*\*③|$)", text, re.S)
     if m:
         text = m.group(1)
     s = OLD_LABELS.sub(" ", text)
     s = re.sub(r"\*\*[①②③④⑤][^*]*\*\*：?", " ", s)
+    s = re.sub(r"链中位置：|输入：|输出：|失败时：", " ", s)
     s = re.sub(r"\s+", " ", s).strip(" ;；")
     return s
 
@@ -975,67 +1010,181 @@ def generic_qa(f_code: str, symbol: str, layer: str) -> str:
     return f"问：这一行在演示故事哪一步？答：对照本节「功能链实例」与 `{symbol}` 在表中的顺序；细节见 03-功能问答同 F 编号。"
 
 
+def extract_layer_cell(layer_col: str) -> str:
+    """从第一列还原所属层名称（兼容已合并相关概念的旧表）。"""
+    s = re.sub(r"<br\s*/?>", "\n", layer_col, flags=re.I)
+    for line in s.splitlines():
+        line = line.strip()
+        if line:
+            return line.split("相关概念：")[0].strip() or line
+    return layer_col.strip()
+
+
+def build_layer_column(layer: str, concepts: str) -> str:
+    base = extract_layer_cell(layer)
+    c = concepts.strip()
+    if not c:
+        return base
+    return f"{base}{INTRA_SEP}**相关概念**：{c}"
+
+
+def split_principle_sections(text: str) -> dict[str, str]:
+    sections: dict[str, str] = {}
+    for label in ("① 相关概念", "③ 底层实现", "④ 设计取舍", "⑤ 答辩要点"):
+        m = re.search(rf"\*\*{re.escape(label)}\*\*：(.+?)(?=\*\*[①③④⑤]|$)", text, re.S)
+        if m:
+            sections[label] = m.group(1).strip()
+    return sections
+
+
+def _plain_label(line: str) -> str:
+    return re.sub(r"\*\*([^*]+)\*\*", r"\1", line.strip())
+
+
+def _is_locate_meta_line(line: str) -> bool:
+    t = _plain_label(line)
+    return t.startswith(("链中位置：", "输入：", "输出：", "失败时：", "输入/输出："))
+
+
+def extract_code_locate(locate_col: str) -> str:
+    """从第二列还原「函数·路径·行号」首段（兼容已合并链路的旧表）。"""
+    s = re.sub(r"<br\s*/?>", "\n", locate_col, flags=re.I)
+    for line in s.splitlines():
+        line = line.strip()
+        if not line or _is_locate_meta_line(line):
+            continue
+        return line
+    parts = re.split(r"\*?\*?链中位置\*?\*?：", locate_col, maxsplit=1)
+    return parts[0].strip()
+
+
 def build_principle(
     f_code: str,
     story: str,
     layer: str,
     locate: str,
     old: str,
-) -> str:
-    symbol = extract_symbol(locate)
-    path = extract_path(locate)
-    old_clean = condense_chain_text(strip_old_principle(old))
+) -> tuple[str, str, str]:
+    layer_base = extract_layer_cell(layer)
+    code_locate = extract_code_locate(locate)
+    symbol = extract_symbol(code_locate)
+    path = extract_path(code_locate)
 
-    detail = lookup_detail(symbol, layer, locate)
-    concepts = pick_glossary(f_code, symbol, layer, locate)
+    detail = lookup_detail(symbol, layer_base, code_locate)
+    concepts = normalize_concepts(pick_glossary(f_code, symbol, layer_base, code_locate))
 
     if not detail:
-        detail = infer_detail(f_code, story, layer, symbol, locate)
+        detail = infer_detail(f_code, story, layer_base, symbol, code_locate)
 
     detail = enrich_detail_sections(
-        f_code, story, layer, symbol, locate, path, detail, line_ref, ROUTE_HINT
+        f_code, story, layer_base, symbol, code_locate, path, detail, line_ref, ROUTE_HINT
     )
-    concepts = enrich_concepts(concepts, symbol, layer)
+    concepts = normalize_concepts(enrich_concepts(concepts, symbol, layer_base))
 
-    chain = detail["chain"]
-    impl = detail["impl"]
-    design = detail["design"]
-    qa = detail["qa"]
+    layer_col = build_layer_column(layer_base, concepts)
+    locate_col = build_locate_column(
+        code_locate, layer_base, symbol, detail["chain"], f_code, ROUTE_HINT
+    )
+    principle = format_principle(detail["impl"], detail["design"], detail["qa"])
+    return layer_col, locate_col, principle
 
-    return format_principle(concepts, chain, impl, design, qa)
 
-
-def format_principle(concepts: str, chain: str, impl: str, design: str, qa: str) -> str:
-    """五段原理，段间 <br><br> 换行便于 HTML 表阅读。"""
+def format_principle(impl: str, design: str, qa: str) -> str:
+    """三段原理（概念已并入所属层），段间 <br><br>；子节点保留 **加粗**。"""
     s = PRINCIPLE_SEP
-    return (
-        f"**① 相关概念**：{concepts}{s}"
-        f"**② 链路与职责**：{chain}{s}"
+    return clean_principle_text(
         f"**③ 底层实现**：{impl}{s}"
         f"**④ 设计取舍**：{design}{s}"
         f"**⑤ 答辩要点**：{qa}"
     )
 
 
-def format_concept_card(text: str) -> str:
-    """F1.2 八卡等长文本也加段间换行。"""
-    if PRINCIPLE_SEP in text:
-        return text
-    for label in ("**② ", "**③ ", "**④ ", "**⑤ "):
-        text = text.replace(f" {label}", f"{PRINCIPLE_SEP}{label}", 1)
-    return text
+GH = "https://github.com/CZF312/CampusStudyRoomReservationManagementSystem/blob/master"
+
+# F1.2 八卡「链路中位置与代码地址」列固定路径（不依赖历史损坏的 path 列）
+CONCEPT_LOCATE: dict[str, str] = {
+    "Browser 浏览器": f"`static/index.html` · 浏览器入口 · [L1-L8]({GH}/src/main/resources/static/index.html#L1-L8)",
+    "Vue 单页框架": f"`App.vue` · 单页根组件 · [L1-L120]({GH}/frontend/src/App.vue#L1-L120)",
+    "HTTP 请求": f"`App.vue` · call() 封装 · [L2380-L2420]({GH}/frontend/src/App.vue#L2380-L2420)",
+    "JSON 数据格式": f"`ApiResponse.java` · 统一响应 · [L1-L40]({GH}/src/main/java/com/scau/campusstudyroomreservationmanagementsystem/dto/ApiResponse.java#L1-L40)",
+    "REST API": f"`AppController.java` · REST 映射 · [L1-L80]({GH}/src/main/java/com/scau/campusstudyroomreservationmanagementsystem/controller/AppController.java#L1-L80)",
+    "Service 业务层": f"`AppService.java` · 业务规则 · [L1-L120]({GH}/src/main/java/com/scau/campusstudyroomreservationmanagementsystem/service/AppService.java#L1-L120)",
+    "MySQL 数据库": f"`schema.sql` · 表结构 · [L1-L80]({GH}/src/main/resources/schema.sql#L1-L80)",
+    "JWT 令牌": f"`JwtService.java` · 签发解析 · [L1-L60]({GH}/src/main/java/com/scau/campusstudyroomreservationmanagementsystem/service/JwtService.java#L1-L60)",
+}
+
+
+def parse_concept_card_sections(name: str) -> dict[str, str]:
+    card = CONCEPT_CARDS.get(name, "")
+    out: dict[str, str] = {}
+    for label in ("③ 底层实现", "④ 设计取舍", "⑤ 答辩要点"):
+        m = re.search(rf"\*\*{re.escape(label)}\*\*：(.+?)(?=\*\*[③④⑤]|$)", card, re.S)
+        if not m:
+            continue
+        body = m.group(1).strip()
+        body = re.sub(r"\*\*怎么读代码[^*]*\*\*：", "", body)
+        body = re.sub(r"\*\*技术细节\*\*：", "", body)
+        body = re.sub(r"\*\*为何不这样做\*\*：", "**若不这样做**：", body)
+        body = re.sub(r"(?<!\*\*)为何不这样做：", "**若不这样做**：", body)
+        body = re.sub(r"(<br>){3,}", "<br><br>", body)
+        out[label] = body.strip()
+    return out
+
+
+def extract_concept_card_concepts(name: str) -> str:
+    card = CONCEPT_CARDS.get(name, "")
+    m = re.search(r"\*\*① 相关概念\*\*：(.+?)(?=\*\*本行|\*\*②|\*\*③|$)", card, re.S)
+    if m:
+        return normalize_concepts(m.group(1).strip())
+    return normalize_concepts(name)
+
+
+def clean_principle_text(text: str) -> str:
+    text = re.sub(rf"({re.escape(PRINCIPLE_SEP)})+", PRINCIPLE_SEP, text)
+    text = re.sub(r"(<br>){3,}", "<br><br>", text, flags=re.I)
+    return text.strip()
+    """F1.2 八卡：去掉 ② 段与套话，并规范化加粗。"""
+    s = text
+    s = re.sub(
+        r"(<br><br>|\*\*)?\*\*② 链路与职责\*\*：.*?(?=(<br><br>)?\*\*③)",
+        PRINCIPLE_SEP,
+        s,
+        flags=re.S,
+    )
+    s = re.sub(r"\*\*本行符号[^*]*\*\*[^<]*(<br>)?", "", s)
+    s = re.sub(r"\*\*怎么读代码[^*]*\*\*：[^<]*(<br>)?", "", s)
+    s = re.sub(r"\*\*技术细节\*\*：", "", s)
+    s = normalize_concepts(s)
+    s = re.sub(rf"{re.escape(PRINCIPLE_SEP)}+", PRINCIPLE_SEP, s)
+    return s.strip()
+
+
+def build_concept_locate(concept: str, instance: str, path_cell: str = "") -> str:
+    name = extract_layer_cell(concept)
+    code = CONCEPT_LOCATE.get(name) or extract_code_locate(path_cell) or path_cell.strip()
+    return f"{code}{INTRA_SEP}**链中位置**：F1.2 八卡串起「小明点确认预约」全链路，本卡实例「{instance.strip()}」为其中一环。"
+
+
+def build_concept_layer(concept: str, instance: str) -> str:
+    name = extract_layer_cell(concept)
+    if name in CONCEPT_CARDS:
+        return f"{name}{INTRA_SEP}**相关概念**：{extract_concept_card_concepts(name)}"
+    return f"{name}{INTRA_SEP}{normalize_concepts(name)}——{instance.strip()}"
 
 
 def build_concept_principle(concept: str, instance: str, path_cell: str) -> str:
-    if concept.strip() in CONCEPT_CARDS:
-        return format_concept_card(CONCEPT_CARDS[concept.strip()])
-    link = re.search(r"\[L\d+", path_cell)
-    return (
-        f"**① 相关概念**：{concept.strip()}——{instance.strip()} "
-        f"**② 链路与职责**：F1.2 八卡串起「小明点确认预约」全链路，本卡为其中一环。 "
-        f"**③ 底层实现**：{strip_old_principle(path_cell) or path_cell} "
-        f"**④ 设计取舍**：概念与源码行号一一对应，答辩指 L 行即可。 "
-        f"**⑤ 答辩要点**：用本卡名词解释相邻下一卡如何衔接。"
+    name = extract_layer_cell(concept)
+    if name in CONCEPT_CARDS:
+        secs = parse_concept_card_sections(name)
+        return format_principle(
+            secs.get("③ 底层实现", ""),
+            secs.get("④ 设计取舍", ""),
+            secs.get("⑤ 答辩要点", ""),
+        )
+    return format_principle(
+        strip_old_principle(path_cell) or path_cell,
+        "概念与源码行号一一对应，答辩指 L 行即可。",
+        "用本卡名词解释相邻下一卡如何衔接。",
     )
 
 
@@ -1080,31 +1229,42 @@ def rebuild_html_table(html: str, f_code: str, story: str) -> tuple[str, int]:
     def repl_tr(m: re.Match[str]) -> str:
         nonlocal changed
         tr = m.group(0)
-        tds = re.findall(r"<td>(.*?)</td>", tr, re.DOTALL)
+        if re.search(r"<th[\s>]", tr, flags=re.I):
+            return tr
+        tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
         if len(tds) < 3:
             return tr
-        if len(tds) >= 4 and (f_code == "f1-2" or "Browser" in tds[0] or "Vue" in tds[0]):
-            new_p = build_concept_principle(tds[0], tds[1], tds[2])
+        if len(tds) >= 4 and f_code == "f1-2":
+            concept_col = build_concept_layer(tds[0], tds[1])
+            locate_col = build_concept_locate(tds[0], tds[1], tds[2])
+            new_p = build_concept_principle(tds[0], tds[1], tds[3] if len(tds) > 3 else tds[2])
             changed += 1
             return (
                 "    <tr>\n"
-                f"      <td>{tds[0]}</td>\n"
+                f"      <td>{concept_col}</td>\n"
                 f"      <td>{tds[1]}</td>\n"
-                f"      <td>{tds[2]}</td>\n"
+                f"      <td>{locate_col}</td>\n"
                 f"      <td>{new_p}</td>\n"
                 "    </tr>"
             )
-        new_p = build_principle(f_code, story, tds[0], tds[1], tds[2] if len(tds) > 2 else "")
+        layer_col, locate_col, new_p = build_principle(
+            f_code, story, tds[0], tds[1], tds[2] if len(tds) > 2 else ""
+        )
         changed += 1
         return (
             "    <tr>\n"
-            f"      <td>{tds[0]}</td>\n"
-            f"      <td>{tds[1]}</td>\n"
+            f"      <td>{layer_col}</td>\n"
+            f"      <td>{locate_col}</td>\n"
             f"      <td>{new_p}</td>\n"
             "    </tr>"
         )
 
-    new_html = re.sub(r"<tr>\s*(?:<td>.*?</td>\s*){3,4}\s*</tr>", repl_tr, html, flags=re.DOTALL)
+    new_html = re.sub(
+        r"<tr[^>]*>\s*(?:<td[^>]*>.*?</td>\s*){3,4}\s*</tr>",
+        repl_tr,
+        html,
+        flags=re.DOTALL,
+    )
     return new_html, changed
 
 
@@ -1114,7 +1274,7 @@ def emit_md_table(rows: list[list[str]], four_col: bool) -> list[str]:
         sep = "|---|---|---|---|"
         width = 4
     else:
-        header = "| 所属层 Layer | 定位（函数 · 路径 · 行号） | 原理 Principle |"
+        header = "| 所属层 Layer | 链路中位置与代码地址 | 原理 Principle |"
         sep = "|---|---|---|"
         width = 3
     out = [header, sep]
@@ -1148,7 +1308,7 @@ def process_doc(text: str) -> tuple[str, int]:
             continue
 
         # HTML 定位表
-        if line.strip().startswith('<table class="impl-loc-table">'):
+        if "impl-loc-table" in line and line.strip().startswith("<table"):
             block = [line]
             i += 1
             while i < len(lines) and "</table>" not in lines[i]:
@@ -1192,14 +1352,21 @@ def process_doc(text: str) -> tuple[str, int]:
                 for cells in data_rows:
                     if four and len(cells) >= 4:
                         c, inst, path_c = cells[0], cells[1], cells[2]
+                        concept_col = build_concept_layer(c, inst)
+                        locate_col = build_concept_locate(c, inst, path_c)
                         new_p = build_concept_principle(c, inst, path_c)
                         changed += 1
-                        new_rows.append([c, inst, path_c, new_p])
+                        new_rows.append([concept_col, inst, locate_col, new_p])
                     elif len(cells) >= 3:
-                        layer, locate = cells[0], cells[1]
-                        new_p = build_principle(f_code, story, layer, locate, cells[2] if len(cells) > 2 else "")
+                        layer_col, locate_col, new_p = build_principle(
+                            f_code,
+                            story,
+                            cells[0],
+                            cells[1],
+                            cells[2] if len(cells) > 2 else "",
+                        )
                         changed += 1
-                        new_rows.append([layer, locate, new_p])
+                        new_rows.append([layer_col, locate_col, new_p])
                 out.extend(emit_md_table(new_rows, four))
                 out.append("")
             expect_table = False

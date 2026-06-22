@@ -20,6 +20,8 @@ uploads/*
 application-local.properties
 application-shared.properties
 SHARED_DATABASE.txt
+scripts/__pycache__/
+scripts/_rebuild_backup.py
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
