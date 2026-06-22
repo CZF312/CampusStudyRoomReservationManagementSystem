@@ -1248,15 +1248,20 @@ def _is_locate_meta_line(line: str) -> bool:
 
 
 def extract_code_locate(locate_col: str) -> str:
-    """从第二列还原「函数·路径·行号」首段（兼容已合并链路的旧表）。"""
+    """从第二列还原「函数·路径·行号」首段（不含链中位置正文）。"""
+    raw = locate_col.strip()
+    head = re.split(r"链中位置：", raw, maxsplit=1)[0].strip()
+    head = re.sub(r"<br\s*/?>", " ", head, flags=re.I)
+    head = re.sub(r"\s+", " ", head).strip()
+    if head:
+        return head
     s = re.sub(r"<br\s*/?>", "\n", locate_col, flags=re.I)
     for line in s.splitlines():
         line = line.strip()
         if not line or _is_locate_meta_line(line):
             continue
         return line
-    parts = re.split(r"\*?\*?链中位置\*?\*?：", locate_col, maxsplit=1)
-    return parts[0].strip()
+    return raw
 
 
 def build_principle(
@@ -1423,6 +1428,23 @@ def is_concept_table(f_code: str, first_row: list[str]) -> bool:
     return "Concept" in c0 or ("浏览器" in c0 or "Vue" in c0 or "HTTP" in c0) and "·" not in c0[:20]
 
 
+def strip_html_cell(text: str) -> str:
+    """HTML 表单元格还原为 rebuild 可处理的纯文本（保留 <br>）。"""
+    import html as html_mod
+
+    t = text.strip()
+    t = re.sub(r"<br\s*/?>", "<br>", t, flags=re.I)
+    t = re.sub(
+        r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>',
+        r"[\2](\1)",
+        t,
+        flags=re.S | re.I,
+    )
+    t = re.sub(r"<code[^>]*>(.*?)</code>", r"`\1`", t, flags=re.S | re.I)
+    t = re.sub(r"<span[^>]*>(.*?)</span>", r"\1", t, flags=re.S | re.I)
+    return html_mod.unescape(t).strip()
+
+
 def rebuild_html_table(html: str, f_code: str, story: str) -> tuple[str, int]:
     changed = 0
 
@@ -1431,7 +1453,7 @@ def rebuild_html_table(html: str, f_code: str, story: str) -> tuple[str, int]:
         tr = m.group(0)
         if re.search(r"<th[\s>]", tr, flags=re.I):
             return tr
-        tds = re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)
+        tds = [strip_html_cell(x) for x in re.findall(r"<td[^>]*>(.*?)</td>", tr, re.DOTALL)]
         if len(tds) < 3:
             return tr
         if len(tds) >= 4 and f_code == "f1-2":
