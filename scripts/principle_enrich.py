@@ -36,8 +36,51 @@ def layer_short_name(layer: str) -> str:
     return layer.split("·")[0].strip() or layer
 
 
+# 按符号定制输入/输出（避免同层每行重复同一套话）
+SYMBOL_IO: dict[str, str] = {
+    "start.bat": INTRA_SEP.join([
+        "**输入**：双击 bat 或 cmd 调用。",
+        "**输出**：调用 start-system.ps1，exit code 原样返回。",
+        "**失败时**：无 pom.xml 或 ps1 非 0 → ERROR + pause。",
+    ]),
+    "start-system.ps1": INTRA_SEP.join([
+        "**输入**：bat 调用；可选环境变量 CSRRM_MYSQL_PASSWORD。",
+        "**输出**：导库 PASS=17、新窗口 mvnw、8080 可访问。",
+        "**失败时**：Java/MySQL/static 缺失或 verify 失败 → exit 1。",
+    ]),
+    "verify-v3-dictionary.ps1": INTRA_SEP.join([
+        "**输入**：MySQL 已导入 database-full.sql；root 密码。",
+        "**输出**：控制台 PASS=17 / FAIL=n；exit 0 或 1。",
+        "**失败时**：表数/外键/字典不符 → 红色 FAIL，需重跑 setup。",
+    ]),
+    "DatabaseInitializer.run": INTRA_SEP.join([
+        "**输入**：Spring 容器启动完成（无 HTTP）。",
+        "**输出**：缺表时执行 classpath 补丁 SQL。",
+        "**失败时**：SQL 异常 → Boot 启动失败，8080 不起。",
+    ]),
+    "runMaintenanceTasks": INTRA_SEP.join([
+        "**输入**：@Scheduled 定时触发，无 HTTP 参数。",
+        "**输出**：依次调用 markNoShow/autoCheckout 等维护方法。",
+        "**失败时**：单任务异常记日志，下次调度继续。",
+    ]),
+}
+
+
+def _norm_io_sym(symbol: str) -> str:
+    return re.sub(r"[^a-z0-9.]", "", symbol.lower())
+
+
 def io_beginner_hint(layer: str, symbol: str, f_code: str, route_hint: dict[str, str]) -> str:
-    sym = symbol.lower()
+    sym = _norm_io_sym(symbol)
+    for key, val in SYMBOL_IO.items():
+        if _norm_io_sym(key) == sym:
+            return val
+    if sym.startswith("scheduledprocess"):
+        return INTRA_SEP.join([
+            "**输入**：@Scheduled 触发，无 HTTP。",
+            "**输出**：JdbcTemplate UPDATE 预约/信用/黑名单表。",
+            "**失败时**：记录日志，不弹前端（无 UI）。",
+        ])
     if "表现" in layer or "Presentation" in layer:
         return INTRA_SEP.join([
             "**输入**：用户在页面的点击/表单（ref 里的值）。",

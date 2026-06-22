@@ -118,6 +118,21 @@ SYMBOL_GLOSSARY: dict[str, str] = {
     "myStudyDuration": "**statsDateWhereCondition**、**TIMESTAMPDIFF 分钟**、**series[]**、**date_format(%%Y-%%m)**",
     "main": "**SpringApplication.run**、**@SpringBootApplication**、内嵌 Tomcat 监听 8080",
     "DatabaseInitializer.run": "**@PostConstruct**、**JdbcTemplate.execute**、classpath schema 补丁",
+    "start.bat": "**@echo off**、**%~dp0** 固定项目根、**ERRORLEVEL** 透传 ps1 退出码",
+    "start-system.ps1": "**[1/5]–[5/5]** 五步链、**setup-after-clone.ps1** 导库、**8080 轮询**",
+    "verify-v3-dictionary.ps1": "**information_schema** 验表/外键、**Test-Check**、**PASS=17**",
+    "runMaintenanceTasks": "**@Scheduled** 总入口、串联 markNoShow/autoCheckout 等",
+    "scheduledProcessNoShow": "**noShow grace** 宽限、**status 已违约**、**credit 扣分**",
+    "scheduledProcessAutoCheckout": "**过 end_time** 自动签退、**status 已完成**",
+    "scheduledProcessBlacklistRelease": "**blacklist_record** 到期解除",
+    "scheduledProcessInvalidCheckin": "**异常 checkin** 数据纠正",
+    "availableSeats": "**seat 状态** 过滤、**reservation_slot** 占用查询",
+    "listMyReservations": "**GET /reservations/my**、**按 user_id** 列表",
+    "loadMyReservations": "**call GET**、**reservations ref**、**2 分钟 refresh**",
+    "loadAvailableSeats": "**GET /seats/available**、**seat 网格 ref**",
+    "submitReservation": "**POST /reservations**、**确认弹窗**后提交",
+    "bootstrap": "**GET /auth/me**、**localStorage token** 恢复会话",
+    "doFilterInternal": "**Authorization Bearer**、**SecurityContext**、**401 JSON**",
 }
 
 # 符号级底层详解（优先于泛化模板）
@@ -867,6 +882,27 @@ def infer_detail(
             "qa": f"问：`{symbol}` 有多厚？答：答辩可指行号证明几乎只有一行 return service；问：会做鉴权吗？答：JwtAuthFilter 在进 Controller 前已完成，本方法只取已解析的 userId。",
         }
     if "Service" in layer or "业务" in layer:
+        if sym.startswith("scheduledprocess") or sym == "runmaintenancetasks":
+            scheduled_chain = {
+                "runmaintenancetasks": "ScheduledTaskService @Scheduled 入口：依次调 AppService 内 package 维护方法（无 HTTP）。",
+                "scheduledprocessnoshow": "扫「待使用且过 grace 未签到」→ status=已违约 → 扣分写 credit_log。",
+                "scheduledprocessautocheckout": "扫「使用中且已过 end_time」→ 写 sign_out_time → status=已完成。",
+                "scheduledprocessblacklistrelease": "扫 blacklist_record 到期行 → 解除限制。",
+                "scheduledprocessinvalidcheckin": "纠正无效/异常 checkin_record 与预约状态不一致。",
+            }
+            return {
+                "chain": scheduled_chain.get(sym, f"`{symbol}`：F4.3 定时维护，@Scheduled 触发，无 Controller。"),
+                "impl": f"{lr}：`AppService.{symbol}` 或 ScheduledTaskService；JdbcTemplate UPDATE/INSERT；status 须为 schema 中文枚举。",
+                "design": "Java @Scheduled 替代 MySQL EVENT/触发器，逻辑可调试、答辩可指 AppService 行号。",
+                "qa": "问：关掉 8080 还跑吗？答：不跑，定时随 JVM；演示需保持 CSRRMS-Backend 窗口在线。",
+            }
+        if "databaseinitializer" in sym:
+            return {
+                "chain": "Spring Boot 启动后 @PostConstruct：若 classpath 补丁 SQL 对应表缺失则执行 DDL（与 database-full.sql 全量导入互补）。",
+                "impl": f"{lr}：DatabaseInitializer.run 读 resources SQL；JdbcTemplate.execute；不负责造演示数据。",
+                "design": "答辩机以 start.bat → database-full.sql 为主；Initializer 防表结构缺失。",
+                "qa": "问：数据从哪来？答：database-full.sql 整库导入；Initializer 只做结构补丁。",
+            }
         tables = SECTION_GLOSSARY.get(f_code, "").split("、")[0:3]
         table_hint = "、".join(tables) if tables else "user_account/reservation/checkin_record 等"
         return {
@@ -924,51 +960,96 @@ def infer_detail(
     }
 
 
+def _norm_sym(symbol: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", symbol.lower())
+
+
+def minimal_concept(symbol: str, layer: str) -> str:
+    """禁止整节 BEGINNER 重复：每行最多一行短概念。"""
+    hints = {
+        "表现": "前端 UI/事件",
+        "Presentation": "前端 UI/事件",
+        "Controller": "REST 接口转发",
+        "接口": "REST 接口转发",
+        "Service": "业务规则与 SQL",
+        "业务": "业务规则与 SQL",
+        "Config": "JWT/安全配置",
+        "配置": "JWT/安全配置",
+        "运维": "启动/导库脚本",
+        "Ops": "启动/导库脚本",
+        "样式": "CSS 布局与 z-index",
+    }
+    for k, v in hints.items():
+        if k in layer:
+            return f"**`{symbol}`**：{v}（见链中位置与 GitHub 【行】）"
+    return f"**`{symbol}`**：见本节功能链实例该步"
+
+
 def pick_glossary(f_code: str, symbol: str, layer: str, locate: str = "") -> str:
     sym = symbol.lower().replace(" ", "")
-    # 模板行专用概念
+    sym_norm = _norm_sym(symbol)
+
+    # 模板行：按页面类型区分，不用整节 glossary
     if "模板" in locate or "page" in sym or "首页" in symbol or "公告区" in symbol:
         if "stats" in locate.lower() or "统计" in locate:
-            return "**v-if**（条件渲染）、**el-radio-group**（当期/往期 Tab）、**type=date**（起止分离单日历）、**bar-chart-lite**"
+            return "**v-if**、**el-radio-group**（当期/往期）、**type=date**、**bar-chart-lite**"
         if "login" in locate.lower() or "登录" in locate:
-            return "**v-model**（双向绑定）、**el-form**（表单校验）、**@click**（触发 loginStudent）"
+            return "**v-model**、**el-form**、**@click → loginStudent**"
         if "公告" in locate or "announcement" in locate.lower():
-            return "**announcement**（全员公告表）、**v-for**（卡片列表）、**loadAnnouncements**"
-        return "**Vue 模板**（HTML + 指令 + 插值）、**Element Plus 组件**"
-    # 符号级精确匹配
+            return "**announcement** 表、**v-for** 卡片、**loadAnnouncements**"
+        if "预约" in locate or "reserve" in locate.lower():
+            return "**studentPage='reserve'**、**seat 网格**、**loadAvailableSeats**"
+        if "我的预约" in locate:
+            return "**v-for reservations**、**status tag**、**refresh 轮询**"
+        return "**Vue 模板** + **Element Plus**（本块 UI 结构）"
+
+    # 符号级精确匹配（仅全键相等，禁止子串误伤）
     for key, val in SYMBOL_GLOSSARY.items():
-        if key.lower() == sym or key.lower() == symbol.lower():
+        if key.lower() == sym or _norm_sym(key) == sym_norm:
             return val
-        if key.lower() in sym and len(key) > 5:
-            return val
-    # 域级精简概念（注意 checkout 先于 checkin 匹配）
-    if "stats" in sym or "统计" in symbol or "studybar" in sym or "studystats" in sym or "popper" in sym:
-        return "**rangeMode**（current/past）、**statPeriod**（day/week/month/year）、**studyStats ref**、**studyBars computed**"
-    if sym == "checkout" or "sign_out" in locate.lower():
-        return SYMBOL_GLOSSARY["checkout"]
-    if "credit" in sym and "checkin" not in sym:
+
+    # 方法/脚本精确表（小写键）
+    METHOD_EXACT: dict[str, str] = {
+        "loginstudent": "**BCrypt.matches**、**createToken**、**afterLogin**",
+        "loginadmin": "**admin_account**、**/admin/auth/login**",
+        "login": "**POST /auth/login**、**LoginRequest**、**ApiResponse**",
+        "registerstudent": "**auditStatus 待审核**、**Multipart 材料**",
+        "register": "**POST /auth/register**、**BCrypt 哈希入库**",
+        "createreservation": "**reservation_no**、**INSERT slot**、**uk_seat_slot**",
+        "cancelreservation": "**releaseSlots**、**credit_cancel_penalty**、**已取消**",
+        "availabeseats": "**WHERE 可用 seat**、**排除 slot 占用**",
+        "scancheckin": "**checkin_record**、**status 使用中**、**credit +5**",
+        "checkout": "**sign_out_time**、**studyMinutes**、**已完成**",
+        "docheckout": "**POST checkout**、**call()** 触发",
+        "confirmcheckout": "**确认弹窗**、**使用中才可签退**",
+        "statisticsreport": "**reportType 六种**、**动态 JOIN SQL**",
+        "exportcsv": "**与 report 同 SQL**、**text/csv 响应**",
+        "mystudyduration": "**statsDateWhereCondition**、**TIMESTAMPDIFF**、**series[]**",
+        "statsdatewherecondition": "**current/past 时间窗**、**LocalDate 闭区间**",
+        "revokeviolation": "**恢复 credit**、**撤销违约标记**",
+        "audituser": "**auditStatus 已通过**、**operation_log**",
+        "saveannouncement": "**INSERT/UPDATE announcement**",
+        "loadadminstatistics": "**GET statistics/report**、**ECharts 四块**",
+    }
+    if sym_norm in METHOD_EXACT:
+        return METHOD_EXACT[sym_norm]
+
+    # 窄域匹配（仅当 sym 以关键词开头或完全相等）
+    if sym in ("checkout", "docheckout", "confirmcheckout") or sym.startswith("checkout"):
+        return SYMBOL_GLOSSARY.get("checkout", METHOD_EXACT["checkout"])
+    if sym in ("credit", "loadcredit"):
         return "**credit_score**、**credit_log**、**GET /credit/my**"
-    if "login" in sym or "register" in sym:
-        return "**BCrypt**、**JWT Bearer**、**localStorage**、**user_account.auditStatus**"
-    if "reservation" in sym or "seat" in sym or "slot" in sym:
-        return "**reservation_slot**（10 分钟片）、**uk_seat_slot**、**reservation.status**、**reservation_no**"
-    if "checkin" in sym or "scan" in sym:
-        return "**checkin_record**、**sign_in_time**、**status 使用中**、**credit +5**"
-    if "statistics" in sym or "export" in sym or "report" in sym:
-        return "**JDBC 动态 SQL**（Java 里拼接 SELECT，非 ORM）· **statisticsReport/exportCsv**（报表与导出共用 SQL）· **statsDateWhereCondition**（统计时间窗）"
-    base = BEGINNER_SECTION.get(f_code) or SECTION_GLOSSARY.get(f_code, "见本节功能链实例")
-    extras: list[str] = []
-    if "表现" in layer:
-        extras.append("**Vue ref/computed**")
-    elif "Controller" in layer or "接口" in layer:
-        extras.append("**@RestController**")
-    elif "Service" in layer or "业务" in layer:
-        extras.append("**JdbcTemplate**")
-    elif "样式" in layer:
-        extras.append("**CSS 类选择器**")
-    if extras:
-        return base + "；" + extras[0]
-    return base
+    if sym in ("loadnotifications", "readnotification", "readallnotifications", "notifyuser"):
+        return SYMBOL_GLOSSARY.get(sym, "**notification_message**、**is_read**")
+    if sym.startswith("scheduledprocess") or sym == "runmaintenancetasks":
+        for key, val in SYMBOL_GLOSSARY.items():
+            if _norm_sym(key) == sym_norm:
+                return val
+    if sym.startswith("stat") or "studystats" in sym or "studybar" in sym or "popper" in sym:
+        return "**rangeMode**、**statPeriod**、**studyStats ref**、**studyBars**"
+
+    # 禁止 fallback 到整节 BEGINNER_SECTION
+    return minimal_concept(symbol, layer)
 
 
 def generic_impl(layer: str, symbol: str, path: str, locate: str) -> str:
