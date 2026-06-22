@@ -174,6 +174,283 @@ def extra_qa_hints(f_code: str, symbol: str, layer: str) -> str:
     return INTRA_SEP.join(extras)
 
 
+def _parse_total_io(layer: str, symbol: str, f_code: str, route_hint: dict[str, str]) -> dict[str, str]:
+    """从 SYMBOL_IO / io_beginner_hint 解析总输入输出。"""
+    raw = io_beginner_hint(layer, symbol, f_code, route_hint)
+    out: dict[str, str] = {}
+    for line in re.split(r"<br\s*/?>", raw, flags=re.I):
+        line = line.strip()
+        for key, prefix in (
+            ("input", "输入："),
+            ("output", "输出："),
+            ("fail", "失败时："),
+        ):
+            if line.startswith(prefix):
+                out[key] = line[len(prefix) :].strip()
+    return out
+
+
+# 符号级分步链路（第二列分点 + 第三列按步对行号）
+SYMBOL_CHAIN_STEPS: dict[str, list[dict[str, str]]] = {
+    "start.bat": [
+        {
+            "work": "cd 到 bat 所在项目根，设 UTF-8 与窗口标题",
+            "input": "用户双击 start.bat",
+            "output": "工作目录=项目根；`CSRRM_SCRIPT_ROOT=%~dp0scripts`",
+            "lines": "L1-L9",
+            "detail": "@echo off；chcp 65001；`cd /d %~dp0` 固定项目根；首行 REM 含 `【F1-1】` 总体讲解。",
+        },
+        {
+            "work": "校验 pom.xml 存在",
+            "input": "当前目录",
+            "output": "有 pom.xml 继续；无则 echo ERROR 并 exit /b 1",
+            "lines": "L12-L16",
+            "detail": "if not exist pom.xml → 错误提示 + pause + exit，防止在错误目录启动。",
+        },
+        {
+            "work": "Bypass 执行策略调用 start-system.ps1",
+            "input": "`scripts\\start-system.ps1`",
+            "output": "PowerShell 五步链运行；`ERRORLEVEL` 写入 ERR",
+            "lines": "L18-L22",
+            "detail": "`powershell -ExecutionPolicy Bypass -File ...\\start-system.ps1`；重活交给 ps1。",
+        },
+        {
+            "work": "pause 并透传退出码",
+            "input": "ps1 的 `%ERRORLEVEL%`",
+            "output": "窗口保留供答辩看 PASS/FAIL；`exit /b %ERR%`",
+            "lines": "L24-L32",
+            "detail": "根据 ERR 打印 Setup finished 或 ERROR；pause 防窗口闪退。",
+        },
+    ],
+    "start-system.ps1": [
+        {
+            "work": "检 Java、mysql 客户端与 static/index.html",
+            "input": "PATH 中 java/mysql；预构建 `static/index.html`",
+            "output": "打印版本与 [OK] Frontend；缺依赖 exit 1",
+            "lines": "L85-L99",
+            "detail": "Write-Step [1/5]；Require-Command java/mysql；Test-Path staticIndex；JDK 版本提示。",
+        },
+        {
+            "work": "检查并启动 MySQL Windows 服务",
+            "input": "本机 MySQL/MariaDB 服务",
+            "output": "服务 Status=Running（必要时 Start-Service）",
+            "lines": "L109-L129",
+            "detail": "Get-Service 匹配 mysql；未 Running 则 Start-Service + Sleep；失败 exit 1。",
+        },
+        {
+            "work": "读/写 application-local.properties 中的 root 密码",
+            "input": "可选 `CSRRM_MYSQL_PASSWORD`；或已保存密码；或交互 Read-Host",
+            "output": "Test-MysqlLogin 通过；密码可写回 local 配置",
+            "lines": "L131-L147",
+            "detail": "Get-ConfiguredMysqlPassword → 空密码/已保存/循环 Read-Host 直至 mysql SELECT 1 成功。",
+        },
+        {
+            "work": "调用 setup-after-clone.ps1 导库并验 PASS=17",
+            "input": "上步 root 密码",
+            "output": "DROP+导入 database-full.sql；verify-v3-dictionary PASS=17",
+            "lines": "L149-L152",
+            "detail": "调用 setup-after-clone.ps1 -MySqlPassword $password -SkipStart；非 0 则 exit。",
+        },
+        {
+            "work": "新窗口 mvnw spring-boot:run 并轮询 8080",
+            "input": "8080 空闲或已有实例返回 200",
+            "output": "CSRRMS-Backend 窗口；http://localhost:8080 可访问",
+            "lines": "L154-L191",
+            "detail": "netstat 查 8080；`Start-Process cmd /k mvnw spring-boot:run`；Invoke-WebRequest 最多 60 秒轮询。",
+        },
+    ],
+    "verify-v3-dictionary.ps1": [
+        {
+            "work": "连接 MySQL 并读取密码",
+            "input": "mysql 在 PATH；database-full.sql 已导入",
+            "output": "mysql 客户端就绪；$env:MYSQL_PWD 设置",
+            "lines": "L18-L39",
+            "detail": "检 mysql 命令；从 application-local.properties 或 Read-Host 取密码。",
+        },
+        {
+            "work": "验库存在、16 表、外键与字典",
+            "input": "study_room_reservation 库",
+            "output": "information_schema 查询 PASS/FAIL 计数",
+            "lines": "L68-L120",
+            "detail": "Test-Check 包装：表数、temp_leave 不存在、status 中文字典、外键数等。",
+        },
+        {
+            "work": "抽样演示账号与 uploads 并汇总",
+            "input": "上步 SQL 结果",
+            "output": "控制台 PASS=n FAIL=m；PASS=17 则 exit 0",
+            "lines": "L121-L176",
+            "detail": "查演示学号/管理员；验 uploads 文件；打印 PASS=17 或 exit 1。",
+        },
+    ],
+    "DatabaseInitializer.run": [
+        {
+            "work": "Spring 容器启动后触发 @PostConstruct",
+            "input": "Boot 完成组件扫描",
+            "output": "进入 run() 方法",
+            "lines": "L14-L20",
+            "detail": "@PostConstruct 标注；JdbcTemplate 已注入。",
+        },
+        {
+            "work": "检测缺表并执行 classpath 补丁 SQL",
+            "input": "当前 MySQL 表结构",
+            "output": "缺表时 DDL/DML 补丁；与 ps1 全量导入互补",
+            "lines": "L21-L38",
+            "detail": "读 resources SQL；JdbcTemplate.execute；失败则 Boot 启动失败。",
+        },
+    ],
+}
+
+
+def _norm_step_sym(symbol: str) -> str:
+    return re.sub(r"[^a-z0-9.]", "", symbol.lower())
+
+
+def _infer_step_io(
+    idx: int,
+    total: int,
+    work: str,
+    layer: str,
+) -> tuple[str, str]:
+    w = work.lower()
+    if idx == 1:
+        if "运维" in layer or "Ops" in layer:
+            return ("用户双击 bat 或命令行调用", "环境就绪，进入下一步")
+        if "表现" in layer or "Presentation" in layer:
+            return ("用户点击/表单输入（ref 绑定值）", "触发本层 JS 函数或更新 computed")
+        if "Controller" in layer or "接口" in layer:
+            return ("HTTP 请求到达 Tomcat（路径/JSON/ Bearer JWT）", "参数绑定完成，可转发 Service")
+        if "Service" in layer or "业务" in layer:
+            return ("Controller 传入 DTO/基本类型", "业务校验通过，可读写 MySQL")
+        return ("功能链起点：用户操作或上游表行输出", "进入本步处理")
+    if idx == total:
+        if "表现" in layer:
+            return ("前面 API 返回的 JSON", "页面 ref/computed 更新，用户可见结果")
+        if "Controller" in layer:
+            return ("Service 返回 DTO/void", "ApiResponse JSON 写回 HTTP 响应")
+        if "Service" in layer:
+            return ("累积 SQL/校验结果", "返回 DTO 或抛 BusinessException")
+        return ("前面各步累积结果", "本符号在本层的最终产出")
+    if "post " in w or "get " in w or "put " in w:
+        return (f"上一步产出 + HTTP 参数（见本步 `{work[:36]}`）", "请求发出或 JSON 返回给下一步")
+    if "service" in w or "controller" in w:
+        return ("上一步 HTTP/调用参数", "转发至下一层或返回 DTO")
+    return ("上一步输出", f"本步 `{work[:40]}` 处理结果交给下一步")
+
+
+def _parse_bracket_chain(chain: str) -> list[dict[str, str]]:
+    body = re.sub(r"^[^：:]*[：:]\s*", "", (chain or "").strip())
+    if "→" not in body and not re.search(r"\[\d+/\d+\]", body):
+        return []
+    parts = [p.strip() for p in re.split(r"\s*→\s*", body) if p.strip()]
+    steps: list[dict[str, str]] = []
+    for p in parts:
+        m = re.match(r"\[(\d+)/(\d+)\]\s*(.+)", p)
+        work = m.group(3).strip() if m else p
+        steps.append({"work": work, "input": "", "output": "", "lines": "", "detail": ""})
+    return steps
+
+
+def _parse_arrow_chain(chain: str) -> list[dict[str, str]]:
+    if not chain or "→" not in chain:
+        return []
+    body = re.sub(r"^[^：:]*[：:]\s*", "", chain.strip())
+    parts = [p.strip() for p in re.split(r"\s*→\s*", body) if p.strip()]
+    if len(parts) < 2:
+        return []
+    return [{"work": p, "input": "", "output": "", "lines": "", "detail": ""} for p in parts]
+
+
+def _split_line_range(lo: int, hi: int, n: int, idx: int) -> str:
+    if n <= 1:
+        return f"L{lo}–L{hi}"
+    span = hi - lo + 1
+    chunk = max(1, span // n)
+    start = lo + idx * chunk
+    end = start + chunk - 1 if idx < n - 1 else hi
+    return f"L{start}–L{end}"
+
+
+def resolve_chain_steps(
+    symbol: str,
+    chain: str,
+    layer: str,
+    f_code: str,
+    route_hint: dict[str, str],
+) -> tuple[list[dict[str, str]], dict[str, str]]:
+    sym = _norm_step_sym(symbol)
+    total_io = _parse_total_io(layer, symbol, f_code, route_hint)
+
+    steps: list[dict[str, str]] = []
+    for key, val in SYMBOL_CHAIN_STEPS.items():
+        if _norm_step_sym(key) == sym:
+            steps = [dict(s) for s in val]
+            break
+    if not steps:
+        steps = _parse_bracket_chain(chain)
+    if not steps:
+        steps = _parse_arrow_chain(chain)
+    if not steps and chain.strip():
+        steps = [{"work": chain.strip(), "input": "", "output": "", "lines": "", "detail": ""}]
+
+    n = len(steps)
+    for i, st in enumerate(steps):
+        inf, outf = _infer_step_io(i + 1, n, st["work"], layer)
+        if not (st.get("input") or "").strip():
+            st["input"] = inf
+        if not (st.get("output") or "").strip():
+            st["output"] = outf
+    return steps, total_io
+
+
+def format_chain_steps_column(steps: list[dict[str, str]], total_io: dict[str, str]) -> str:
+    sub = "&nbsp;&nbsp;&nbsp;"
+    lines: list[str] = ["链中位置："]
+    for i, st in enumerate(steps, 1):
+        lines.append(f"{i}. {st['work']}")
+        lines.append(f"{sub}输入：{st.get('input', '—')}")
+        lines.append(f"{sub}输出：{st.get('output', '—')}")
+    if total_io.get("input"):
+        lines.append(f"总输入：{total_io['input']}")
+    if total_io.get("output"):
+        lines.append(f"总输出：{total_io['output']}")
+    if total_io.get("fail"):
+        lines.append(f"失败时：{total_io['fail']}")
+    return INTRA_SEP.join(lines)
+
+
+def format_impl_by_steps(
+    path: str,
+    symbol: str,
+    steps: list[dict[str, str]],
+    fallback_impl: str,
+    locate: str,
+) -> str:
+    pf = path or symbol
+    lo = hi = None
+    m = re.search(r"\[L(\d+)-L(\d+)\]", locate or "")
+    if m:
+        lo, hi = int(m.group(1)), int(m.group(2))
+
+    n = len(steps)
+    if n == 0:
+        return fallback_impl or "见源码 【Fx-y】与 【行】 注释。"
+
+    parts: list[str] = []
+    for i, st in enumerate(steps):
+        lines = st.get("lines", "")
+        if not lines and lo is not None and hi is not None:
+            lines = _split_line_range(lo, hi, n, i)
+        detail = st.get("detail") or ""
+        if not detail and i == 0 and fallback_impl and n == 1:
+            detail = fallback_impl
+        elif not detail:
+            detail = f"见 `{pf}` {lines or '对应段'} 内 【行】 注释逐步跟读。"
+        label = f"{i + 1}（{lines}）：" if lines else f"{i + 1}："
+        parts.append(f"{label}{detail}")
+
+    return INTRA_SEP.join(parts)
+
+
 def build_locate_column(
     locate: str,
     layer: str,
@@ -182,31 +459,53 @@ def build_locate_column(
     f_code: str,
     route_hint: dict[str, str],
 ) -> str:
-    """第二列：代码地址 + 链中位置 + 输入输出（段内 <br> 分隔）。"""
+    """第二列：代码地址 + 分步链中位置 + 总输入输出。"""
     parts: list[str] = [locate.strip()]
-    chain_clean = re.sub(r"\s+", " ", (chain or "").strip())
-    if chain_clean:
-        parts.append(f"链中位置：{chain_clean}")
-    io = io_beginner_hint(layer, symbol, f_code, route_hint)
-    if io:
-        parts.append(io)
+    steps, total_io = resolve_chain_steps(symbol, chain, layer, f_code, route_hint)
+    if steps:
+        parts.append(format_chain_steps_column(steps, total_io))
+    elif chain.strip():
+        chain_one = re.sub(r"\s+", " ", chain.strip())
+        parts.append(f"链中位置：{chain_one}")
+        io = io_beginner_hint(layer, symbol, f_code, route_hint)
+        if io:
+            parts.append(io)
+    else:
+        io = io_beginner_hint(layer, symbol, f_code, route_hint)
+        if io:
+            parts.append(io)
     return INTRA_SEP.join(parts)
 
 
-def expand_impl(locate: str, path: str, symbol: str, impl: str) -> str:
-    """③ 段：按行号范围展开技术细节，不写重复的「怎么读代码」套话。"""
+def expand_impl(
+    locate: str,
+    path: str,
+    symbol: str,
+    impl: str,
+    chain: str = "",
+    layer: str = "",
+    f_code: str = "",
+    route_hint: dict[str, str] | None = None,
+) -> str:
+    """③ 段：按链路与源码行号分步展开。"""
+    steps, _ = resolve_chain_steps(
+        symbol, chain, layer, f_code, route_hint or {}
+    )
+    if steps:
+        body = format_impl_by_steps(path, symbol, steps, (impl or "").strip(), locate)
+        return body
+
     pf = path or symbol
     impl = (impl or "").strip()
     m = re.search(r"\[L(\d+)-L(\d+)\]", locate)
     if m:
         lo, hi = m.group(1), m.group(2)
-        header = f"分段说明（`{pf}` L{lo}–L{hi}）："
+        header = f"1（L{lo}–L{hi}）："
         if impl:
-            return f"{header}{INTRA_SEP}{impl}"
+            return f"{header}{impl}"
         return (
-            f"{header}{INTRA_SEP}"
-            f"L{lo} 起首行 【Fx-y】 总体讲解本函数在功能链中的职责；"
-            f"L{lo}–L{hi} 内带 【行】 的 executable 行即逐行中文注释，答辩可指行号讲解。"
+            f"{header}L{lo} 起首行 【Fx-y】 总体讲解；"
+            f"L{lo}–L{hi} 内 【行】 为逐行中文注释。"
         )
     if impl:
         return impl
@@ -239,7 +538,16 @@ def enrich_detail(
         qa_parts.append(extra)
     return {
         "chain": chain_core,
-        "impl": expand_impl(locate, path, symbol, detail.get("impl", "")),
+        "impl": expand_impl(
+            locate,
+            path,
+            symbol,
+            detail.get("impl", ""),
+            chain=chain_core,
+            layer=layer,
+            f_code=f_code,
+            route_hint=route_hint,
+        ),
         "design": INTRA_SEP.join(d for d in design_parts if d),
         "qa": INTRA_SEP.join(q for q in qa_parts if q),
     }

@@ -53,7 +53,10 @@ def esc_cell(text: str) -> str:
         if re.fullmatch(r"<br\s*/?>", p, flags=re.I):
             out.append(p)
         else:
-            out.append(p.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+            s = p
+            if "&amp;" not in s and "&lt;" not in s and "&gt;" not in s:
+                s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            out.append(s)
     return "".join(out)
 
 

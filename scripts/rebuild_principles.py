@@ -1076,7 +1076,7 @@ def build_row_concepts(
         for seg in re.split(r"[；、]", fallback):
             add(seg)
 
-    return "；".join(parts[:10])
+    return "；".join(parts[:8])
 
 
 def minimal_concept(symbol: str, layer: str) -> str:
@@ -1238,7 +1238,13 @@ def _plain_label(line: str) -> str:
 
 def _is_locate_meta_line(line: str) -> bool:
     t = _plain_label(line)
-    return t.startswith(("链中位置：", "输入：", "输出：", "失败时：", "输入/输出："))
+    if re.match(r"^\d+\.\s", t):
+        return True
+    if t.startswith("   输入：") or t.startswith("   输出："):
+        return True
+    return t.startswith(
+        ("链中位置：", "输入：", "输出：", "失败时：", "输入/输出：", "总输入：", "总输出：")
+    )
 
 
 def extract_code_locate(locate_col: str) -> str:
