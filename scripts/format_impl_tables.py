@@ -31,9 +31,9 @@ TABLE_STYLE = (
 )
 
 THREE_COL_GROUP = """<colgroup>
-  <col style="width:18%" />
-  <col style="width:28%" />
-  <col style="width:54%" />
+  <col style="width:20%" />
+  <col style="width:32%" />
+  <col style="width:48%" />
 </colgroup>"""
 
 FOUR_COL_GROUP = """<colgroup>
@@ -112,6 +112,12 @@ def relax_cell_spacing(text: str, col_idx: int, n_cols: int) -> str:
     if col_idx == 1:
         t = re.sub(r"(输出：[^<]+)<br>(?=\d+\.)", rf"\1{BR2}", t)
         t = re.sub(r"(输出：[^<]+)<br>(?=总输入：)", rf"\1{BR2}", t)
+        # 代码头 · 描述 · 行号 拆成多行（若仍在一行）
+        t = re.sub(
+            r"(`[^`]+`)\s*·\s*([^<·]+?)\s*·\s*(\[L[^\]]+\]\([^)]+\))",
+            r"\1<br>\2<br>\3",
+            t,
+        )
     if col_idx == n_cols - 1:
         t = re.sub(r"(③ 底层实现：)\s*(\d+（L|\d+：)", r"\1<br>\2", t)
         t = re.sub(r"(?<!<br>)(?<!<br><br>)问：", f"{BR2}问：", t)
@@ -122,6 +128,7 @@ def relax_cell_spacing(text: str, col_idx: int, n_cols: int) -> str:
 
 def _md_links_and_code(segment: str) -> str:
     """转义纯文本，保留已生成 span/a/code。"""
+    segment = html.unescape(segment)
 
     def link_repl(m: re.Match[str]) -> str:
         label, url = m.group(1), m.group(2)
@@ -140,9 +147,21 @@ def _md_links_and_code(segment: str) -> str:
         placeholders.append(m.group(0))
         return f"\x00H{len(placeholders) - 1}\x00"
 
-    seg = re.sub(r"<(?:span|a|code|br)[^>]*>.*?</(?:span|a|code)>|<br\s*/?>", stash, segment, flags=re.I)
+    seg = re.sub(
+        r"<(?:span|a|code)[^>]*>.*?</(?:span|a|code)>|<br\s*/?>",
+        stash,
+        segment,
+        flags=re.I | re.S,
+    )
     seg = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", link_repl, seg)
     seg = re.sub(r"`([^`]+)`", code_repl, seg)
+    # 新生成的 a/code 也需占位，避免后续 html.escape 把标签打成 &lt;code&gt;
+    seg = re.sub(
+        r"<(?:a|code)[^>]*>.*?</(?:a|code)>",
+        stash,
+        seg,
+        flags=re.I | re.S,
+    )
     seg = html.escape(seg, quote=False)
     seg = seg.replace("&lt;br&gt;", "<br>").replace("&lt;br/&gt;", "<br/>").replace("&lt;br /&gt;", "<br />")
     for i, ph in enumerate(placeholders):
@@ -193,7 +212,12 @@ def highlight_segment(segment: str, col_idx: int, n_cols: int) -> str:
     if s.startswith("输出："):
         return _span("io", "输出：") + _md_links_and_code(s[3:])
 
-    # 步骤行 1. xxx
+    # 步骤序号单独一行（工作描述在下一行）
+    m = re.match(r"^(\d+\.)$", s)
+    if m and col_idx == 1:
+        return _span("step", m.group(1))
+
+    # 步骤行 1. xxx（兼容旧格式）
     m = re.match(r"^(\d+\.\s)(.+)$", s)
     if m and col_idx == 1:
         return _span("step", m.group(1)) + _md_links_and_code(m.group(2))
@@ -339,12 +363,16 @@ def extract_html_table_rows(html: str) -> list[list[str]]:
 
 def strip_html_to_plain(cell: str) -> str:
     """从旧 HTML 单元格还原为可重新高亮的纯文本（保留 <br>）。"""
-    c = cell
+    c = html.unescape(cell)
     c = re.sub(r"<br\s*/?>", "<br>", c, flags=re.I)
-    c = re.sub(r"<a[^>]+href=\"([^\"]+)\"[^>]*>(.*?)</a>", r"[\2](\1)", c, flags=re.I | re.S)
+    c = re.sub(
+        r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>',
+        r"[\2](\1)",
+        c,
+        flags=re.I | re.S,
+    )
     c = re.sub(r"<code[^>]*>(.*?)</code>", r"`\1`", c, flags=re.I | re.S)
     c = re.sub(r"<span[^>]*>(.*?)</span>", r"\1", c, flags=re.I | re.S)
-    c = html.unescape(c)
     return c.strip()
 
 

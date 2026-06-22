@@ -1432,7 +1432,7 @@ def strip_html_cell(text: str) -> str:
     """HTML 表单元格还原为 rebuild 可处理的纯文本（保留 <br>）。"""
     import html as html_mod
 
-    t = text.strip()
+    t = html_mod.unescape(text.strip())
     t = re.sub(r"<br\s*/?>", "<br>", t, flags=re.I)
     t = re.sub(
         r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>',

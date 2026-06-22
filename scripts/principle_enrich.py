@@ -449,15 +449,42 @@ def resolve_chain_steps(
     return steps, total_io
 
 
+def _wrap_line(text: str, max_len: int = 32) -> str:
+    """长句在顿号/逗号处换行，避免首行撑满整列。"""
+    t = (text or "").strip()
+    if not t or len(t) <= max_len:
+        return t
+    for sep in ("、", "，", "；", " → ", "->"):
+        if sep in t:
+            return INTRA_SEP.join(p.strip() for p in t.split(sep) if p.strip())
+    return t
+
+
+def split_code_header(locate: str) -> str:
+    """代码地址列首行：符号 / 中文说明 / 行号链接 各占一行。"""
+    s = locate.strip()
+    m = re.match(
+        r"^(`[^`]+`)\s*·\s*(.+?)\s*·\s*(\[L[^\]]+\]\([^)]+\))\s*$",
+        s,
+    )
+    if m:
+        return INTRA_SEP.join([m.group(1), m.group(2).strip(), m.group(3)])
+    parts = [p.strip() for p in s.split("·")]
+    if len(parts) >= 3:
+        return INTRA_SEP.join([parts[0], "·".join(parts[1:-1]), parts[-1]])
+    return s
+
+
 def format_chain_steps_column(steps: list[dict[str, str]], total_io: dict[str, str]) -> str:
     sub = "\u00a0" * 3
     blocks: list[str] = []
     for i, st in enumerate(steps, 1):
         block = INTRA_SEP.join(
             [
-                f"{i}. {st['work']}",
-                f"{sub}输入：{st.get('input', '—')}",
-                f"{sub}输出：{st.get('output', '—')}",
+                f"{i}.",
+                _wrap_line(st["work"]),
+                f"{sub}输入：{_wrap_line(st.get('input', '—'), 36)}",
+                f"{sub}输出：{_wrap_line(st.get('output', '—'), 36)}",
             ]
         )
         blocks.append(block)
@@ -660,7 +687,7 @@ def build_locate_column(
     route_hint: dict[str, str],
 ) -> str:
     """第二列：代码地址 + 分步链中位置 + 总输入输出。"""
-    parts: list[str] = [locate.strip()]
+    parts: list[str] = [split_code_header(locate.strip())]
     steps, total_io = resolve_chain_steps(symbol, chain, layer, f_code, route_hint)
     if steps:
         parts.append(STEP_GAP + format_chain_steps_column(steps, total_io))
